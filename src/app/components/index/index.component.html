@@ -1,1 +1,121 @@
-<p>index works!</p>
+<div class="container">
+	<nav>
+		<div class="hidden_offset"></div>
+		<div class="app_title">Grant Tichu</div>
+		<button mat-button>
+			<span class="material-symbols-outlined options"> menu </span>
+		</button>
+	</nav>
+	<div class="team_names_and_scores">
+		<div class="team_name team1_name">Team 1</div>
+		<div class="team_name team2_name">Team 2</div>
+		<div class="team_score team1_score">755</div>
+		<div class="team_score team2_score">945</div>
+	</div>
+	<div class="team_members_and_tichu_controls">
+		<div class="player">
+			<div class="player_top_row">
+				<div class="player_name">Raf2055331</div>
+				<div class="hidden_offset"></div>
+				<!-- <div class="player_shuffles"> -->
+				<button mat-button class="player_shuffles">
+					<span class="material-symbols-outlined"> sports_esports </span>
+				</button>
+				<!-- </div> -->
+				<!-- <span class="material-symbols-outlined player_shuffles">
+				  sports_esports
+				</span> -->
+			</div>
+			<mat-button-toggle-group
+				class="player_bottom_row"
+				name="player1_controls_group"
+				aria-label="Font Style"
+				multiple
+				(change)="toggleChange($event)"
+			>
+				<mat-button-toggle class="player_tichu" value="3"
+				>Tichu
+				</mat-button-toggle
+				>
+				<mat-button-toggle class="player_grand_tichu" value="2"
+				>Grand
+				</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
+
+		<div class="player">
+			<div class="player_top_row">
+				<div class="player_name">Raf2</div>
+				<div class="hidden_offset"></div>
+				<div class="player_shuffles"></div>
+			</div>
+			<mat-button-toggle-group
+				class="player_bottom_row"
+				name="player2_controls_group"
+				aria-label="Font Style"
+				multiple
+				(change)="toggleChange($event)"
+			>
+				<mat-button-toggle class="player_tichu" value="3"
+				>Tichu
+				</mat-button-toggle
+				>
+				<mat-button-toggle class="player_grand_tichu" value="2"
+				>Grand
+				</mat-button-toggle
+				>
+			</mat-button-toggle-group>
+		</div>
+
+		<div class="player">
+			<div class="player_top_row">
+				<div class="player_name">Eratosthenis</div>
+				<div class="hidden_offset"></div>
+				<div class="player_shuffles"></div>
+			</div>
+			<mat-button-toggle-group
+				class="player_bottom_row"
+				name="player3_controls_group"
+				aria-label="Font Style"
+				multiple
+				(change)="toggleChange($event)"
+			>
+				<mat-button-toggle class="player_tichu" value="3"
+				>Tichu
+				</mat-button-toggle
+				>
+				<mat-button-toggle class="player_grand_tichu" value="2"
+				>Grand
+				</mat-button-toggle
+				>
+			</mat-button-toggle-group>
+		</div>
+
+		<div class="player">
+			<div class="player_top_row">
+				<div class="player_name">Raf4</div>
+				<div class="hidden_offset"></div>
+				<div class="player_shuffles"></div>
+			</div>
+			<mat-button-toggle-group
+				class="player_bottom_row"
+				name="player4_controls_group"
+				aria-label="Font Style"
+				multiple
+				(change)="toggleChange($event)"
+			>
+				<mat-button-toggle class="player_tichu" value="3"
+				>Tichu
+				</mat-button-toggle
+				>
+				<mat-button-toggle class="player_grand_tichu" value="2"
+				>Grand
+				</mat-button-toggle
+				>
+			</mat-button-toggle-group>
+		</div>
+	</div>
+	<div class="set_score_area">
+		<button mat-stroked-button color="primary">Set Score</button>
+	</div>
+</div>
