@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+@import "./variables";
 
 html, body {
 	height: 100%;
@@ -11,4 +11,14 @@ body {
 
 .material-symbols-outlined {
 	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+}
+
+.mat-button-toggle {
+	background-color: white;
+	color: black;
+	border: 3px solid $beau-blue;
+}
+
+.mat-button-toggle-checked {
+	background-color: $primary_text_color;
 }

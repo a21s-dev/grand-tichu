@@ -1,11 +1,4 @@
-$raisin-black: #1e1e24ff;
-$dark-red: #92140cff;
-$floral-white: #fff8f0ff;
-$deep-champagne: #ffcf99ff;
-$space-cadet: #111d4aff;
-
-$primary_color: $dark-red;
-$primary_text_color: $floral-white;
+@import "../../../variables";
 
 .container {
 	border: 2px solid black;
@@ -62,6 +55,7 @@ nav > .options {
 .team_names_and_scores > .team_score {
 	font-weight: bolder;
 	font-size: 3em;
+	color: $primary_text_color;
 }
 
 .team_members_and_tichu_controls {
@@ -161,4 +155,8 @@ nav > .options {
 	height: 3em;
 	background-color: $primary_color;
 	color: $primary_text_color;
+}
+
+mat-button-toggle {
+	//margin-left: 20px;
 }
