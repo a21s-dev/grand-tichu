@@ -1,7 +1,7 @@
 @import "../../../variables";
 
 .container {
-	border: 2px solid black;
+	//border: 2px solid black;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -10,18 +10,23 @@
 	position: fixed;
 }
 
+.container > * {
+	//flex-grow:1;
+	//flex-shrink: 1;
+}
+
 nav {
 	// border: 5px solid blue;
+	flex-grow: 0.5;
 	background-color: $primary_color;
 	color: $primary_text_color;
-	height: 50px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
 
 nav > * {
-	font-size: 2em;
+	font-size: 2.5em;
 }
 
 nav > .app_title {
@@ -35,13 +40,15 @@ nav > .options {
 
 .team_names_and_scores {
 	// border: 5px solid red;
-	height: 70px;
+	flex-grow: 2;
 	padding-top: 40px;
 	padding-bottom: 40px;
 	display: grid;
+	justify-content: space-around;
+	align-content: space-around;
 	grid-template-columns: repeat(2, auto);
 	grid-template-rows: 20px 50px;
-	grid-row-gap: 15px;
+	//grid-row-gap: 10px;
 }
 
 .team_names_and_scores > * {
@@ -49,18 +56,18 @@ nav > .options {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	font-size: 1.5em;
+	font-size: 2.5em;
 }
 
 .team_names_and_scores > .team_score {
-	font-weight: bolder;
-	font-size: 3em;
+	font-weight: bold;
+	font-size: 2.8em;
 	color: $primary_text_color;
 }
 
 .team_members_and_tichu_controls {
 	// border: 5px solid purple;
-	height: 300px;
+	flex-grow: 8;
 	display: grid;
 	grid-template-columns: repeat(2, auto);
 	grid-template-rows: repeat(2, auto);
@@ -93,6 +100,7 @@ nav > .options {
 .team_members_and_tichu_controls > .player > .player_top_row > * {
 	// border: 1px solid black;
 	// flex-grow: 2;
+	font-size: 1.8em;
 }
 
 .team_members_and_tichu_controls > .player > .player_top_row > .player_name,
@@ -126,12 +134,13 @@ nav > .options {
 
 .team_members_and_tichu_controls > .player > .player_bottom_row {
 	// border: 3px solid green;
-	height: 20px;
+	//height: 20px;
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
+	justify-content: space-around;
 	align-items: center;
 	flex-grow: 2;
+	font-size: 1.6em;
 }
 
 .team_members_and_tichu_controls > .player > .player_bottom_row > * {
@@ -142,6 +151,7 @@ nav > .options {
 .set_score_area {
 	// border: 5px solid yellow;
 	display: flex;
+	//flex-grow:1;
 	padding-top: 40px;
 	justify-content: center;
 	align-items: center;
