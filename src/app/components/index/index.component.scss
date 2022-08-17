@@ -9,12 +9,7 @@
 	overflow: hidden;
 	position: fixed;
 }
-
-.container > * {
-	//flex-grow:1;
-	//flex-shrink: 1;
-}
-
+//region navbar
 nav {
 	// border: 5px solid blue;
 	flex-grow: 0.5;
@@ -27,7 +22,6 @@ nav {
 }
 
 
-//nav:nth-child(1) { grid-column-start: 2; }
 nav > div:nth-child(1) {
 	grid-column-start: 2;
 }
@@ -52,6 +46,8 @@ nav > .options {
 	justify-content: center;
 }
 
+//endregion
+//region team names and scores
 .team_names_and_scores {
 	// border: 5px solid red;
 	flex-grow: 2;
@@ -79,9 +75,11 @@ nav > .options {
 	color: $primary_text_color;
 }
 
+//endregion
+//region team members and controls
 .team_members_and_tichu_controls {
 	// border: 5px solid purple;
-	flex-grow: 8;
+	flex-grow: 2;
 	display: grid;
 	grid-template-columns: repeat(2, auto);
 	grid-template-rows: repeat(2, auto);
@@ -90,68 +88,66 @@ nav > .options {
 }
 
 .team_members_and_tichu_controls > .player {
-	// border: 2px solid pink;
+	//border: 2px solid pink;
 	display: flex;
-	align-items: stretch;
+	justify-content: flex-end;
+	align-items: center;
 	flex-direction: column;
 }
 
 .team_members_and_tichu_controls > .player > .player_top_row {
-	// border: 2px solid green;
-	flex-grow: 1;
+	//border: 2px solid green;
 	display: grid;
-	// flex-direction: row;
-	// justify-content: center;
-	// align-items: center;
-	grid-template-columns: repeat(3, auto);
-	grid-template-rows: 20px;
-	align-items: center;
-	align-content: center;
-	justify-content: space-around;
-	grid-column-gap: 5px;
+	grid-template-columns: 1fr repeat(1, auto) 1fr;
+	justify-items: center;
+}
+
+.team_members_and_tichu_controls > .player > .player_top_row > div:nth-child(1) {
+	grid-column-start: 2;
+}
+
+.team_members_and_tichu_controls > .player > .player_top_row > div:nth-child(2) {
+	margin-left: auto;
 }
 
 .team_members_and_tichu_controls > .player > .player_top_row > * {
 	// border: 1px solid black;
-	// flex-grow: 2;
 	font-size: 1.8em;
-}
-
-.team_members_and_tichu_controls > .player > .player_top_row > .player_name,
-.player_shuffles {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	// overflow: hidden;
-	// white-space: nowrap;
-	// text-overflow: ellipsis;
-	// max-width: 5ch;
+}
+
+.team_members_and_tichu_controls > .player > .player_top_row > .player_name {
+
 }
 
 .team_members_and_tichu_controls
 > .player
 > .player_top_row
-> .player_shuffles {
-	// padding: 0;
-}
-
-.team_members_and_tichu_controls
-> .player
-> .player_top_row
-> .player_shuffles {
+> .player_shuffles > button {
 	padding: 0;
 	margin: 0;
-	font-size: 2.2em;
-	user-select: none;
-	min-width: 0;
+	line-height: normal;
+	//font-size: 2.2em;
+	//user-select: none;
+	//min-width: 0;
+}
+
+.shuffle_icon {
+	padding: 0;
+	margin: 0;
+	font-size: 1.6em;
+	//user-select: none;
+	//min-width: 0;
 }
 
 .team_members_and_tichu_controls > .player > .player_bottom_row {
-	// border: 3px solid green;
+	//border: 3px solid blue;
 	//height: 20px;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-around;
+	justify-content: space-between;
 	align-items: center;
 	flex-grow: 2;
 	font-size: 1.6em;
@@ -160,17 +156,21 @@ nav > .options {
 .team_members_and_tichu_controls > .player > .player_bottom_row > * {
 	// border: 1px solid blue;
 	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
 }
 
+//endregion
+//region set score
 .set_score_area {
 	// border: 5px solid yellow;
 	display: flex;
-	//flex-grow:1;
 	padding-top: 40px;
 	justify-content: center;
 	align-items: center;
 	margin-top: auto;
-	// align-self: flex-end;
 }
 
 .set_score_area > button {
@@ -181,6 +181,4 @@ nav > .options {
 	color: $primary_text_color;
 }
 
-mat-button-toggle {
-	//margin-left: 20px;
-}
+//endregion
