@@ -9,6 +9,7 @@
 	overflow: hidden;
 	position: fixed;
 }
+
 //region navbar
 nav {
 	// border: 5px solid blue;
@@ -51,28 +52,39 @@ nav > .options {
 .team_names_and_scores {
 	// border: 5px solid red;
 	flex-grow: 2;
-	padding-top: 40px;
+	//padding-top: 40px;
 	padding-bottom: 40px;
 	display: grid;
 	justify-content: space-around;
 	align-content: space-around;
 	grid-template-columns: repeat(2, auto);
-	grid-template-rows: 20px 50px;
+	grid-template-rows: 40px 50px;
 	//grid-row-gap: 10px;
 }
 
 .team_names_and_scores > * {
-	/*   border: 2px solid black; */
+	//border: 2px solid black;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	font-size: 2.5em;
+	font-size: 2.3em;
+}
+
+
+.team_names_and_scores > :nth-child(odd) {
+	background-color: $secondary_color;
+	color: $secondary_text_color;
+}
+
+.team_names_and_scores > :nth-child(even) {
+	background-color: $tertiary_color;
+	color: $tertiary_text_color;
 }
 
 .team_names_and_scores > .team_score {
 	font-weight: bold;
 	font-size: 2.8em;
-	color: $primary_text_color;
+	color: $secondary_text_color;
 }
 
 //endregion
@@ -90,7 +102,7 @@ nav > .options {
 .team_members_and_tichu_controls > .player {
 	//border: 2px solid pink;
 	display: flex;
-	justify-content: flex-end;
+	justify-content: center;
 	align-items: center;
 	flex-direction: column;
 }
@@ -100,6 +112,8 @@ nav > .options {
 	display: grid;
 	grid-template-columns: 1fr repeat(1, auto) 1fr;
 	justify-items: center;
+	height: 2em;
+	width: 100%;
 }
 
 .team_members_and_tichu_controls > .player > .player_top_row > div:nth-child(1) {
@@ -116,6 +130,16 @@ nav > .options {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.team_members_and_tichu_controls .player:nth-child(odd) > .player_top_row {
+	background-color: $secondary_color;
+	color: $secondary_text_color;
+}
+
+.team_members_and_tichu_controls .player:nth-child(even) > .player_top_row {
+	background-color: $tertiary_color;
+	color: $tertiary_text_color;
 }
 
 .team_members_and_tichu_controls > .player > .player_top_row > .player_name {
@@ -135,9 +159,9 @@ nav > .options {
 }
 
 .shuffle_icon {
-	padding: 0;
-	margin: 0;
-	font-size: 1.6em;
+	//padding: 0;
+	//margin: 0;
+	font-size: 1.4em;
 	//user-select: none;
 	//min-width: 0;
 }
