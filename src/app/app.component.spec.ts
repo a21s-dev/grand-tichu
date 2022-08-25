@@ -20,16 +20,16 @@ describe('AppComponent', () => {
 		expect(app).toBeTruthy();
 	});
 
-	it(`should have as title 'r8-stack'`, () => {
+	it(`should have as title 'grand-tichu'`, () => {
 		const fixture = TestBed.createComponent(AppComponent);
 		const app = fixture.componentInstance;
-		expect(app.title).toEqual('r8-stack');
+		expect(app.title).toEqual('grand-tichu');
 	});
 
 	it('should render title', () => {
 		const fixture = TestBed.createComponent(AppComponent);
 		fixture.detectChanges();
 		const compiled = fixture.nativeElement as HTMLElement;
-		expect(compiled.querySelector('.content span')?.textContent).toContain('r8-stack app is running!');
+		expect(compiled.querySelector('.content span')?.textContent).toContain('grand-tichu app is running!');
 	});
 });

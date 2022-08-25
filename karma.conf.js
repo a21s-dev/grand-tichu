@@ -25,13 +25,13 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/r8-stack'),
-      subdir: '.',
-      reporters: [
-        { type: 'html' },
-        { type: 'text-summary' }
-      ]
-    },
+		dir: require('path').join(__dirname, './coverage/grand-tichu'),
+		subdir: '.',
+		reporters: [
+			{type: 'html'},
+			{type: 'text-summary'}
+		]
+	},
     reporters: ['progress', 'kjhtml'],
     port: 9876,
     colors: true,

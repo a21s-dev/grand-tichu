@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/grant-tichu.iml" filepath="$PROJECT_DIR$/grant-tichu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../grand-tichu/grand-tichu.iml" filepath="$PROJECT_DIR$/../grand-tichu/grand-tichu.iml" />
     </modules>
   </component>
 </project>
