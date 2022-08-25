@@ -72,19 +72,19 @@ nav > .options {
 
 
 .team_names_and_scores > :nth-child(odd) {
-	background-color: $secondary_color;
-	color: $secondary_text_color;
+	//background-color: $secondary_color;
+	//color: $secondary_text_color;
 }
 
 .team_names_and_scores > :nth-child(even) {
-	background-color: $tertiary_color;
-	color: $tertiary_text_color;
+	//background-color: $tertiary_color;
+	//color: $tertiary_text_color;
 }
 
 .team_names_and_scores > .team_score {
 	font-weight: bold;
 	font-size: 2.8em;
-	color: $secondary_text_color;
+	//color: $secondary_text_color;
 }
 
 //endregion
@@ -133,13 +133,13 @@ nav > .options {
 }
 
 .team_members_and_tichu_controls .player:nth-child(odd) > .player_top_row {
-	background-color: $secondary_color;
-	color: $secondary_text_color;
+	//background-color: $secondary_color;
+	//color: $secondary_text_color;
 }
 
 .team_members_and_tichu_controls .player:nth-child(even) > .player_top_row {
-	background-color: $tertiary_color;
-	color: $tertiary_text_color;
+	//background-color: $tertiary_color;
+	//color: $tertiary_text_color;
 }
 
 .team_members_and_tichu_controls > .player > .player_top_row > .player_name {
@@ -161,7 +161,7 @@ nav > .options {
 .shuffle_icon {
 	//padding: 0;
 	//margin: 0;
-	font-size: 1.4em;
+	font-size: 2em;
 	//user-select: none;
 	//min-width: 0;
 }
