@@ -13,6 +13,7 @@ import {SetScoreComponent} from './components/set-score/set-score.component';
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatOptionModule} from "@angular/material/core";
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
 	declarations: [AppComponent, IndexComponent, SetScoreComponent],
@@ -31,6 +32,7 @@ import {MatOptionModule} from "@angular/material/core";
 		MatFormFieldModule,
 		MatSelectModule,
 		MatOptionModule,
+		MatMenuModule,
 	],
 	providers: [],
 	bootstrap: [AppComponent],

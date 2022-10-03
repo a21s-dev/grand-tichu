@@ -7,7 +7,7 @@ import {MatButtonToggle, MatButtonToggleChange, MatButtonToggleGroup} from "@ang
 	styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements OnInit {
-//TODO truncate player names
+	//TODO truncate player names
 	constructor() {
 	}
 
