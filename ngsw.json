@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1664826506189,
+  "timestamp": 1664827719789,
   "index": "/grand-tichu/index.html",
   "assetGroups": [
     {
@@ -11,9 +11,9 @@
         "ignoreVary": true
       },
       "urls": [
-        "/grand-tichu/favicon.ico",
+        "/grand-tichu/card-icon.png",
         "/grand-tichu/index.html",
-        "/grand-tichu/main.3c324b9a3c069e4551d0.js",
+        "/grand-tichu/main.c9ebf6f82843c695de02.js",
         "/grand-tichu/manifest.webmanifest",
         "/grand-tichu/polyfills.f264c7ad41d307be0e14.js",
         "/grand-tichu/runtime.6c3aeb45b4e39e717fd6.js",
@@ -29,32 +29,34 @@
         "ignoreVary": true
       },
       "urls": [
-        "/grand-tichu/assets/icons/icon-128x128.png",
-        "/grand-tichu/assets/icons/icon-144x144.png",
-        "/grand-tichu/assets/icons/icon-152x152.png",
-        "/grand-tichu/assets/icons/icon-192x192.png",
-        "/grand-tichu/assets/icons/icon-384x384.png",
-        "/grand-tichu/assets/icons/icon-512x512.png",
-        "/grand-tichu/assets/icons/icon-72x72.png",
-        "/grand-tichu/assets/icons/icon-96x96.png"
+        "/grand-tichu/assets/icons/card128.png",
+        "/grand-tichu/assets/icons/card144.png",
+        "/grand-tichu/assets/icons/card152.png",
+        "/grand-tichu/assets/icons/card192.png",
+        "/grand-tichu/assets/icons/card384.png",
+        "/grand-tichu/assets/icons/card512.png",
+        "/grand-tichu/assets/icons/card72.png",
+        "/grand-tichu/assets/icons/card96.png",
+        "/grand-tichu/assets/one-two.svg"
       ],
       "patterns": []
     }
   ],
   "dataGroups": [],
   "hashTable": {
-    "/grand-tichu/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
-    "/grand-tichu/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
-    "/grand-tichu/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
-    "/grand-tichu/assets/icons/icon-192x192.png": "1abd80d431a237a853ce38147d8c63752f10933b",
-    "/grand-tichu/assets/icons/icon-384x384.png": "329749cd6393768d3131ed6304c136b1ca05f2fd",
-    "/grand-tichu/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
-    "/grand-tichu/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
-    "/grand-tichu/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
-    "/grand-tichu/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/grand-tichu/index.html": "c37faee5e987c92446b4a1c59b54bfddba62aa0c",
-    "/grand-tichu/main.3c324b9a3c069e4551d0.js": "75e8c431eced18a677b2be9a0449b4caa609ca7c",
-    "/grand-tichu/manifest.webmanifest": "4a58b8b20e5e00d8be09c31591005cec3df25293",
+    "/grand-tichu/assets/icons/card128.png": "7f67c9051d90b90d05d7087120b56c5f09c35fee",
+    "/grand-tichu/assets/icons/card144.png": "ff095cf667757f80ebfb424af8aaca3c622221f5",
+    "/grand-tichu/assets/icons/card152.png": "c3511919c70b952bb09714e693067b1f6344c04d",
+    "/grand-tichu/assets/icons/card192.png": "41f7ce11026f593a5499fa671d9d4eb9984ec84f",
+    "/grand-tichu/assets/icons/card384.png": "d126f1f9ce9804bafba40e697bc269d71af73298",
+    "/grand-tichu/assets/icons/card512.png": "d63b31653e5e9a46b2948be320bdae113a9572f3",
+    "/grand-tichu/assets/icons/card72.png": "25cc8da518c589449d9d52e7e15680d4aa8c3e3b",
+    "/grand-tichu/assets/icons/card96.png": "ac826c88767f47f08257807619e142c50d10d3b2",
+    "/grand-tichu/assets/one-two.svg": "b0a906d120fd47790750b25de2a360bac5b105c7",
+    "/grand-tichu/card-icon.png": "e79a0b1a2b2a7043438f35bf56fd6bc6d8bad061",
+    "/grand-tichu/index.html": "3768e94698d8eea437c69c9e71e9517ab52376b1",
+    "/grand-tichu/main.c9ebf6f82843c695de02.js": "a465a3fc73bb411dd7afa4810743e1ed76368fae",
+    "/grand-tichu/manifest.webmanifest": "f85062adeefda6b784010e3bd1e5a194b5990994",
     "/grand-tichu/polyfills.f264c7ad41d307be0e14.js": "bb723dd7fa1f2d15bcd604e66411d25313f39b65",
     "/grand-tichu/runtime.6c3aeb45b4e39e717fd6.js": "f7233c1636005329c1d10cc17a79273c6b6969a7",
     "/grand-tichu/styles.37dc19e1fce1a31163b2.css": "6aac27f882ac8641f94d9afd57a91dd345d3140a"
