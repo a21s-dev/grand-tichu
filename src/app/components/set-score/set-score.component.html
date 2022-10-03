@@ -19,32 +19,40 @@
 		</mat-button-toggle-group>
 	</div>
 	<div class="points">
-		<mat-form-field appearance="fill">
-			<mat-label>Points</mat-label>
-			<mat-select>
-				<mat-option *ngFor="let points of team1Points" [value]="points">
-					{{points}}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
-		<mat-form-field appearance="fill">
-			<mat-label>
-				Who finished first
-			</mat-label>
-			<mat-select>
-				<mat-option *ngFor="let player of players" [value]="player">
-					{{player}}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
-		<mat-form-field appearance="fill">
-			<mat-label>Points</mat-label>
-			<mat-select>
-				<mat-option *ngFor="let points of team2Points" [value]="points">
-					{{points}}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
+		<div>
+			<mat-form-field appearance="fill">
+				<mat-label>Points</mat-label>
+				<mat-select>
+					<mat-option *ngFor="let points of team1Points" [value]="points">
+						{{points}}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field appearance="fill">
+				<mat-label>
+					Who finished first
+				</mat-label>
+				<mat-select>
+					<mat-option *ngFor="let player of players" [value]="player">
+						{{player}}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field appearance="fill">
+				<mat-label>Points</mat-label>
+				<mat-select>
+					<mat-option *ngFor="let points of team2Points" [value]="points">
+						{{points}}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
+
+
 	</div>
 	<div class="total-score">
 		<h2>

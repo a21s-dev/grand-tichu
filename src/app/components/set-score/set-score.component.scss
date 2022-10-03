@@ -66,18 +66,25 @@
 
 }
 
-.points > mat-form-field {
+.points > div {
+	display: flex;
+	flex: 1 1 0;
+	width: 0;
+	justify-content: center;
+	align-items: center;
+}
+
+.points > div > mat-form-field {
 	height: 100%;
-	width: 100%;
 	flex: 1;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-//.points > mat-form-field > *{
-//	width: 100%;
-//}
+:host::ng-deep.mat-form-field-wrapper {
+	width: 60% !important;
+}
 
 .total-score {
 	//height: 100px;
