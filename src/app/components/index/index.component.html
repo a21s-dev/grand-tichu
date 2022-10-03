@@ -2,10 +2,14 @@
   <nav>
     <div class="app_title">Grand Tichu</div>
     <div class="options">
-      <button mat-button>
-        <span class="material-symbols-outlined"> menu </span>
-      </button>
-    </div>
+		<button mat-button [matMenuTriggerFor]="menu"><span class="material-symbols-outlined"> menu </span></button>
+		<mat-menu #menu="matMenu">
+			<button mat-menu-item>New game</button>
+			<button mat-menu-item>Settings</button>
+			<button mat-menu-item>Player Statistics</button>
+			<button mat-menu-item>About</button>
+		</mat-menu>
+	</div>
   </nav>
   <div class="team_names_and_scores">
     <div class="team_name team1_name">Team 1</div>
