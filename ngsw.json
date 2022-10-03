@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1663710331419,
+  "timestamp": 1664813785041,
   "index": "/grand-tichu/index.html",
   "assetGroups": [
     {
@@ -17,7 +17,7 @@
         "/grand-tichu/manifest.webmanifest",
         "/grand-tichu/polyfills.f264c7ad41d307be0e14.js",
         "/grand-tichu/runtime.6c3aeb45b4e39e717fd6.js",
-        "/grand-tichu/styles.18260ad05563c9c9908b.css"
+        "/grand-tichu/styles.37dc19e1fce1a31163b2.css"
       ],
       "patterns": []
     },
@@ -52,12 +52,12 @@
     "/grand-tichu/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
     "/grand-tichu/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
     "/grand-tichu/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/grand-tichu/index.html": "2e556b5ec2095b480c23a664a5cb2c5475ecdb08",
+    "/grand-tichu/index.html": "190553853c913f918d5f4876d22ec745abb555ac",
     "/grand-tichu/main.6e56cac2306807bb904b.js": "4f17b54f4715f9459784e44d7ce1ef6b5ff27576",
     "/grand-tichu/manifest.webmanifest": "4a58b8b20e5e00d8be09c31591005cec3df25293",
     "/grand-tichu/polyfills.f264c7ad41d307be0e14.js": "bb723dd7fa1f2d15bcd604e66411d25313f39b65",
     "/grand-tichu/runtime.6c3aeb45b4e39e717fd6.js": "f7233c1636005329c1d10cc17a79273c6b6969a7",
-    "/grand-tichu/styles.18260ad05563c9c9908b.css": "14e681756c01b7ebc8d6db75c9e093a538907d9c"
+    "/grand-tichu/styles.37dc19e1fce1a31163b2.css": "6aac27f882ac8641f94d9afd57a91dd345d3140a"
   },
   "navigationUrls": [
     {
