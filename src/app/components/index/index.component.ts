@@ -2,6 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatButtonToggle, MatButtonToggleChange, MatButtonToggleGroup} from "@angular/material/button-toggle";
 import {fromEvent, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
+import {MatDialog} from "@angular/material/dialog";
+import {ChangePlayerDialogComponent} from "./change-player-dialog/change-player-dialog.component";
 
 @Component({
 	selector: 'app-index',
@@ -12,7 +14,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 	private readonly browserHistorySubject: Subject<void>;
 
 	// TODO truncate player names
-	constructor() {
+	constructor(private dialog: MatDialog) {
 		this.browserHistorySubject = new Subject<void>();
 	}
 
@@ -20,18 +22,15 @@ export class IndexComponent implements OnInit, OnDestroy {
 		this.removeBackButtonFunctionality();
 	}
 
-	private removeBackButtonFunctionality(): void {
-		history.pushState(null, '');
-		fromEvent(window, 'popstate').pipe(
-			takeUntil(this.browserHistorySubject)
-		).subscribe((_) => {
-			history.pushState(null, '');
-		});
-	}
-
 	ngOnDestroy(): void {
 		this.browserHistorySubject.next();
 		this.browserHistorySubject.complete();
+	}
+
+	openDialog(): void {
+		const dialogRef = this.dialog.open(ChangePlayerDialogComponent, {
+			data: {},
+		});
 	}
 
 	toggleChange(event: MatButtonToggleChange) {
@@ -43,5 +42,14 @@ export class IndexComponent implements OnInit, OnDestroy {
 		if (event.value.some((item: any) => item == toggle.value)) {
 			group.value = [toggle.value];
 		}
+	}
+
+	private removeBackButtonFunctionality(): void {
+		history.pushState(null, '');
+		fromEvent(window, 'popstate').pipe(
+			takeUntil(this.browserHistorySubject)
+		).subscribe((_) => {
+			history.pushState(null, '');
+		});
 	}
 }
