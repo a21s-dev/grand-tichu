@@ -1,0 +1,7 @@
+<h2>
+	Who will deal the cards?
+</h2>
+
+<mat-button-toggle-group name="favoriteColor" aria-label="Favorite Color" (change)="pickPlayer($event)">
+	<mat-button-toggle *ngFor="let player of players" [value]="player">{{player}}</mat-button-toggle>
+</mat-button-toggle-group>

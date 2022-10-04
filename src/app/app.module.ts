@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -14,9 +14,12 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatOptionModule} from "@angular/material/core";
 import {MatMenuModule} from "@angular/material/menu";
+import {ChangePlayerDialogComponent} from "./components/index/change-player-dialog/change-player-dialog.component";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatRadioModule} from "@angular/material/radio";
 
 @NgModule({
-	declarations: [AppComponent, IndexComponent, SetScoreComponent],
+	declarations: [AppComponent, IndexComponent, SetScoreComponent, ChangePlayerDialogComponent],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
@@ -33,8 +36,11 @@ import {MatMenuModule} from "@angular/material/menu";
 		MatSelectModule,
 		MatOptionModule,
 		MatMenuModule,
+		MatDialogModule,
+		MatRadioModule,
 	],
 	providers: [],
 	bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+}
