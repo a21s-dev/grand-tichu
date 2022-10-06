@@ -30,6 +30,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 	openDialog(): void {
 		const dialogRef = this.dialog.open(ChangePlayerDialogComponent, {
 			data: {},
+			restoreFocus: false
 		});
 	}
 
