@@ -10,10 +10,14 @@ import {ThemeProvider} from "@mui/system";
 const theme = createTheme({
 	palette: {
 		primary: {
-			main: orange[600],
+			main: orange['A400'],
 		},
 		secondary: {
 			main: '#FFFFFF',
+		},
+		text: {
+			primary: '#FFFFFF',
+			secondary: '#000000',
 		}
 	},
 	typography: {
@@ -22,7 +26,11 @@ const theme = createTheme({
 		].join(','),
 		title: {
 			'color': 'white',
-			'background-color': orange[600],
+			'backgroundColor': orange['A400'],
+		},
+		plain: {
+			'color': 'black',
+			'backgroundColor': 'white',
 		}
 	}
 })
