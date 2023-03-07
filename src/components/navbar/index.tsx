@@ -44,10 +44,26 @@ const NavBar: NextPage = () => {
 							open={anchorEl != null}
 							onClose={handleClose}
 						>
-							<MenuItem onClick={handleClose}>New Game</MenuItem>
-							<MenuItem onClick={handleClose}>Settings</MenuItem>
-							<MenuItem onClick={handleClose}>Player Statistics</MenuItem>
-							<MenuItem onClick={handleClose}>About</MenuItem>
+							<MenuItem onClick={handleClose}>
+								<Typography variant="plain">
+									New Game
+								</Typography>
+							</MenuItem>
+							<MenuItem onClick={handleClose}>
+								<Typography variant="plain">
+									Settings
+								</Typography>
+							</MenuItem>
+							<MenuItem onClick={handleClose}>
+								<Typography variant="plain">
+									Player Statistics
+								</Typography>
+							</MenuItem>
+							<MenuItem onClick={handleClose}>
+								<Typography variant="plain">
+									About
+								</Typography>
+							</MenuItem>
 						</Menu>
 					</div>
 				</Toolbar>
