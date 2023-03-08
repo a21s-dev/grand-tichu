@@ -2,10 +2,24 @@ import {type NextPage} from "next";
 import * as React from 'react';
 import {Button, ToggleButton, ToggleButtonGroup, Typography} from "@mui/material";
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import ChangePlayerDialog from "~/components/change-player-dialog";
 
 const TeamsMembersAndTichuControls: NextPage = () => {
 	const [alignment, setAlignment] = React.useState<string | null>('left');
+	const [open, setOpen] = React.useState(false);
+	const [value, setValue] = React.useState('Dione');
 
+	const handleClickListItem = () => {
+		setOpen(true);
+	};
+
+	const handleClose = (newValue?: string) => {
+		setOpen(false);
+
+		if (newValue) {
+			setValue(newValue);
+		}
+	};
 	const handleAlignment = (
 		event: React.MouseEvent<HTMLElement>,
 		newAlignment: string | null,
@@ -54,9 +68,16 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 						Rafael
 					</Typography>
 					<div className="ml-auto flex items-center justify-center text-[1.8em]">
-						<Button className='m-0 p-0 leading-[normal]'>
+						<Button className='m-0 p-0 leading-[normal]' onClick={handleClickListItem}>
 							<SportsEsportsIcon className='text-[2em]'/>
 						</Button>
+						<ChangePlayerDialog
+							id="ringtone-menu"
+							keepMounted
+							open={open}
+							onClose={handleClose}
+							value={value}
+						/>
 					</div>
 				</div>
 
