@@ -9,7 +9,7 @@ export type GamePlayer = {
 	name: string;
 	tichu: boolean;
 	grandTichu: boolean;
-	plays: boolean;
+	deals: boolean;
 }
 
 const initialState: GamePlayerState = {
@@ -19,28 +19,28 @@ const initialState: GamePlayerState = {
 			name: 'Andrew',
 			tichu: false,
 			grandTichu: false,
-			plays: false
+			deals: false
 		},
 		'2': {
 			id: '2',
 			name: 'Brad',
 			tichu: false,
 			grandTichu: false,
-			plays: true
+			deals: true
 		},
 		'3': {
 			id: '3',
 			name: 'Adam',
 			tichu: false,
 			grandTichu: false,
-			plays: false
+			deals: false
 		},
 		'4': {
 			id: '4',
 			name: 'Raf',
 			tichu: false,
 			grandTichu: false,
-			plays: false
+			deals: false
 		}
 	}
 }
@@ -57,12 +57,12 @@ export const gamePlayersSlice = createSlice({
 				v.tichu = action.payload.tichu;
 				v.grandTichu = action.payload.grandTichu;
 			},
-			'newPlayerPlays': (state: Draft<GamePlayerState>, action: PayloadAction<{ newId: string }>) => {
+			'newPlayerDeals': (state: Draft<GamePlayerState>, action: PayloadAction<{ newId: string }>) => {
 				for (const player of Object.values(state.players)) {
-					player.plays = false;
+					player.deals = false;
 				}
 				const newPlayer = state.players[action.payload.newId];
-				newPlayer.plays = true;
+				newPlayer.deals = true;
 			}
 		}
 	}
@@ -70,6 +70,6 @@ export const gamePlayersSlice = createSlice({
 export const selectGamePlayers = (state: { gamePlayers: GamePlayerState }) => {
 	return state.gamePlayers;
 }
-export const selectPlayerWhoPlays = (state: { gamePlayers: GamePlayerState }) => {
-	return Array.from(Object.values(state.gamePlayers.players)).find(player => player.plays);
+export const selectPlayerWhoDeals = (state: { gamePlayers: GamePlayerState }) => {
+	return Array.from(Object.values(state.gamePlayers.players)).find(player => player.deals);
 }
