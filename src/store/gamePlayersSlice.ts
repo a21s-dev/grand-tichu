@@ -87,24 +87,44 @@ export const gamePlayersSlice = createSlice({
 				if (playerToRemove == undefined) {
 					throw new Error(`Couldn't find player with id: ${action.payload.playerToRemoveId}.`);
 				}
-				const entries: [string, GamePlayer][] = Array.from(Object.entries(state));
-				let playerToRemoveIndex: string | undefined;
-				for (const entry of entries) {
-					const playerIndex = entry[0];
-					const player = entry[1];
-					if (player.id === action.payload.playerToRemoveId) {
-						playerToRemoveIndex = playerIndex;
-						break;
+				let newPlayer = getPlayerById(state, action.payload.newPlayer.id);
+				if (newPlayer != undefined) {
+					let indexToAddNewPlayer: string | undefined;
+					let indexToAddOldPlayer: string | undefined;
+					const entries: [string, GamePlayer][] = Array.from(Object.entries(state));
+					for (const entry of entries) {
+						const playerIndex = entry[0];
+						const player = entry[1];
+						if (player.id === playerToRemove.id) {
+							indexToAddNewPlayer = playerIndex;
+						}
+						if (player.id === newPlayer.id) {
+							indexToAddOldPlayer = playerIndex;
+						}
 					}
-				}
-				delete state[playerToRemoveIndex];
-				state[playerToRemoveIndex] = {
-					id: action.payload.newPlayer.id,
-					name: action.payload.newPlayer.name,
-					team: playerToRemove.team,
-					tichu: playerToRemove.tichu,
-					grandTichu: playerToRemove.grandTichu,
-					deals: playerToRemove.deals
+					state[indexToAddOldPlayer] = playerToRemove;
+					state[indexToAddNewPlayer] = newPlayer;
+
+				} else {
+					newPlayer = {
+						id: action.payload.newPlayer.id,
+						name: action.payload.newPlayer.name,
+						team: playerToRemove.team,
+						tichu: playerToRemove.tichu,
+						grandTichu: playerToRemove.grandTichu,
+						deals: playerToRemove.deals
+					}
+					const entries: [string, GamePlayer][] = Array.from(Object.entries(state));
+					let playerToReplaceIndex: string | undefined;
+					for (const entry of entries) {
+						const playerIndex = entry[0];
+						const player = entry[1];
+						if (player.id === action.payload.playerToRemoveId) {
+							playerToReplaceIndex = playerIndex;
+							break;
+						}
+					}
+					state[playerToReplaceIndex] = newPlayer;
 				}
 			}
 		}
