@@ -2,7 +2,7 @@ import {type NextPage} from "next";
 import * as React from 'react';
 import {Dialog, DialogTitle, List, ListItem, ListItemButton, ListItemText, Typography} from "@mui/material";
 import {useSelector} from "react-redux";
-import {selectGamePlayers, selectPlayerWhoDeals} from "~/store/gamePlayersSlice";
+import {selectGamePlayersInWeirdOrder, selectPlayerWhoDeals} from "~/store/gamePlayersSlice";
 
 
 export interface ChangePlayerWhoDealsDialogProps {
@@ -21,8 +21,9 @@ const ChangePlayerWhoDealsDialog: NextPage = (props: ChangePlayerWhoDealsDialogP
 	const handleListItemClick = (newId: string) => {
 		onClose(newId);
 	};
-	const gamePlayersState = useSelector(selectGamePlayers);
+	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
 	const playerWhoDeals = useSelector(selectPlayerWhoDeals);
+	// console.log(playerWhoDeals);
 	return (
 		<Dialog onClose={handleClose} open={open}>
 			<DialogTitle>
@@ -31,11 +32,10 @@ const ChangePlayerWhoDealsDialog: NextPage = (props: ChangePlayerWhoDealsDialogP
 				</Typography>
 			</DialogTitle>
 			<List sx={{pt: 0}}>
-				{Object
-					.entries(gamePlayersState.players)
-					.filter(([id, player]) => id !== playerWhoDeals.id)
-					.map(([key, player]) => {
-						return <ListItem key={key}>
+				{gamePlayers
+					.filter((player) => player.id !== playerWhoDeals.id)
+					.map(player => {
+						return <ListItem key={player.id}>
 							<ListItemButton
 								onClick={() => handleListItemClick(player.id)}
 							>

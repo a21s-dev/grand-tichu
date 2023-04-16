@@ -9,7 +9,7 @@ import {selectAppUsers} from "~/store/usersSlice";
 export interface ChangePlayerDialogProps {
 	open: boolean;
 	player: GamePlayer | undefined;
-	onClose: (value?: string) => void;
+	onClose: (details: {} | undefined) => void;
 }
 
 const ChangePlayerDialog: NextPage = (props: ChangePlayerDialogProps) => {
@@ -17,10 +17,10 @@ const ChangePlayerDialog: NextPage = (props: ChangePlayerDialogProps) => {
 	// console.log(player);
 
 	const handleClose = () => {
-		onClose();
+		onClose(undefined);
 	}
 	const handleListItemClick = (newId: string) => {
-		onClose(newId);
+		onClose({oldId: player!.id, newId});
 	};
 	const usersState = useSelector(selectAppUsers);
 	return (

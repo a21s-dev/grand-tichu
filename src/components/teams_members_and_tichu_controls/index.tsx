@@ -4,13 +4,14 @@ import * as React from 'react';
 import {Button, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ChangePlayerWhoDealsDialog from "~/components/change-player-who-deals-dialog";
-import {useDispatch, useSelector} from "react-redux";
-import {GamePlayer, gamePlayersSlice, selectGamePlayers} from "~/store/gamePlayersSlice";
+import {useDispatch, useSelector, useStore} from "react-redux";
+import {GamePlayer, gamePlayersSlice, selectGamePlayersInWeirdOrder} from "~/store/gamePlayersSlice";
 import ChangePlayerDialog from "~/components/change-player-dialog";
 
 const TeamsMembersAndTichuControls: NextPage = () => {
+	const store = useStore();
 	const dispatch = useDispatch();
-	const selector = useSelector(selectGamePlayers);
+	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
 	const [openWhoDealsDialog, setOpenWhoDealsDialog] = React.useState(false);
 	const [openChangePlayerDialog, setOpenChangePlayerDialog] = React.useState(false);
 	const [playerToChange, setPlayerToChange] = React.useState<GamePlayer>();
@@ -23,15 +24,23 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 			}));
 		}
 	};
-	const handleChangePlayerDialog = (newId?: string) => {
+	const handleChangePlayerDialog = (details: { oldId: string, newId: string } | undefined) => {
 		setOpenChangePlayerDialog(false);
-		// console.log(newId);
-		// setOpenWhoDealsDialog(false);
-		// if (newId) {
-		// 	dispatch(gamePlayersSlice.actions.newPlayerDeals({
-		// 		newId
-		// 	}));
-		// }
+		console.log(details);
+		if (details == undefined) {
+			return;
+		}
+		console.log(store.getState())
+		const users = store.getState().users.users;
+		const newPlayer = users[details.newId];
+		console.log(newPlayer)
+		dispatch(gamePlayersSlice.actions.replacePlayer({
+			playerToRemoveId: details.oldId,
+			newPlayer: {
+				id: newPlayer.id,
+				name: newPlayer.name
+			}
+		}));
 	};
 
 	const handleTichuAndGrandTichu = (
@@ -49,8 +58,8 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 	return (
 		<>
 			<div className='grow-[2] grid grid-cols-[repeat(2,1fr)] grid-rows-[repeat(2,1fr)] gap-y-[15px] gap-x-2.5'>
-				{Object.entries(selector.players).map(([key, player]) => {
-					return <div className="flex flex-col items-center justify-center" key={key}>
+				{gamePlayers.map(player => {
+					return <div className="flex flex-col items-center justify-center" key={player.id}>
 						<div className="grid grid-cols-[1fr_repeat(1,auto)_1fr] justify-items-center h-[2em] w-full">
 							<Button
 								variant="text"

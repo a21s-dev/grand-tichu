@@ -59,3 +59,7 @@ export const usersSlice = createSlice({
 export const selectAppUsers = (state: { users: AppUsersState }) => {
 	return state.users;
 }
+
+export const selectAppUser = (state: { users: AppUsersState }, id: string): AppUser | undefined => {
+	return state.users[id];
+}
