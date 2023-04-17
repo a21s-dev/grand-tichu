@@ -1,8 +1,19 @@
-import {type NextPage} from 'next';
+import { type NextPage } from 'next';
 import * as React from 'react';
-import {Dialog, DialogTitle, List, ListItem, ListItemButton, ListItemText, Typography,} from '@mui/material';
-import {useSelector} from 'react-redux';
-import {selectGamePlayersInWeirdOrder, selectPlayerWhoDeals,} from '~/store/gamePlayersSlice';
+import {
+	Dialog,
+	DialogTitle,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemText,
+	Typography,
+} from '@mui/material';
+import { useSelector } from 'react-redux';
+import {
+	selectGamePlayersInWeirdOrder,
+	selectPlayerWhoDeals,
+} from '~/store/gamePlayersSlice';
 
 export interface ChangePlayerWhoDealsDialogProps {
 	keepMounted: boolean;

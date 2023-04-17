@@ -1,4 +1,4 @@
-import {createSlice, type Draft, type PayloadAction} from '@reduxjs/toolkit';
+import { createSlice, type Draft, type PayloadAction } from '@reduxjs/toolkit';
 
 type GameStateKey = 't1p1' | 't1p2' | 't2p1' | 't2p2';
 

@@ -1,5 +1,12 @@
-import {type NextPage} from 'next';
-import {AppBar, IconButton, Menu, MenuItem, Toolbar, Typography,} from '@mui/material';
+import { type NextPage } from 'next';
+import {
+	AppBar,
+	IconButton,
+	Menu,
+	MenuItem,
+	Toolbar,
+	Typography,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import * as React from 'react';
 

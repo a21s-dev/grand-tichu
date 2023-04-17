@@ -1,11 +1,11 @@
-import {type NextPage} from 'next';
+import { type NextPage } from 'next';
 import NavBar from '~/components/navbar';
 import TeamsNamesAndScores from '~/components/teams-names-and-scores';
 import TeamsMembersAndTichuControls from '~/components/teams_members_and_tichu_controls';
 import SetScore from '~/components/set-score';
-import {createTheme} from '@mui/material/styles';
-import {orange} from '@mui/material/colors';
-import {ThemeProvider} from '@mui/system';
+import { createTheme } from '@mui/material/styles';
+import { orange } from '@mui/material/colors';
+import { ThemeProvider } from '@mui/system';
 
 const theme = createTheme({
 	palette: {

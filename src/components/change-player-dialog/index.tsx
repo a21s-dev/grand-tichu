@@ -1,9 +1,17 @@
-import {type NextPage} from 'next';
+import { type NextPage } from 'next';
 import * as React from 'react';
-import {Dialog, DialogTitle, List, ListItem, ListItemButton, ListItemText, Typography,} from '@mui/material';
-import {useSelector} from 'react-redux';
-import type {GamePlayer} from '~/store/gamePlayersSlice';
-import {selectAppUsers} from '~/store/usersSlice';
+import {
+	Dialog,
+	DialogTitle,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemText,
+	Typography,
+} from '@mui/material';
+import { useSelector } from 'react-redux';
+import type { GamePlayer } from '~/store/gamePlayersSlice';
+import { selectAppUsers } from '~/store/usersSlice';
 
 export interface ChangePlayerDialogProps {
 	keepMounted: boolean;

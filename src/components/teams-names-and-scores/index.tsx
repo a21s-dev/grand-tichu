@@ -1,8 +1,8 @@
-import {type NextPage} from 'next';
+import { type NextPage } from 'next';
 import * as React from 'react';
-import {Typography} from '@mui/material';
-import {useSelector} from 'react-redux';
-import {selectTeamScores} from '~/store/teamScoresSlice';
+import { Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { selectTeamScores } from '~/store/teamScoresSlice';
 
 const TeamsNamesAndScores: NextPage = () => {
 	const teamScores = useSelector(selectTeamScores);

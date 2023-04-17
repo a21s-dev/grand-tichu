@@ -1,4 +1,4 @@
-import {createSlice, type Draft, type PayloadAction} from '@reduxjs/toolkit';
+import { createSlice, type Draft, type PayloadAction } from '@reduxjs/toolkit';
 
 export interface TeamScoresState {
 	[teamId: string]: TeamScore;

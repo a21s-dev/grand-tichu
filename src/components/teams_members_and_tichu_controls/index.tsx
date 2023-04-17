@@ -1,13 +1,17 @@
 'use client';
-import {type NextPage} from 'next';
+import { type NextPage } from 'next';
 import * as React from 'react';
-import {Button, ToggleButton, ToggleButtonGroup} from '@mui/material';
+import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ChangePlayerWhoDealsDialog from '~/components/change-player-who-deals-dialog';
-import {useDispatch, useSelector, useStore} from 'react-redux';
-import {type GamePlayer, gamePlayersSlice, selectGamePlayersInWeirdOrder,} from '~/store/gamePlayersSlice';
+import { useDispatch, useSelector, useStore } from 'react-redux';
+import {
+	type GamePlayer,
+	gamePlayersSlice,
+	selectGamePlayersInWeirdOrder,
+} from '~/store/gamePlayersSlice';
 import ChangePlayerDialog from '~/components/change-player-dialog';
-import {type AppUsersState} from '~/store/usersSlice';
+import { type AppUsersState } from '~/store/usersSlice';
 
 const TeamsMembersAndTichuControls: NextPage = () => {
 	const store = useStore();
