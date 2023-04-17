@@ -13,7 +13,7 @@ export interface ChangePlayerWhoDealsDialogProps {
 const ChangePlayerWhoDealsDialog: NextPage<ChangePlayerWhoDealsDialogProps> = (
 	props: ChangePlayerWhoDealsDialogProps,
 ) => {
-	const {onClose, open} = props;
+	const { onClose, open } = props;
 	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
 	const playerWhoDeals = useSelector(selectPlayerWhoDeals);
 	if (playerWhoDeals == undefined) {
@@ -32,7 +32,7 @@ const ChangePlayerWhoDealsDialog: NextPage<ChangePlayerWhoDealsDialogProps> = (
 			<DialogTitle>
 				<Typography variant="body1">Who will deal the cards?</Typography>
 			</DialogTitle>
-			<List sx={{pt: 0}}>
+			<List sx={{ pt: 0 }}>
 				{gamePlayers
 					.filter((player) => player.id !== playerWhoDeals.id)
 					.map((player) => {

@@ -8,7 +8,7 @@ import '@fontsource/roboto/700.css';
 import {wrapper} from '~/store/store';
 import {Provider} from 'react-redux';
 
-const MyApp: AppType = ({Component, ...rest}) => {
+const MyApp: AppType = ({ Component, ...rest }) => {
 	const storeAndProps = wrapper.useWrappedStore(rest);
 
 	return (

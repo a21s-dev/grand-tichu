@@ -74,8 +74,7 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 							className="flex flex-col items-center justify-center"
 							key={player.id}
 						>
-							<div
-								className="grid h-[2em] w-full grid-cols-[1fr_repeat(1,auto)_1fr] justify-items-center">
+							<div className="grid h-[2em] w-full grid-cols-[1fr_repeat(1,auto)_1fr] justify-items-center">
 								<Button
 									variant="text"
 									onClick={() => {
@@ -94,13 +93,12 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 												setOpenWhoDealsDialog(true);
 											}}
 										>
-											<SportsEsportsIcon className="text-[2em]"/>
+											<SportsEsportsIcon className="text-[2em]" />
 										</Button>
 									</div>
 								)}
 							</div>
-							<div
-								className="flex w-full grow-[2] flex-row items-center justify-between text-[1.6em] md:w-[50%]">
+							<div className="flex w-full grow-[2] flex-row items-center justify-between text-[1.6em] md:w-[50%]">
 								<ToggleButtonGroup
 									fullWidth={true}
 									className="flex w-full grow flex-row items-center justify-center"
@@ -109,8 +107,8 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 										player.tichu
 											? 'tichu'
 											: player.grandTichu
-												? 'grandTichu'
-												: ''
+											? 'grandTichu'
+											: ''
 									}
 									exclusive
 									onChange={(e, value) => {

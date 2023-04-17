@@ -22,7 +22,7 @@ const NavBar: NextPage = () => {
 					</Typography>
 					<div className="ml-auto">
 						<IconButton color="secondary" onClick={handleMenu}>
-							<MenuIcon/>
+							<MenuIcon />
 						</IconButton>
 						<Menu
 							anchorEl={anchorEl}
@@ -54,7 +54,7 @@ const NavBar: NextPage = () => {
 					</div>
 				</Toolbar>
 			</AppBar>
-			<Toolbar/>
+			<Toolbar />
 		</React.Fragment>
 	);
 };

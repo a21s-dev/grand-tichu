@@ -37,11 +37,11 @@ const Home: NextPage = () => {
 	return (
 		<ThemeProvider theme={theme}>
 			<div className="fixed flex h-full w-full flex-col">
-				<NavBar/>
+				<NavBar />
 				<main className="flex h-full w-full flex-col overflow-hidden">
-					<TeamsNamesAndScores/>
-					<TeamsMembersAndTichuControls/>
-					<SetScore/>
+					<TeamsNamesAndScores />
+					<TeamsMembersAndTichuControls />
+					<SetScore />
 				</main>
 			</div>
 		</ThemeProvider>

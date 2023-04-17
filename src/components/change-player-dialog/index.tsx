@@ -15,7 +15,7 @@ export interface ChangePlayerDialogProps {
 const ChangePlayerDialog: NextPage<ChangePlayerDialogProps> = (
 	props: ChangePlayerDialogProps,
 ) => {
-	const {onClose, player, open} = props;
+	const { onClose, player, open } = props;
 	const usersState = useSelector(selectAppUsers);
 	if (player == undefined) {
 		return <div></div>;
@@ -25,14 +25,14 @@ const ChangePlayerDialog: NextPage<ChangePlayerDialogProps> = (
 		onClose(undefined);
 	};
 	const handleListItemClick = (newId: string) => {
-		onClose({oldId: player?.id, newId});
+		onClose({ oldId: player?.id, newId });
 	};
 	return (
 		<Dialog onClose={handleClose} open={open}>
 			<DialogTitle>
 				<Typography variant="body1">Who plays instead?</Typography>
 			</DialogTitle>
-			<List sx={{pt: 0}}>
+			<List sx={{ pt: 0 }}>
 				{usersState
 					.filter((user) => user.id !== player?.id)
 					.map((user) => {
