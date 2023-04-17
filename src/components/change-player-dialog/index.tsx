@@ -14,7 +14,6 @@ export interface ChangePlayerDialogProps {
 
 const ChangePlayerDialog: NextPage = (props: ChangePlayerDialogProps) => {
 	const {onClose, player, open} = props;
-	// console.log(player);
 
 	const handleClose = () => {
 		onClose(undefined);

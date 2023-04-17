@@ -16,7 +16,6 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 	const [openChangePlayerDialog, setOpenChangePlayerDialog] = React.useState(false);
 	const [playerToChange, setPlayerToChange] = React.useState<GamePlayer>();
 	const handleCloseWhoDealsDialog = (newId?: string) => {
-		// console.log(newId);
 		setOpenWhoDealsDialog(false);
 		if (newId) {
 			dispatch(gamePlayersSlice.actions.newPlayerDeals({
@@ -26,14 +25,11 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 	};
 	const handleChangePlayerDialog = (details: { oldId: string, newId: string } | undefined) => {
 		setOpenChangePlayerDialog(false);
-		console.log(details);
 		if (details == undefined) {
 			return;
 		}
-		console.log(store.getState())
 		const users = store.getState().users.users;
 		const newPlayer = users[details.newId];
-		console.log(newPlayer)
 		dispatch(gamePlayersSlice.actions.replacePlayer({
 			playerToRemoveId: details.oldId,
 			newPlayer: {

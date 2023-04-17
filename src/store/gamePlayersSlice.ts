@@ -89,22 +89,13 @@ export const gamePlayersSlice = createSlice({
 				}
 				let newPlayer = getPlayerById(state, action.payload.newPlayer.id);
 				if (newPlayer != undefined) {
-					let indexToAddNewPlayer: string | undefined;
-					let indexToAddOldPlayer: string | undefined;
-					const entries: [string, GamePlayer][] = Array.from(Object.entries(state));
-					for (const entry of entries) {
-						const playerIndex = entry[0];
-						const player = entry[1];
-						if (player.id === playerToRemove.id) {
-							indexToAddNewPlayer = playerIndex;
-						}
-						if (player.id === newPlayer.id) {
-							indexToAddOldPlayer = playerIndex;
-						}
+					const indexToAddNewPlayer: string | undefined = getIndexOfPlayer(state, playerToRemove.id);
+					const indexToAddOldPlayer: string | undefined = getIndexOfPlayer(state, newPlayer.id);
+					if (indexToAddNewPlayer == undefined || indexToAddOldPlayer == undefined) {
+						throw new Error(`Internal Error`);
 					}
 					state[indexToAddOldPlayer] = playerToRemove;
 					state[indexToAddNewPlayer] = newPlayer;
-
 				} else {
 					newPlayer = {
 						id: action.payload.newPlayer.id,
@@ -114,15 +105,9 @@ export const gamePlayersSlice = createSlice({
 						grandTichu: playerToRemove.grandTichu,
 						deals: playerToRemove.deals
 					}
-					const entries: [string, GamePlayer][] = Array.from(Object.entries(state));
-					let playerToReplaceIndex: string | undefined;
-					for (const entry of entries) {
-						const playerIndex = entry[0];
-						const player = entry[1];
-						if (player.id === action.payload.playerToRemoveId) {
-							playerToReplaceIndex = playerIndex;
-							break;
-						}
+					let playerToReplaceIndex: string | undefined = getIndexOfPlayer(state, action.payload.playerToRemoveId);
+					if (playerToReplaceIndex == undefined) {
+						throw new Error(`Internal Error`);
 					}
 					state[playerToReplaceIndex] = newPlayer;
 				}
@@ -142,6 +127,18 @@ function getPlayerById(state: GamePlayerState, playerId: string): GamePlayer | u
 		return players.find(player => player.id === playerId);
 	}
 	throw new Error(`Internal Error`);
+}
+
+function getIndexOfPlayer(state: GamePlayerState, playerId: string): string | undefined {
+	const entries: [string, GamePlayer][] = Array.from(Object.entries(state));
+	for (const entry of entries) {
+		const playerIndex = entry[0];
+		const player = entry[1];
+		if (player.id === playerId) {
+			return playerIndex;
+		}
+	}
+	return undefined;
 }
 
 export const selectGamePlayersInWeirdOrder = (state: { gamePlayers: GamePlayerState }): GamePlayer[] => {

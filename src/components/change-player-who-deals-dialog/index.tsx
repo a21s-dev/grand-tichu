@@ -23,7 +23,6 @@ const ChangePlayerWhoDealsDialog: NextPage = (props: ChangePlayerWhoDealsDialogP
 	};
 	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
 	const playerWhoDeals = useSelector(selectPlayerWhoDeals);
-	// console.log(playerWhoDeals);
 	return (
 		<Dialog onClose={handleClose} open={open}>
 			<DialogTitle>
