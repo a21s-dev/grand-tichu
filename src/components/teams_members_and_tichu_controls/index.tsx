@@ -5,8 +5,9 @@ import {Button, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import ChangePlayerWhoDealsDialog from "~/components/change-player-who-deals-dialog";
 import {useDispatch, useSelector, useStore} from "react-redux";
-import {GamePlayer, gamePlayersSlice, selectGamePlayersInWeirdOrder} from "~/store/gamePlayersSlice";
+import {type GamePlayer, gamePlayersSlice, selectGamePlayersInWeirdOrder} from "~/store/gamePlayersSlice";
 import ChangePlayerDialog from "~/components/change-player-dialog";
+import {type AppUsersState} from "~/store/usersSlice";
 
 const TeamsMembersAndTichuControls: NextPage = () => {
 	const store = useStore();
@@ -28,8 +29,14 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 		if (details == undefined) {
 			return;
 		}
-		const users = store.getState().users.users;
-		const newPlayer = users[details.newId];
+		const state: { users: AppUsersState } = store.getState() as { users: AppUsersState };
+		const appUsersState: AppUsersState = state.users;
+		console.log(state);
+		console.log(appUsersState);
+		const newPlayer = appUsersState[details.newId];
+		if (newPlayer == undefined) {
+			return;
+		}
 		dispatch(gamePlayersSlice.actions.replacePlayer({
 			playerToRemoveId: details.oldId,
 			newPlayer: {
@@ -86,7 +93,7 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 								value={player.tichu ? 'tichu' : player.grandTichu ? 'grandTichu' : ''}
 								exclusive
 								onChange={(e, value) => {
-									handleTichuAndGrandTichu(value, player.id)
+									handleTichuAndGrandTichu(value as string, player.id)
 								}}
 							>
 								<ToggleButton

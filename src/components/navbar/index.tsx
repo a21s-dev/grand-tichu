@@ -5,9 +5,6 @@ import * as React from 'react';
 
 const NavBar: NextPage = () => {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		// setAuth(event.target.checked);
-	};
 
 	const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -20,7 +17,7 @@ const NavBar: NextPage = () => {
 		<React.Fragment>
 			<AppBar color='primary' position="fixed">
 				<Toolbar className='grid grid-cols-[1fr_repeat(1,auto)_1fr] justify-items-center gap-3'>
-					<Typography variant="title" className='col-start-2 text-3xl'>
+					<Typography variant="h2" className='col-start-2 text-3xl'>
 						Grand Tichu
 					</Typography>
 					<div className='ml-auto'>
@@ -45,22 +42,22 @@ const NavBar: NextPage = () => {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={handleClose}>
-								<Typography variant="plain">
+								<Typography variant="body1">
 									New Game
 								</Typography>
 							</MenuItem>
 							<MenuItem onClick={handleClose}>
-								<Typography variant="plain">
+								<Typography variant="body1">
 									Settings
 								</Typography>
 							</MenuItem>
 							<MenuItem onClick={handleClose}>
-								<Typography variant="plain">
+								<Typography variant="body1">
 									Player Statistics
 								</Typography>
 							</MenuItem>
 							<MenuItem onClick={handleClose}>
-								<Typography variant="plain">
+								<Typography variant="body1">
 									About
 								</Typography>
 							</MenuItem>

@@ -24,11 +24,11 @@ const theme = createTheme({
 		fontFamily: [
 			'Roboto',
 		].join(','),
-		title: {
+		h2: {
 			'color': 'white',
 			'backgroundColor': orange['A400'],
 		},
-		plain: {
+		body1: {
 			'color': 'black',
 			'backgroundColor': 'white',
 		}

@@ -1,7 +1,7 @@
-import {createSlice, Draft, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, type Draft, type PayloadAction} from "@reduxjs/toolkit";
 
 export interface TeamScoresState {
-	teamsAndScores: { [teamId: string]: TeamScore };
+	[teamId: string]: TeamScore;
 }
 
 
@@ -11,15 +11,13 @@ export type TeamScore = {
 }
 
 const initialState: TeamScoresState = {
-	teamsAndScores: {
-		'team1': {
-			id: 'team1',
-			score: 755
-		},
-		'team2': {
-			id: 'team2',
-			score: 945
-		}
+	'team1': {
+		id: 'team1',
+		score: 755
+	},
+	'team2': {
+		id: 'team2',
+		score: 945
 	}
 }
 
@@ -28,11 +26,11 @@ export const teamScoresSlice = createSlice({
 		initialState,
 		reducers: {
 			'addNew': (state: Draft<TeamScoresState>, action: PayloadAction<TeamScore>) => {
-				state.teamsAndScores[action.payload.id] = action.payload;
+				state[action.payload.id] = action.payload;
 			}
 		}
 	}
 );
-export const selectTeamScores = (state: { teams: TeamScoresState }) => {
-	return state.teams;
+export const selectTeamScores = (state: { teams: TeamScoresState }): TeamScore[] => {
+	return Array.from(Object.values(state.teams));
 }

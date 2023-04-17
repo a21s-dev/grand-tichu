@@ -9,12 +9,11 @@ import {wrapper} from "~/store/store";
 import {Provider} from "react-redux";
 
 const MyApp: AppType = ({Component, ...rest}) => {
-	const {store, props} = wrapper.useWrappedStore(rest);
-	const {pageProps} = props;
+	const storeAndProps = wrapper.useWrappedStore(rest);
 
 	return (
-		<Provider store={store}>
-			<Component {...pageProps} />
+		<Provider store={storeAndProps.store}>
+			<Component {...storeAndProps.props} />
 		</Provider>
 	);
 };

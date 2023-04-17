@@ -6,14 +6,18 @@ import {selectGamePlayersInWeirdOrder, selectPlayerWhoDeals} from "~/store/gameP
 
 
 export interface ChangePlayerWhoDealsDialogProps {
+	keepMounted: boolean
 	open: boolean;
-	selectedValue: string;
 	onClose: (value?: string) => void;
 }
 
-const ChangePlayerWhoDealsDialog: NextPage = (props: ChangePlayerWhoDealsDialogProps) => {
+const ChangePlayerWhoDealsDialog: NextPage<ChangePlayerWhoDealsDialogProps> = (props: ChangePlayerWhoDealsDialogProps) => {
 	const {onClose, open} = props;
-
+	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
+	const playerWhoDeals = useSelector(selectPlayerWhoDeals);
+	if (playerWhoDeals == undefined) {
+		return <div></div>
+	}
 
 	const handleClose = () => {
 		onClose();
@@ -21,12 +25,11 @@ const ChangePlayerWhoDealsDialog: NextPage = (props: ChangePlayerWhoDealsDialogP
 	const handleListItemClick = (newId: string) => {
 		onClose(newId);
 	};
-	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
-	const playerWhoDeals = useSelector(selectPlayerWhoDeals);
+
 	return (
 		<Dialog onClose={handleClose} open={open}>
 			<DialogTitle>
-				<Typography variant='plain'>
+				<Typography variant="body1">
 					Who will deal the cards?
 				</Typography>
 			</DialogTitle>
