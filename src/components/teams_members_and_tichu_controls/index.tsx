@@ -31,8 +31,6 @@ const TeamsMembersAndTichuControls: NextPage = () => {
 		}
 		const state: { users: AppUsersState } = store.getState() as { users: AppUsersState };
 		const appUsersState: AppUsersState = state.users;
-		console.log(state);
-		console.log(appUsersState);
 		const newPlayer = appUsersState[details.newId];
 		if (newPlayer == undefined) {
 			return;
