@@ -1,9 +1,9 @@
 'use client';
-import {type Action, configureStore, type ThunkAction} from "@reduxjs/toolkit";
-import {createWrapper} from "next-redux-wrapper";
-import {teamScoresSlice} from "~/store/teamScoresSlice";
-import {gamePlayersSlice} from "~/store/gamePlayersSlice";
-import {usersSlice} from "~/store/usersSlice";
+import {type Action, configureStore, type ThunkAction,} from '@reduxjs/toolkit';
+import {createWrapper} from 'next-redux-wrapper';
+import {teamScoresSlice} from '~/store/teamScoresSlice';
+import {gamePlayersSlice} from '~/store/gamePlayersSlice';
+import {usersSlice} from '~/store/usersSlice';
 
 const makeStore = () =>
 	configureStore({
@@ -16,7 +16,7 @@ const makeStore = () =>
 	});
 
 export type AppStore = ReturnType<typeof makeStore>;
-export type AppState = ReturnType<AppStore["getState"]>;
+export type AppState = ReturnType<AppStore['getState']>;
 export type AppThunk<ReturnType = void> = ThunkAction<
 	ReturnType,
 	AppState,

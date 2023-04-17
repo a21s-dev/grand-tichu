@@ -1,5 +1,5 @@
-import {type NextPage} from "next";
-import {AppBar, IconButton, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
+import {type NextPage} from 'next';
+import {AppBar, IconButton, Menu, MenuItem, Toolbar, Typography,} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import * as React from 'react';
 
@@ -15,16 +15,13 @@ const NavBar: NextPage = () => {
 	};
 	return (
 		<React.Fragment>
-			<AppBar color='primary' position="fixed">
-				<Toolbar className='grid grid-cols-[1fr_repeat(1,auto)_1fr] justify-items-center gap-3'>
-					<Typography variant="h2" className='col-start-2 text-3xl'>
+			<AppBar color="primary" position="fixed">
+				<Toolbar className="grid grid-cols-[1fr_repeat(1,auto)_1fr] justify-items-center gap-3">
+					<Typography variant="h2" className="col-start-2 text-3xl">
 						Grand Tichu
 					</Typography>
-					<div className='ml-auto'>
-						<IconButton
-							color="secondary"
-							onClick={handleMenu}
-						>
+					<div className="ml-auto">
+						<IconButton color="secondary" onClick={handleMenu}>
 							<MenuIcon/>
 						</IconButton>
 						<Menu
@@ -42,24 +39,16 @@ const NavBar: NextPage = () => {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={handleClose}>
-								<Typography variant="body1">
-									New Game
-								</Typography>
+								<Typography variant="body1">New Game</Typography>
 							</MenuItem>
 							<MenuItem onClick={handleClose}>
-								<Typography variant="body1">
-									Settings
-								</Typography>
+								<Typography variant="body1">Settings</Typography>
 							</MenuItem>
 							<MenuItem onClick={handleClose}>
-								<Typography variant="body1">
-									Player Statistics
-								</Typography>
+								<Typography variant="body1">Player Statistics</Typography>
 							</MenuItem>
 							<MenuItem onClick={handleClose}>
-								<Typography variant="body1">
-									About
-								</Typography>
+								<Typography variant="body1">About</Typography>
 							</MenuItem>
 						</Menu>
 					</div>

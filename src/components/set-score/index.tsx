@@ -1,18 +1,13 @@
-import {type NextPage} from "next";
+import {type NextPage} from 'next';
 import * as React from 'react';
-import {Typography} from "@mui/material";
+import {Typography} from '@mui/material';
 
 const SetScore: NextPage = () => {
 	return (
-		<div className="flex justify-center items-center mt-auto pt-10">
-			<Typography variant="h2" className='w-full text-[2em] h-[3em] text-white'>
-				<button
-					className='w-full h-full'
-				>
-					Set Score
-				</button>
+		<div className="mt-auto flex items-center justify-center pt-10">
+			<Typography variant="h2" className="h-[3em] w-full text-[2em] text-white">
+				<button className="h-full w-full">Set Score</button>
 			</Typography>
-
 		</div>
 	);
 };

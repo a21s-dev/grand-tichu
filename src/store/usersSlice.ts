@@ -1,4 +1,4 @@
-import {createSlice, type Draft, type PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, type Draft, type PayloadAction} from '@reduxjs/toolkit';
 
 export interface AppUsersState {
 	[userId: string]: AppUser;
@@ -7,7 +7,7 @@ export interface AppUsersState {
 export type AppUser = {
 	id: string;
 	name: string;
-}
+};
 
 const initialState: AppUsersState = {
 	'1': {
@@ -28,20 +28,19 @@ const initialState: AppUsersState = {
 	},
 	'5': {
 		id: '5',
-		name: 'Ted'
-	}
-}
+		name: 'Ted',
+	},
+};
 
 export const usersSlice = createSlice({
-		name: 'users',
-		initialState,
-		reducers: {
-			'addNew': (state: Draft<AppUsersState>, action: PayloadAction<AppUser>) => {
-				state[action.payload.id] = action.payload;
-			},
-		}
-	}
-);
+	name: 'users',
+	initialState,
+	reducers: {
+		addNew: (state: Draft<AppUsersState>, action: PayloadAction<AppUser>) => {
+			state[action.payload.id] = action.payload;
+		},
+	},
+});
 export const selectAppUsers = (state: { users: AppUsersState }): AppUser[] => {
 	return Array.from(Object.values(state.users));
-}
+};
