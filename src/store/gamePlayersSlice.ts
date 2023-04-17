@@ -1,9 +1,11 @@
 import { createSlice, type Draft, type PayloadAction } from '@reduxjs/toolkit';
 
-type GameStateKey = 't1p1' | 't1p2' | 't2p1' | 't2p2';
+export type PlayerIndexKey = 't1p1' | 't1p2' | 't2p1' | 't2p2';
+
+export type TeamIndexKey = 'team1' | 'team2';
 
 export type FourPlayerGameState = {
-	[key in GameStateKey]: GamePlayer;
+	[key in PlayerIndexKey]: GamePlayer;
 };
 
 export type GamePlayer = {
@@ -11,7 +13,7 @@ export type GamePlayer = {
 	name: string;
 	tichu: boolean;
 	grandTichu: boolean;
-	team: string;
+	team: TeamIndexKey;
 	deals: boolean;
 };
 
@@ -106,14 +108,10 @@ export const gamePlayersSlice = createSlice({
 			}
 			let newPlayer = getPlayerById(state, action.payload.newPlayer.id);
 			if (newPlayer != undefined) {
-				const indexToAddNewPlayer: GameStateKey | undefined = getIndexOfPlayer(
-					state,
-					playerToRemove.id,
-				);
-				const indexToAddOldPlayer: GameStateKey | undefined = getIndexOfPlayer(
-					state,
-					newPlayer.id,
-				);
+				const indexToAddNewPlayer: PlayerIndexKey | undefined =
+					getIndexOfPlayer(state, playerToRemove.id);
+				const indexToAddOldPlayer: PlayerIndexKey | undefined =
+					getIndexOfPlayer(state, newPlayer.id);
 				if (
 					indexToAddNewPlayer == undefined ||
 					indexToAddOldPlayer == undefined
@@ -131,10 +129,8 @@ export const gamePlayersSlice = createSlice({
 					grandTichu: playerToRemove.grandTichu,
 					deals: playerToRemove.deals,
 				};
-				const playerToReplaceIndex: GameStateKey | undefined = getIndexOfPlayer(
-					state,
-					action.payload.playerToRemoveId,
-				);
+				const playerToReplaceIndex: PlayerIndexKey | undefined =
+					getIndexOfPlayer(state, action.payload.playerToRemoveId);
 				if (playerToReplaceIndex == undefined) {
 					throw new Error(`Internal Error`);
 				}
@@ -159,10 +155,10 @@ function getPlayerById(
 function getIndexOfPlayer(
 	state: FourPlayerGameState,
 	playerId: string,
-): GameStateKey | undefined {
+): PlayerIndexKey | undefined {
 	const entries: [string, GamePlayer][] = Array.from(Object.entries(state));
 	for (const entry of entries) {
-		const playerIndex = entry[0] as GameStateKey;
+		const playerIndex = entry[0] as PlayerIndexKey;
 		const player = entry[1];
 		if (player.id === playerId) {
 			return playerIndex;
@@ -170,6 +166,12 @@ function getIndexOfPlayer(
 	}
 	return undefined;
 }
+
+export const selectGamePlayersRaw = (state: {
+	gamePlayers: FourPlayerGameState;
+}) => {
+	return state.gamePlayers;
+};
 
 export const selectGamePlayersInWeirdOrder = (state: {
 	gamePlayers: FourPlayerGameState;

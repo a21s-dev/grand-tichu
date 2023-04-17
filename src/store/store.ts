@@ -5,16 +5,18 @@ import {
 	type ThunkAction,
 } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
-import { teamScoresSlice } from '~/store/teamScoresSlice';
+import { teamsSlice } from '~/store/teamsSlice';
 import { gamePlayersSlice } from '~/store/gamePlayersSlice';
 import { usersSlice } from '~/store/usersSlice';
+import { setScoreSlice } from '~/store/setScoreSlice';
 
 const makeStore = () =>
 	configureStore({
 		reducer: {
 			[gamePlayersSlice.name]: gamePlayersSlice.reducer,
 			[usersSlice.name]: usersSlice.reducer,
-			[teamScoresSlice.name]: teamScoresSlice.reducer,
+			[teamsSlice.name]: teamsSlice.reducer,
+			[setScoreSlice.name]: setScoreSlice.reducer,
 		},
 		devTools: true,
 	});
