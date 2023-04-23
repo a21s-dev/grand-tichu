@@ -1,5 +1,6 @@
 import { type NextPage } from 'next';
 import * as React from 'react';
+import { useEffect } from 'react';
 import {
 	FormControl,
 	InputLabel,
@@ -11,7 +12,6 @@ import {
 import Image from 'next/image';
 import { type GamePlayer, type TeamIndexKey } from '~/store/gamePlayersSlice';
 import { type SetScoreState } from '~/store/setScoreSlice';
-import { useEffect } from 'react';
 
 const POSSIBLE_SCORES = Array.from({ length: 31 }, (_, i) => -25 + i * 5); //[-25..125]
 export interface TeamsPointsProps {
@@ -49,7 +49,6 @@ const TeamsPoints: NextPage<TeamsPointsProps> = (props: TeamsPointsProps) => {
 	useEffect(() => {
 		retrieveData(teamScore, teamOneTwo, firstPlayerId);
 	}, [firstPlayerId, teamOneTwo, teamScore]);
-
 
 	function handleScoreChange(team: TeamIndexKey, score: number) {
 		const otherTeamScore = 100 - score;
