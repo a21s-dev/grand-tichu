@@ -1,5 +1,6 @@
+'use client';
 import { createSlice, type Draft, type PayloadAction } from '@reduxjs/toolkit';
-
+import { stateFromLocalStorage } from '~/store/store';
 export type PlayerIndexKey = 't1p1' | 't1p2' | 't2p1' | 't2p2';
 
 export type TeamIndexKey = 'team1' | 'team2';
@@ -51,7 +52,41 @@ const initialState: FourPlayerGameState = {
 		deals: false,
 	},
 };
-
+const a = stateFromLocalStorage('gamePlayers', {
+	t1p1: {
+		id: '1',
+		name: 'Andrew',
+		team: 'team1',
+		tichu: false,
+		grandTichu: false,
+		deals: false,
+	},
+	t1p2: {
+		id: '2',
+		name: 'Brad',
+		team: 'team1',
+		tichu: false,
+		grandTichu: false,
+		deals: true,
+	},
+	t2p1: {
+		id: '3',
+		name: 'Adam',
+		team: 'team2',
+		tichu: false,
+		grandTichu: false,
+		deals: false,
+	},
+	t2p2: {
+		id: '4',
+		name: 'Raf',
+		team: 'team2',
+		tichu: false,
+		grandTichu: false,
+		deals: false,
+	},
+});
+console.log(a);
 export const gamePlayersSlice = createSlice({
 	name: 'gamePlayers',
 	initialState,
