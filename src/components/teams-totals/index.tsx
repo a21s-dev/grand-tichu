@@ -1,14 +1,14 @@
-import { GamePlayer, PlayerIndexKey, TeamIndexKey } from '../../store/gamePlayersSlice.ts';
+import { GamePlayer, PlayerIndex, TeamIndex } from '../../store/gamePlayersSlice.ts';
 import { Team } from '../../store/teamsSlice.ts';
 
 export interface TeamsTotalsProps {
-	oneTwoPerTeam: { [teamIndex in TeamIndexKey]: boolean };
+	oneTwoPerTeam: { [teamIndex in TeamIndex]: boolean };
 	tichuGrandTichuPerPlayer: {
-		[key in PlayerIndexKey]: GamePlayer;
+		[key in PlayerIndex]: GamePlayer;
 	};
 	finishedFirstId: string;
-	teams: { [teamIndex in TeamIndexKey]: Team };
-	pointsPerTeam: { [teamIndex in TeamIndexKey]: number };
+	teams: { [teamIndex in TeamIndex]: Team };
+	pointsPerTeam: { [teamIndex in TeamIndex]: number };
 }
 
 function TeamsTotals(props: TeamsTotalsProps) {
@@ -24,7 +24,7 @@ function TeamsTotals(props: TeamsTotalsProps) {
 							props.tichuGrandTichuPerPlayer,
 							props.teams,
 							props.finishedFirstId,
-							team as TeamIndexKey,
+							team as TeamIndex,
 						)}
           </span>
 				))}
@@ -34,14 +34,14 @@ function TeamsTotals(props: TeamsTotalsProps) {
 }
 
 function scoreOfTeam(
-	oneTwoPerTeam: { [teamIndex in TeamIndexKey]: boolean },
-	pointsPerTeam: { [teamIndex in TeamIndexKey]: number },
+	oneTwoPerTeam: { [teamIndex in TeamIndex]: boolean },
+	pointsPerTeam: { [teamIndex in TeamIndex]: number },
 	tichuGrandTichuPerPlayer: {
-		[key in PlayerIndexKey]: GamePlayer;
+		[key in PlayerIndex]: GamePlayer;
 	},
-	teams: { [teamIndex in TeamIndexKey]: Team },
+	teams: { [teamIndex in TeamIndex]: Team },
 	finishedFirstId: string,
-	teamToCheck: TeamIndexKey,
+	teamToCheck: TeamIndex,
 ): string {
 	let scoreToAdd = 0;
 	const team = teams[teamToCheck];
@@ -68,8 +68,8 @@ function scoreOfTeam(
 }
 
 function applyTichuGrandTichuScore(initialScore: number, tichuGrandTichuPerPlayer: {
-	[key in PlayerIndexKey]: GamePlayer;
-}, teamToCheck: TeamIndexKey, finishedFirstId: string): number {
+	[key in PlayerIndex]: GamePlayer;
+}, teamToCheck: TeamIndex, finishedFirstId: string): number {
 	const playersOfTeamToCheck = Array.from(
 		Object.values(tichuGrandTichuPerPlayer),
 	).filter((player) => player.team === teamToCheck);
@@ -92,7 +92,7 @@ function applyTichuGrandTichuScore(initialScore: number, tichuGrandTichuPerPlaye
 	return initialScore;
 }
 
-function applyOneTwo(initialScore: number, oneTwoPerTeam: { [teamIndex in TeamIndexKey]: boolean }, teamToCheck: TeamIndexKey): number {
+function applyOneTwo(initialScore: number, oneTwoPerTeam: { [teamIndex in TeamIndex]: boolean }, teamToCheck: TeamIndex): number {
 	const entries = Array.from(Object.entries(oneTwoPerTeam));
 	for (const [teamIndex, oneTwo] of entries) {
 		if (teamIndex !== teamToCheck) {
@@ -107,7 +107,7 @@ function applyOneTwo(initialScore: number, oneTwoPerTeam: { [teamIndex in TeamIn
 	return initialScore;
 }
 
-function applyPointsScore(initialScore: number, pointsPerTeam: { [teamIndex in TeamIndexKey]: number }, teamToCheck: TeamIndexKey): number {
+function applyPointsScore(initialScore: number, pointsPerTeam: { [teamIndex in TeamIndex]: number }, teamToCheck: TeamIndex): number {
 	const pointsOfTeam = pointsPerTeam[teamToCheck];
 	return initialScore + pointsOfTeam;
 }

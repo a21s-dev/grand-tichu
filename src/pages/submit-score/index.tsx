@@ -6,7 +6,7 @@ import {
 	GamePlayer,
 	selectGamePlayersInWeirdOrder,
 	selectGamePlayersRaw,
-	TeamIndexKey,
+	TeamIndex,
 } from '../../store/gamePlayersSlice.ts';
 import TeamsPlayers from '../../components/teams-players';
 import TeamsPoints from '../../components/teams-points';
@@ -18,16 +18,16 @@ function SubmitScore() {
 	const gamePlayersRaw = useSelector(selectGamePlayersRaw);
 	const teamsRaw = useSelector(selectTeamsRaw);
 	// const teams = useSelector(selectTeams);
-	const teamsDetails = useSelector(selectTeamsDetailsRaw);
+	const setScoreState = useSelector(selectTeamsDetailsRaw);
 
 	const [teamScore, setTeamScore] = React.useState<{
-		[teamId in TeamIndexKey]: number;
+		[teamId in TeamIndex]: number;
 	}>({
-		team1: teamsDetails['team1'].points,
-		team2: teamsDetails['team2'].points,
+		team1: setScoreState.team1.points,
+		team2: setScoreState.team2.points,
 	});
 	const [teamOneTwo, setTeamOneTwo] = React.useState<{
-		[teamId in TeamIndexKey]: boolean;
+		[teamId in TeamIndex]: boolean;
 	}>({
 		team1: false,
 		team2: false,
@@ -45,7 +45,7 @@ function SubmitScore() {
 				<TeamsPlayers />
 				<TeamsPoints
 					players={players}
-					teamsDetails={teamsDetails}
+					teamsDetails={setScoreState}
 					retrieveData={(teamScores, teamOneTwo, firstPlayerId) => {
 						// console.log("retrieving");
 						// console.log({ teamScores, teamOneTwo, firstPlayerId });

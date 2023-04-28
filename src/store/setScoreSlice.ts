@@ -1,32 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { type TeamIndexKey } from './gamePlayersSlice';
+import { TEAM_INDEX_SCHEMA } from './gamePlayersSlice';
+import { z } from 'zod';
+import { GlobalState, stateFromLocalStorage } from './store.ts';
+import { exhaustiveEnumRecord } from '../utils/type-wizards.ts';
 
-export type SetScoreState = {
-	[teamId in TeamIndexKey]: TeamDetails;
-};
-
-export type TeamDetails = {
-	team: TeamIndexKey;
-	oneTwo: boolean;
-	points: number;
-};
-
-const initialState: SetScoreState = {
-	team1: {
-		team: 'team1',
-		oneTwo: false,
-		points: 70,
-	},
-	team2: {
-		team: 'team2',
-		oneTwo: false,
-		points: 30,
-	},
-};
+const SET_SCORE_SCHEMA = z.object({
+	team: TEAM_INDEX_SCHEMA,
+	oneTwo: z.boolean(),
+	points: z.number(),
+});
+export const SET_SCORE_STATE_SCHEMA = exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, SET_SCORE_SCHEMA);
+export type TeamDetails = z.infer<typeof SET_SCORE_SCHEMA>;
+export type SetScoreState = z.infer<typeof SET_SCORE_STATE_SCHEMA>;
 
 export const setScoreSlice = createSlice({
 	name: 'setScore',
-	initialState,
+	initialState: () => {
+		return stateFromLocalStorage('setScore', {
+			team1: {
+				team: 'team1',
+				oneTwo: false,
+				points: 70,
+			},
+			team2: {
+				team: 'team2',
+				oneTwo: false,
+				points: 30,
+			},
+		});
+	},
 	reducers: {
 		update: () =>
 			// state: Draft<SetScoreState>,
@@ -41,8 +43,6 @@ export const selectTeamsDetails = (state: {
 }): TeamDetails[] => {
 	return Array.from(Object.values(state.setScore));
 };
-export const selectTeamsDetailsRaw = (state: {
-	setScore: SetScoreState;
-}): SetScoreState => {
+export const selectTeamsDetailsRaw = (state: GlobalState): SetScoreState => {
 	return state.setScore;
 };

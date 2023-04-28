@@ -1,60 +1,62 @@
 import { createSlice, type Draft, type PayloadAction } from '@reduxjs/toolkit';
+import { stateFromLocalStorage } from './store.ts';
+import { z } from 'zod';
+import { exhaustiveEnumRecord } from '../utils/type-wizards.ts';
 
-export type PlayerIndexKey = 't1p1' | 't1p2' | 't2p1' | 't2p2';
-
-export type TeamIndexKey = 'team1' | 'team2';
-
-export type FourPlayerGameState = {
-	[key in PlayerIndexKey]: GamePlayer;
-};
-
-export type GamePlayer = {
-	id: string;
-	name: string;
-	tichu: boolean;
-	grandTichu: boolean;
-	team: TeamIndexKey;
-	deals: boolean;
-};
-
-const initialState: FourPlayerGameState = {
-	t1p1: {
-		id: '1',
-		name: 'Andrew',
-		team: 'team1',
-		tichu: false,
-		grandTichu: false,
-		deals: false,
-	},
-	t1p2: {
-		id: '2',
-		name: 'Brad',
-		team: 'team1',
-		tichu: false,
-		grandTichu: false,
-		deals: true,
-	},
-	t2p1: {
-		id: '3',
-		name: 'Adam',
-		team: 'team2',
-		tichu: false,
-		grandTichu: false,
-		deals: false,
-	},
-	t2p2: {
-		id: '4',
-		name: 'Raf',
-		team: 'team2',
-		tichu: false,
-		grandTichu: false,
-		deals: false,
-	},
-};
+const PLAYER_INDEX_SCHEMA = z.enum(['t1p1', 't1p2', 't2p1', 't2p2']);
+export const TEAM_INDEX_SCHEMA = z.enum(['team1', 'team2']);
+const GAME_PLAYER_SCHEMA = z.object({
+	id: z.string(),
+	name: z.string(),
+	tichu: z.boolean(),
+	grandTichu: z.boolean(),
+	team: TEAM_INDEX_SCHEMA,
+	deals: z.boolean(),
+});
+export const FOUR_PLAYER_GAME_STATE_SCHEMA = exhaustiveEnumRecord(PLAYER_INDEX_SCHEMA, GAME_PLAYER_SCHEMA);
+export type PlayerIndex = z.infer<typeof PLAYER_INDEX_SCHEMA>;
+export type TeamIndex = z.infer<typeof TEAM_INDEX_SCHEMA>;
+export type GamePlayer = z.infer<typeof GAME_PLAYER_SCHEMA>;
+export type FourPlayerGameState = z.infer<typeof FOUR_PLAYER_GAME_STATE_SCHEMA>;
 
 export const gamePlayersSlice = createSlice({
 	name: 'gamePlayers',
-	initialState,
+	initialState: () => {
+		return stateFromLocalStorage('gamePlayers', {
+			t1p1: {
+				id: '1',
+				name: 'Andrew',
+				team: 'team1',
+				tichu: false,
+				grandTichu: false,
+				deals: false,
+			},
+			t1p2: {
+				id: '2',
+				name: 'Brad',
+				team: 'team1',
+				tichu: false,
+				grandTichu: false,
+				deals: true,
+			},
+			t2p1: {
+				id: '3',
+				name: 'Adam',
+				team: 'team2',
+				tichu: false,
+				grandTichu: false,
+				deals: false,
+			},
+			t2p2: {
+				id: '4',
+				name: 'Raf',
+				team: 'team2',
+				tichu: false,
+				grandTichu: false,
+				deals: false,
+			},
+		}) as FourPlayerGameState;
+	},
 	reducers: {
 		tichuOrGrand: (
 			state: Draft<FourPlayerGameState>,
@@ -108,9 +110,9 @@ export const gamePlayersSlice = createSlice({
 			}
 			let newPlayer = getPlayerById(state, action.payload.newPlayer.id);
 			if (newPlayer != undefined) {
-				const indexToAddNewPlayer: PlayerIndexKey | undefined =
+				const indexToAddNewPlayer: PlayerIndex | undefined =
 					getIndexOfPlayer(state, playerToRemove.id);
-				const indexToAddOldPlayer: PlayerIndexKey | undefined =
+				const indexToAddOldPlayer: PlayerIndex | undefined =
 					getIndexOfPlayer(state, newPlayer.id);
 				if (
 					indexToAddNewPlayer == undefined ||
@@ -129,7 +131,7 @@ export const gamePlayersSlice = createSlice({
 					grandTichu: playerToRemove.grandTichu,
 					deals: playerToRemove.deals,
 				};
-				const playerToReplaceIndex: PlayerIndexKey | undefined =
+				const playerToReplaceIndex: PlayerIndex | undefined =
 					getIndexOfPlayer(state, action.payload.playerToRemoveId);
 				if (playerToReplaceIndex == undefined) {
 					throw new Error(`Internal Error`);
@@ -155,10 +157,10 @@ function getPlayerById(
 function getIndexOfPlayer(
 	state: FourPlayerGameState,
 	playerId: string,
-): PlayerIndexKey | undefined {
+): PlayerIndex | undefined {
 	const entries: [string, GamePlayer][] = Array.from(Object.entries(state));
 	for (const entry of entries) {
-		const playerIndex = entry[0] as PlayerIndexKey;
+		const playerIndex = entry[0] as PlayerIndex;
 		const player = entry[1];
 		if (player.id === playerId) {
 			return playerIndex;

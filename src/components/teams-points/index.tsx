@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { FormControl, InputLabel, MenuItem, Select, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { GamePlayer, TeamIndexKey } from '../../store/gamePlayersSlice.ts';
+import { GamePlayer, TeamIndex } from '../../store/gamePlayersSlice.ts';
 import { SetScoreState } from '../../store/setScoreSlice.ts';
 
 const POSSIBLE_SCORES = Array.from({ length: 31 }, (_, i) => -25 + i * 5); //[-25..125]
@@ -9,8 +9,8 @@ export interface TeamsPointsProps {
 	players: GamePlayer[];
 	teamsDetails: SetScoreState;
 	retrieveData: (
-		teamScores: { [teamId in TeamIndexKey]: number },
-		teamOneTwo: { [teamId in TeamIndexKey]: boolean },
+		teamScores: { [teamId in TeamIndex]: number },
+		teamOneTwo: { [teamId in TeamIndex]: boolean },
 		firstPlayerId: string,
 	) => void;
 }
@@ -18,13 +18,13 @@ export interface TeamsPointsProps {
 function TeamsPoints(props: TeamsPointsProps) {
 	const { players, teamsDetails, retrieveData } = props;
 	const [teamScore, setTeamScore] = React.useState<{
-		[teamId in TeamIndexKey]: number;
+		[teamId in TeamIndex]: number;
 	}>({
 		team1: teamsDetails['team1'].points,
 		team2: teamsDetails['team2'].points,
 	});
 	const [teamOneTwo, setTeamOneTwo] = React.useState<{
-		[teamId in TeamIndexKey]: boolean;
+		[teamId in TeamIndex]: boolean;
 	}>({
 		team1: false,
 		team2: false,
@@ -41,15 +41,15 @@ function TeamsPoints(props: TeamsPointsProps) {
 		retrieveData(teamScore, teamOneTwo, firstPlayerId);
 	}, [firstPlayerId, retrieveData, teamOneTwo, teamScore]);
 
-	function handleScoreChange(team: TeamIndexKey, score: number) {
+	function handleScoreChange(team: TeamIndex, score: number) {
 		const otherTeamScore = 100 - score;
-		let otherTeam: TeamIndexKey | undefined;
+		let otherTeam: TeamIndex | undefined;
 		if (team === 'team1') {
 			otherTeam = 'team2';
 		} else {
 			otherTeam = 'team1';
 		}
-		const newScores: { [teamId in TeamIndexKey]: number } = {
+		const newScores: { [teamId in TeamIndex]: number } = {
 			team1: 0,
 			team2: 0,
 		};

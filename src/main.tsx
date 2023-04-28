@@ -62,6 +62,7 @@ const theme = createTheme({
 		},
 	},
 });
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const rootElement = document.getElementById('root')!;
 if (!rootElement.innerHTML) {
 	const root = ReactDOM.createRoot(rootElement);
