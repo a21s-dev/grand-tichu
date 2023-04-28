@@ -76,15 +76,17 @@ function applyTichuGrandTichuScore(initialScore: number, tichuGrandTichuPerPlaye
 	for (const player of playersOfTeamToCheck) {
 		if (player.tichu) {
 			if (player.id === finishedFirstId) {
-				return initialScore + 100;
+				initialScore += 100;
+				continue;
 			}
-			return initialScore - 100;
+			initialScore -= 100;
 		}
 		if (player.grandTichu) {
 			if (player.id === finishedFirstId) {
-				return initialScore + 200;
+				initialScore += 200;
+				continue;
 			}
-			return initialScore - 200;
+			initialScore -= 200;
 		}
 	}
 	return initialScore;
