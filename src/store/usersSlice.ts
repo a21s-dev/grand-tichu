@@ -17,23 +17,19 @@ export const usersSlice = createSlice({
 		return stateFromLocalStorage('users', {
 			'1': {
 				id: '1',
-				name: 'Andrew',
+				name: 'Player1',
 			},
 			'2': {
 				id: '2',
-				name: 'Brad',
+				name: 'Player2',
 			},
 			'3': {
 				id: '3',
-				name: 'Adam',
+				name: 'Player3',
 			},
 			'4': {
 				id: '4',
-				name: 'Raf',
-			},
-			'5': {
-				id: '5',
-				name: 'Ted',
+				name: 'Player4',
 			},
 		}) as AppUsersState;
 	},

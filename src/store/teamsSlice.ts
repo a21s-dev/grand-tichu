@@ -19,11 +19,11 @@ export const teamsSlice = createSlice({
 		return stateFromLocalStorage('teams', {
 			team1: {
 				id: 'team1',
-				score: 755,
+				score: 0,
 			},
 			team2: {
 				id: 'team2',
-				score: 945,
+				score: 0,
 			},
 		}) as TeamState;
 	},

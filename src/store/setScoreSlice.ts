@@ -20,12 +20,12 @@ export const setScoreSlice = createSlice({
 			team1: {
 				team: 'team1',
 				oneTwo: false,
-				points: 70,
+				points: 50,
 			},
 			team2: {
 				team: 'team2',
 				oneTwo: false,
-				points: 30,
+				points: 50,
 			},
 		});
 	},
