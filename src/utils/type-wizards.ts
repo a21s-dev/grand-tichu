@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Entries } from 'type-fest';
 
 type ZodEnumRecord<
 	ZodEnum extends z.ZodEnum<[string, ...string[]]>,
@@ -22,3 +23,5 @@ export const exhaustiveEnumRecord = <
 			return acc;
 		}, {} as ZodEnumRecord<ZodEnum, ValueSchema>),
 	);
+
+export const getEntries = <T extends object>(obj: T) => Object.entries(obj) as Entries<T>;

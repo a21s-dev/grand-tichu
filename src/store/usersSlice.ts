@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { stateFromLocalStorage } from './store.ts';
 
 
-const APP_USER_SCHEMA = z.object({
+export const APP_USER_SCHEMA = z.object({
 	id: z.string(),
 	name: z.string(),
 });

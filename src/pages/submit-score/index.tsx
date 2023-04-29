@@ -17,7 +17,6 @@ function SubmitScore() {
 	const players = useSelector(selectGamePlayersInWeirdOrder);
 	const gamePlayersRaw = useSelector(selectGamePlayersRaw);
 	const teamsRaw = useSelector(selectTeamsRaw);
-	// const teams = useSelector(selectTeams);
 	const setScoreState = useSelector(selectTeamsDetailsRaw);
 
 	const [teamScore, setTeamScore] = React.useState<{
@@ -47,8 +46,6 @@ function SubmitScore() {
 					players={players}
 					teamsDetails={setScoreState}
 					retrieveData={(teamScores, teamOneTwo, firstPlayerId) => {
-						// console.log("retrieving");
-						// console.log({ teamScores, teamOneTwo, firstPlayerId });
 						setTeamScore(teamScores);
 						setTeamOneTwo(teamOneTwo);
 						setFirstPlayerId(firstPlayerId);

@@ -61,7 +61,7 @@ function TeamsMembersAndTichuControls() {
 		id: string,
 	) => {
 		const v = gamePlayersSlice.actions.tichuOrGrand({
-			id,
+			playerId: id,
 			tichu: controlValue === 'tichu',
 			grandTichu: controlValue === 'grandTichu',
 		});

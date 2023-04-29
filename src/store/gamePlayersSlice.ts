@@ -3,9 +3,9 @@ import { stateFromLocalStorage } from './store.ts';
 import { z } from 'zod';
 import { exhaustiveEnumRecord } from '../utils/type-wizards.ts';
 
-const PLAYER_INDEX_SCHEMA = z.enum(['t1p1', 't1p2', 't2p1', 't2p2']);
+export const PLAYER_INDEX_SCHEMA = z.enum(['t1p1', 't1p2', 't2p1', 't2p2']);
 export const TEAM_INDEX_SCHEMA = z.enum(['team1', 'team2']);
-const GAME_PLAYER_SCHEMA = z.object({
+export const GAME_PLAYER_SCHEMA = z.object({
 	id: z.string(),
 	name: z.string(),
 	tichu: z.boolean(),
@@ -34,7 +34,7 @@ export const gamePlayersSlice = createSlice({
 			t1p2: {
 				id: '3',
 				name: 'Player3',
-				team: 'team2',
+				team: 'team1',
 				tichu: false,
 				grandTichu: false,
 				deals: false,
@@ -42,7 +42,7 @@ export const gamePlayersSlice = createSlice({
 			t2p1: {
 				id: '2',
 				name: 'Player2',
-				team: 'team1',
+				team: 'team2',
 				tichu: false,
 				grandTichu: false,
 				deals: true,
@@ -68,10 +68,10 @@ export const gamePlayersSlice = createSlice({
 		) => {
 			const player: GamePlayer | undefined = getPlayerById(
 				state,
-				action.payload.id,
+				action.payload.playerId,
 			);
 			if (player == undefined) {
-				throw new Error(`Couldn't find player with id: ${action.payload.id}.`);
+				throw new Error(`Couldn't find player with id: ${action.payload.playerId}.`);
 			}
 			player.tichu = action.payload.tichu;
 			player.grandTichu = action.payload.grandTichu;
@@ -120,6 +120,10 @@ export const gamePlayersSlice = createSlice({
 				) {
 					throw new Error(`Internal Error`);
 				}
+				const oldPlayerTeam = newPlayer.team;
+				const newPlayerTeam = playerToRemove.team;
+				playerToRemove.team = oldPlayerTeam;
+				newPlayer.team = newPlayerTeam;
 				state[indexToAddOldPlayer] = playerToRemove;
 				state[indexToAddNewPlayer] = newPlayer;
 			} else {
