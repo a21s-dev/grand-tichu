@@ -4,16 +4,11 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { AppUser, AppUsersState } from '../../store/usersSlice.ts';
 import ChangePlayerDialog from '../change-player-dialog';
-// import {
-// 	GamePlayer,
-// 	gamePlayersSlice,
-// 	selectGamePlayersInWeirdOrder,
-// } from '../../store/gamePlayersSlice.ts';
 import ChangePlayerWhoDealsDialog from '../change-player-who-deals-dialog';
 import {
 	currentTurnDetailsSlice,
-	selectPlayersWithDetails,
 	selectGamePlayersInWeirdOrder,
+	selectPlayersWithDetails,
 } from '../../store/currentTurnDetailsSlice.ts';
 
 function TeamsMembersAndTichuControls() {
@@ -30,8 +25,8 @@ function TeamsMembersAndTichuControls() {
 		if (newId) {
 			dispatch(
 				currentTurnDetailsSlice.actions.newPlayerDeals({
-					newId
-				})
+					newId,
+				}),
 			);
 		}
 	};

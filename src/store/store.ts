@@ -1,5 +1,4 @@
 import { configureStore, createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
-// import { FOUR_PLAYER_GAME_STATE_SCHEMA, FourPlayerGameState, gamePlayersSlice } from './gamePlayersSlice';
 import { APP_USERS_STATE_SCHEMA, AppUsersState, usersSlice } from './usersSlice.ts';
 import { getState } from '../utils/localStorageUtils.ts';
 import { z } from 'zod';
@@ -21,16 +20,18 @@ export const GLOBAL_STATE_SCHEMA = z.object({
 });
 export type GlobalState = z.infer<typeof GLOBAL_STATE_SCHEMA>;
 type SLICES_TYPES =
-	// FourPlayerGameState
 	| AppUsersState
 	| GamesHistoryState
 	| CurrentTurnDetailsState
-const listenerMiddleware = createListenerMiddleware();
-listenerMiddleware.startListening({
+const localStorageListener = createListenerMiddleware();
+localStorageListener.startListening({
 	matcher: isAnyOf(
-		// gamePlayersSlice.actions.tichuOrGrand,
-		// gamePlayersSlice.actions.replacePlayer,
-		// gamePlayersSlice.actions.newPlayerDeals,
+		currentTurnDetailsSlice.actions.newPlayerDeals,
+		currentTurnDetailsSlice.actions.tichuOrGrand,
+		currentTurnDetailsSlice.actions.replacePlayer,
+		currentTurnDetailsSlice.actions.teamOneTwo,
+		currentTurnDetailsSlice.actions.teamPoints,
+		currentTurnDetailsSlice.actions.finishedFirst,
 		usersSlice.actions.addNew,
 	),
 	effect: (_, listenerApi) => {
@@ -44,7 +45,7 @@ export const STORE = configureStore({
 		[currentTurnDetailsSlice.name]: currentTurnDetailsSlice.reducer,
 	},
 	middleware: (getDefaultMiddleware) => {
-		return getDefaultMiddleware().concat(listenerMiddleware.middleware);
+		return getDefaultMiddleware().concat(localStorageListener.middleware);
 	},
 	devTools: true,
 });
