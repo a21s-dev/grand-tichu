@@ -1,20 +1,11 @@
-import {
-	Dialog,
-	DialogTitle,
-	List,
-	ListItem,
-	ListItemButton,
-	ListItemText,
-	Typography,
-} from '@mui/material';
+import { Dialog, DialogTitle, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { GamePlayer } from '../../store/gamePlayersSlice.ts';
-import { selectAppUsers } from '../../store/usersSlice.ts';
+import { AppUser, selectAppUsers } from '../../store/usersSlice.ts';
 
 export interface ChangePlayerDialogProps {
 	keepMounted: boolean;
 	open: boolean;
-	player: GamePlayer | undefined;
+	player: AppUser | undefined;
 	onClose: (details: { oldId: string; newId: string } | undefined) => void;
 }
 
@@ -29,7 +20,7 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 		onClose(undefined);
 	};
 	const handleListItemClick = (newId: string) => {
-		onClose({ oldId: player?.id, newId });
+		onClose({ oldId: player.id, newId });
 	};
 	return (
 		<Dialog onClose={handleClose} open={open}>
@@ -38,7 +29,7 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 			</DialogTitle>
 			<List sx={{ pt: 0 }}>
 				{usersState
-					.filter((user) => user.id !== player?.id)
+					.filter((user) => user.id !== player.id)
 					.map((user) => {
 						return (
 							<ListItem key={user.id}>

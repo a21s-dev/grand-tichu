@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { selectGamePlayersInWeirdOrder } from '../../store/gamePlayersSlice.ts';
+import { selectGamePlayersInWeirdOrder } from '../../store/currentTurnDetailsSlice.ts';
 
 function TeamsPlayers() {
 	const players = useSelector(selectGamePlayersInWeirdOrder);

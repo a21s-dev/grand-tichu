@@ -1,14 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { GAME_PLAYER_SCHEMA, TEAM_INDEX_SCHEMA } from './gamePlayersSlice';
 import { z } from 'zod';
 import { stateFromLocalStorage } from './store.ts';
 import { exhaustiveEnumRecord } from '../utils/type-wizards.ts';
+import { PLAYER_WITH_DETAILS_SCHEMA, TEAM_INDEX_SCHEMA } from './currentTurnDetailsSlice.ts';
 
 const TURN_DETAILS_SCHEMA = z.object({
-	players: z.record(z.string(), GAME_PLAYER_SCHEMA),
+	players: z.record(z.string(), PLAYER_WITH_DETAILS_SCHEMA),
 	oneTwoPerTeam: exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.boolean()),
 	pointsPerTeam: exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.number()),
-	finishedFirst: GAME_PLAYER_SCHEMA,
+	finishedFirst: PLAYER_WITH_DETAILS_SCHEMA,
 	totalPointsPerTeam: exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.number()),
 });
 const GAME_SCHEMA = z.array(TURN_DETAILS_SCHEMA);

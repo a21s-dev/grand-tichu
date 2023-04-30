@@ -1,16 +1,18 @@
 import { Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { selectTeams } from '../../store/teamsSlice.ts';
+import { selectPoints } from '../../store/currentTurnDetailsSlice.ts';
+import { getEntries } from '../../utils/type-wizards.ts';
 
 function TeamsNamesAndScores() {
-	const teams = useSelector(selectTeams);
+	const teamsWithDetails = useSelector(selectPoints);
+
 	return (
 		<div className='grid grow-[1.5] grid-cols-[repeat(2,auto)] grid-rows-[3em] content-around justify-around'>
-			{teams.map((team) => {
+			{getEntries(teamsWithDetails).map(([teamIndex, details]) => {
 				return (
-					<div className='flex items-center justify-center' key={team.id}>
+					<div className='flex items-center justify-center' key={teamIndex}>
 						<Typography className='text-[2.3em]' variant='body1'>
-							{team.score}
+							{details.totalPoints}
 						</Typography>
 					</div>
 				);

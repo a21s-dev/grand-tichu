@@ -1,32 +1,37 @@
-'use client';
 import * as React from 'react';
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { AppUsersState } from '../../store/usersSlice.ts';
+import { AppUser, AppUsersState } from '../../store/usersSlice.ts';
 import ChangePlayerDialog from '../change-player-dialog';
-import {
-	GamePlayer,
-	gamePlayersSlice,
-	selectGamePlayersInWeirdOrder,
-} from '../../store/gamePlayersSlice.ts';
+// import {
+// 	GamePlayer,
+// 	gamePlayersSlice,
+// 	selectGamePlayersInWeirdOrder,
+// } from '../../store/gamePlayersSlice.ts';
 import ChangePlayerWhoDealsDialog from '../change-player-who-deals-dialog';
+import {
+	currentTurnDetailsSlice,
+	selectPlayersWithDetails,
+	selectGamePlayersInWeirdOrder,
+} from '../../store/currentTurnDetailsSlice.ts';
 
 function TeamsMembersAndTichuControls() {
 	const store = useStore();
 	const dispatch = useDispatch();
 	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
+	const playerDetails = useSelector(selectPlayersWithDetails);
 	const [openWhoDealsDialog, setOpenWhoDealsDialog] = React.useState(false);
 	const [openChangePlayerDialog, setOpenChangePlayerDialog] =
 		React.useState(false);
-	const [playerToChange, setPlayerToChange] = React.useState<GamePlayer>();
+	const [playerToChange, setPlayerToChange] = React.useState<AppUser>();
 	const handleCloseWhoDealsDialog = (newId?: string) => {
 		setOpenWhoDealsDialog(false);
 		if (newId) {
 			dispatch(
-				gamePlayersSlice.actions.newPlayerDeals({
-					newId,
-				}),
+				currentTurnDetailsSlice.actions.newPlayerDeals({
+					newId
+				})
 			);
 		}
 	};
@@ -46,7 +51,7 @@ function TeamsMembersAndTichuControls() {
 			return;
 		}
 		dispatch(
-			gamePlayersSlice.actions.replacePlayer({
+			currentTurnDetailsSlice.actions.replacePlayer({
 				playerToRemoveId: details.oldId,
 				newPlayer: {
 					id: newPlayer.id,
@@ -60,12 +65,20 @@ function TeamsMembersAndTichuControls() {
 		controlValue: string | null,
 		id: string,
 	) => {
-		const v = gamePlayersSlice.actions.tichuOrGrand({
+		const v = currentTurnDetailsSlice.actions.tichuOrGrand({
 			playerId: id,
 			tichu: controlValue === 'tichu',
 			grandTichu: controlValue === 'grandTichu',
 		});
 		dispatch(v);
+	};
+
+	const getPlayerDetailsById = (playerId: string) => {
+		const details = playerDetails.find(p => p.id === playerId);
+		if (details == undefined) {
+			throw new Error('');
+		}
+		return details;
 	};
 
 	return (
@@ -88,7 +101,7 @@ function TeamsMembersAndTichuControls() {
 								>
 									{player.name}
 								</Button>
-								{player.deals && (
+								{getPlayerDetailsById(player.id).deals && (
 									<div className='ml-auto flex items-center justify-center text-[1.8em]'>
 										<Button
 											className='m-0 p-0 leading-[normal]'
@@ -107,9 +120,9 @@ function TeamsMembersAndTichuControls() {
 									className='flex w-full grow flex-row items-center justify-center'
 									color='primary'
 									value={
-										player.tichu
+										getPlayerDetailsById(player.id).tichu
 											? 'tichu'
-											: player.grandTichu
+											: getPlayerDetailsById(player.id).grandTichu
 												? 'grandTichu'
 												: ''
 									}

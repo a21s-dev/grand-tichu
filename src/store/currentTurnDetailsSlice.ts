@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { exhaustiveEnumRecord, getEntries } from '../utils/type-wizards.ts';
-import { GamePlayer, PLAYER_INDEX_SCHEMA, PlayerIndex, TEAM_INDEX_SCHEMA, TeamIndex } from './gamePlayersSlice.ts';
 import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 import { stateFromLocalStorage } from './store.ts';
 import { APP_USER_SCHEMA, AppUser } from './usersSlice.ts';
 
+export const PLAYER_INDEX_SCHEMA = z.enum(['t1p1', 't1p2', 't2p1', 't2p2']);
+export const TEAM_INDEX_SCHEMA = z.enum(['team1', 'team2']);
 const PLAYERS_SCHEMA = exhaustiveEnumRecord(PLAYER_INDEX_SCHEMA, APP_USER_SCHEMA);
 const PLAYERS_TICHU_GRAND_TICHU_SCHEMA = exhaustiveEnumRecord(PLAYER_INDEX_SCHEMA, z.object({
 	tichu: z.boolean(),
@@ -14,6 +15,23 @@ const TEAM_ONE_TWO_SCHEMA = exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.boolean())
 const TEAM_POINTS_SCHEMA = exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.number());
 const TEAM_TOTAL_POINTS_SCHEMA = exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.number());
 
+export const PLAYER_WITH_DETAILS_SCHEMA = z.object({
+	id: z.string(),
+	name: z.string(),
+	team: TEAM_INDEX_SCHEMA,
+	tichu: z.boolean(),
+	grandTichu: z.boolean(),
+	deals: z.boolean(),
+});
+
+const TEAM_WITH_DETAILS_SCHEMA = z.object({
+	teamIndex: TEAM_INDEX_SCHEMA,
+	oneTwo: z.boolean(),
+	points: z.number(),
+	temporaryScore: z.number(),
+	totalPointsBeforeThisTurn: z.number(),
+});
+
 export const CURRENT_TURN_DETAILS_STATE_SCHEMA = z.object({
 	players: PLAYERS_SCHEMA,
 	playersTichuGrandTichu: PLAYERS_TICHU_GRAND_TICHU_SCHEMA,
@@ -21,14 +39,18 @@ export const CURRENT_TURN_DETAILS_STATE_SCHEMA = z.object({
 	teamsPoints: TEAM_POINTS_SCHEMA,
 	finishedFirst: APP_USER_SCHEMA,
 	playerWhoDeals: PLAYER_INDEX_SCHEMA,
+	temporaryScore: TEAM_TOTAL_POINTS_SCHEMA,
 	totalScore: TEAM_TOTAL_POINTS_SCHEMA,
 });
-
+type PlayerIndex = z.infer<typeof PLAYER_INDEX_SCHEMA>;
+export type TeamIndex = z.infer<typeof TEAM_INDEX_SCHEMA>;
 export type CurrentTurnDetailsState = z.infer<typeof CURRENT_TURN_DETAILS_STATE_SCHEMA>;
 type Players = z.infer<typeof PLAYERS_SCHEMA>;
 type OneTwo = z.infer<typeof TEAM_ONE_TWO_SCHEMA>;
 type Points = z.infer<typeof TEAM_POINTS_SCHEMA>;
 type PlayersTichuGrandTichu = z.infer<typeof PLAYERS_TICHU_GRAND_TICHU_SCHEMA>;
+type PlayerWithDetails = z.infer<typeof PLAYER_WITH_DETAILS_SCHEMA>;
+type TeamWithDetails = z.infer<typeof TEAM_WITH_DETAILS_SCHEMA>;
 export const currentTurnDetailsSlice = createSlice({
 	name: 'currentTurnDetails',
 	initialState: () => {
@@ -74,14 +96,18 @@ export const currentTurnDetailsSlice = createSlice({
 				team2: false,
 			},
 			teamsPoints: {
-				team1: 0,
-				team2: 0,
+				team1: 50,
+				team2: 50,
 			},
 			finishedFirst: {
 				id: '1',
 				name: 'Player1',
 			},
 			playerWhoDeals: 't1p1',
+			temporaryScore: {
+				team1: 50,
+				team2: 50,
+			},
 			totalScore: {
 				team1: 0,
 				team2: 0,
@@ -119,6 +145,7 @@ export const currentTurnDetailsSlice = createSlice({
 			const tichuGrandTichu = state.playersTichuGrandTichu[playerIndex];
 			tichuGrandTichu.tichu = action.payload.tichu;
 			tichuGrandTichu.grandTichu = action.payload.grandTichu;
+			updateTemporaryScore(state);
 		},
 		replacePlayer: (
 			state: Draft<CurrentTurnDetailsState>,
@@ -150,21 +177,7 @@ export const currentTurnDetailsSlice = createSlice({
 				}
 				state.players[indexToAddOldPlayer] = playerToRemove;
 				state.players[indexToAddNewPlayer] = action.payload.newPlayer;
-				// const oldPlayerTeam = newPlayer.team;
-				// const newPlayerTeam = playerToRemove.team;
-				// playerToRemove.team = oldPlayerTeam;
-				// newPlayer.team = newPlayerTeam;
-				// state[indexToAddOldPlayer] = playerToRemove;
-				// state[indexToAddNewPlayer] = newPlayer;
 			} else {
-				// newPlayer = {
-				// 	id: action.payload.newPlayer.id,
-				// 	name: action.payload.newPlayer.name,
-				// 	team: playerToRemove.team,
-				// 	tichu: playerToRemove.tichu,
-				// 	grandTichu: playerToRemove.grandTichu,
-				// 	deals: playerToRemove.deals,
-				// };
 				const playerToReplaceIndex: PlayerIndex | undefined =
 					getIndexOfPlayer(state, action.payload.playerToRemoveId);
 				if (playerToReplaceIndex == undefined) {
@@ -172,40 +185,68 @@ export const currentTurnDetailsSlice = createSlice({
 				}
 				state.players[playerToReplaceIndex] = action.payload.newPlayer;
 				state.playerWhoDeals = playerToReplaceIndex;
+				state.finishedFirst = action.payload.newPlayer;
 			}
+			updateTemporaryScore(state);
 		},
 		teamOneTwo: (state: Draft<CurrentTurnDetailsState>, action: PayloadAction<{
-			team: TeamIndex,
-			enabled: boolean
+			[team in TeamIndex]: boolean
 		}>) => {
-			const otherTeamIndex = otherTeam(action.payload.team, state.teamsOneTwo);
-			state.teamsOneTwo[action.payload.team] = action.payload.enabled;
-			state.teamsOneTwo[otherTeamIndex] = !action.payload.enabled;
-			updateTotalScore(state);
+			let teamThatDidOneTwoIndex: TeamIndex | undefined;
+			for (const [teamIndex, enabled] of getEntries(action.payload)) {
+				state.teamsOneTwo[teamIndex] = enabled;
+				if (enabled) {
+					teamThatDidOneTwoIndex = teamIndex;
+				}
+			}
+			if (teamThatDidOneTwoIndex != undefined) {
+				const finishedFirst = state.finishedFirst;
+				const playersOfTeam = getPlayersOfTeam(teamThatDidOneTwoIndex, state);
+				if (!playersOfTeam.map(p => p.id).includes(finishedFirst.id)) {
+					const firstPlayer = playersOfTeam[0];
+					if (firstPlayer == undefined) {
+						throw new Error('');
+					}
+					state.finishedFirst = firstPlayer;
+				}
+			}
+			updateTemporaryScore(state);
 		},
 		teamPoints: (state: Draft<CurrentTurnDetailsState>, action: PayloadAction<{ team: TeamIndex, points: number }>) => {
 			const otherTeamIndex = otherTeam(action.payload.team, state.teamsPoints);
 			state.teamsPoints[action.payload.team] = action.payload.points;
 			state.teamsPoints[otherTeamIndex] = 100 - action.payload.points;
-			updateTotalScore(state);
+			updateTemporaryScore(state);
 		},
-		finishedFirst: (state: Draft<CurrentTurnDetailsState>, action: PayloadAction<{ player: GamePlayer }>) => {
-			state.finishedFirst = action.payload.player;
-			updateTotalScore(state);
+		finishedFirst: (state: Draft<CurrentTurnDetailsState>, action: PayloadAction<{ playerId: string }>) => {
+			const player = getPlayerById(state, action.payload.playerId);
+			if (player == undefined) {
+				throw new Error(
+					`Couldn't find player with id: ${action.payload.playerId}.`,
+				);
+			}
+			state.finishedFirst = player;
+			updateTemporaryScore(state);
 		},
 	},
 });
 
 
-function updateTotalScore(state: CurrentTurnDetailsState): void {
-	state.totalScore.team1 = calculateScoreOfTeam('team1', state);
-	state.totalScore.team2 = calculateScoreOfTeam('team2', state);
+function updateTemporaryScore(state: CurrentTurnDetailsState): void {
+	const score1 = calculateScoreOfTeam('team1', state);
+	const score2 = calculateScoreOfTeam('team2', state);
+	console.log({
+		score1, score2,
+	});
+
+	state.temporaryScore.team1 = state.totalScore.team1 + score1;
+	state.temporaryScore.team2 = state.totalScore.team2 + score2;
 }
 
 function calculateScoreOfTeam(teamToCheck: TeamIndex, state: CurrentTurnDetailsState): number {
+	console.log(state);
 	let scoreToAdd = 0;
-	const entries = getEntries(state.teamsOneTwo);
-	for (const [teamIndex, oneTwo] of entries) {
+	for (const [teamIndex, oneTwo] of getEntries(state.teamsOneTwo)) {
 		if (teamToCheck !== teamIndex) {
 			if (oneTwo) {
 				scoreToAdd += applyTichuGrandTichuScore(state.playersTichuGrandTichu, state.players, teamToCheck, state.finishedFirst.id);
@@ -221,7 +262,7 @@ function calculateScoreOfTeam(teamToCheck: TeamIndex, state: CurrentTurnDetailsS
 		}
 	}
 	scoreToAdd += applyPointsScore(state.teamsPoints, teamToCheck);
-	scoreToAdd += applyOneTwo(state.teamsOneTwo, teamToCheck);
+	scoreToAdd += applyTichuGrandTichuScore(state.playersTichuGrandTichu, state.players, teamToCheck, state.finishedFirst.id);
 	return scoreToAdd;
 }
 
@@ -263,7 +304,7 @@ function applyOneTwo(
 ): number {
 	const entries = getEntries(oneTwoPerTeam);
 	for (const [teamIndex, oneTwo] of entries) {
-		if (teamIndex !== teamToCheck) {
+		if (teamIndex === teamToCheck) {
 			if (oneTwo) {
 				return 200;
 			}
@@ -290,20 +331,26 @@ function playerBelongsToTeam(team: TeamIndex, player: [string, unknown]): boolea
 	throw new Error('Internal Error');
 }
 
-// function getTeamOfPlayer(player: AppUser, players: Players): TeamIndex {
-// 	const p = getEntries(players).find(([_, pl]) => pl.id === player.id);
-// 	if (p == undefined) {
-// 		throw new Error('Internal Error');
-// 	}
-// 	const playerIndex = p[0];
-// 	if (['t1p1', 't1p2'].includes(playerIndex)) {
-// 		return 'team1';
-// 	}
-// 	if (['t2p1', 't2p2'].includes(playerIndex)) {
-// 		return 'team2';
-// 	}
-// 	throw new Error('Internal Error');
-// }
+function getPlayersOfTeam(team: TeamIndex, state: CurrentTurnDetailsState): AppUser[] {
+	return getEntries(state.players)
+		.filter((r) => playerBelongsToTeam(team, r))
+		.map(([, r]) => r);
+}
+
+function getTeamOfPlayer(player: AppUser, players: Players): TeamIndex {
+	const p = getEntries(players).find(([, pl]) => pl.id === player.id);
+	if (p == undefined) {
+		throw new Error('Internal Error');
+	}
+	const playerIndex = p[0];
+	if (['t1p1', 't1p2'].includes(playerIndex)) {
+		return 'team1';
+	}
+	if (['t2p1', 't2p2'].includes(playerIndex)) {
+		return 'team2';
+	}
+	throw new Error('Internal Error');
+}
 
 function playerWithSameId(playerIndex: PlayerIndex, player: [string, unknown]): boolean {
 	return player[0] === playerIndex;
@@ -341,3 +388,80 @@ function otherTeam(team: TeamIndex, collection: { [t in TeamIndex]: unknown }): 
 	}
 	return otherTeamIndex;
 }
+
+export const selectGamePlayersInWeirdOrder = (state: { currentTurnDetails: CurrentTurnDetailsState }): AppUser[] => {
+	const players = state.currentTurnDetails.players;
+	return [players['t1p1'], players['t2p1'], players['t1p2'], players['t2p2']];
+};
+
+export const selectPlayerWhoDeals = (state: { currentTurnDetails: CurrentTurnDetailsState }): AppUser => {
+	return state.currentTurnDetails.players[state.currentTurnDetails.playerWhoDeals];
+};
+
+export const getPlayersTichuGrandTichu = (state: {
+	currentTurnDetails: CurrentTurnDetailsState
+}): PlayersTichuGrandTichu => {
+	return state.currentTurnDetails.playersTichuGrandTichu;
+};
+export const selectFinishedFirstPlayer = (state: { currentTurnDetails: CurrentTurnDetailsState }): AppUser => {
+	return state.currentTurnDetails.finishedFirst;
+};
+export const selectPlayersWithDetails = (state: {
+	currentTurnDetails: CurrentTurnDetailsState
+}): PlayerWithDetails[] => {
+	const playersWithDetails: PlayerWithDetails[] = [];
+	for (const [playerIndex, player] of getEntries(state.currentTurnDetails.players)) {
+		const tichuGrandTichu = state.currentTurnDetails.playersTichuGrandTichu[playerIndex];
+		const deals = state.currentTurnDetails.playerWhoDeals === playerIndex;
+		playersWithDetails.push({
+			id: player.id,
+			name: player.name,
+			team: getTeamOfPlayer(player, state.currentTurnDetails.players),
+			tichu: tichuGrandTichu.tichu,
+			grandTichu: tichuGrandTichu.grandTichu,
+			deals,
+		});
+	}
+	return playersWithDetails;
+};
+
+export const selectTeamsWithDetails = (state: { currentTurnDetails: CurrentTurnDetailsState }): TeamWithDetails[] => {
+	const teamsWithDetails: TeamWithDetails[] = [];
+	for (const [teamIndex, oneTwo] of getEntries(state.currentTurnDetails.teamsOneTwo)) {
+		const points = state.currentTurnDetails.teamsPoints[teamIndex];
+		const temporaryScore = state.currentTurnDetails.temporaryScore[teamIndex];
+		const totalPointsBeforeThisTurn = state.currentTurnDetails.totalScore[teamIndex];
+		teamsWithDetails.push({
+			teamIndex,
+			oneTwo,
+			points,
+			temporaryScore,
+			totalPointsBeforeThisTurn,
+		});
+	}
+	return teamsWithDetails;
+};
+
+export const selectPoints = (state: { currentTurnDetails: CurrentTurnDetailsState }) => {
+	return {
+		team1: {
+			points: state.currentTurnDetails.teamsPoints['team1'],
+			totalPoints: state.currentTurnDetails.totalScore['team1'],
+		},
+		team2: {
+			points: state.currentTurnDetails.teamsPoints['team2'],
+			totalPoints: state.currentTurnDetails.totalScore['team2'],
+		},
+	};
+};
+
+export const selectPlayersAvailableForFirstPlace = (state: {
+	currentTurnDetails: CurrentTurnDetailsState
+}): AppUser[] => {
+	for (const [teamIndex, oneTwo] of getEntries(state.currentTurnDetails.teamsOneTwo)) {
+		if (oneTwo) {
+			return getPlayersOfTeam(teamIndex, state.currentTurnDetails);
+		}
+	}
+	return getEntries(state.currentTurnDetails.players).map(([, r]) => r);
+};
