@@ -233,18 +233,11 @@ export const currentTurnDetailsSlice = createSlice({
 
 
 function updateTemporaryScore(state: CurrentTurnDetailsState): void {
-	const score1 = calculateScoreOfTeam('team1', state);
-	const score2 = calculateScoreOfTeam('team2', state);
-	console.log({
-		score1, score2,
-	});
-
-	state.temporaryScore.team1 = state.totalScore.team1 + score1;
-	state.temporaryScore.team2 = state.totalScore.team2 + score2;
+	state.temporaryScore.team1 = state.totalScore.team1 + calculateScoreOfTeam('team1', state);
+	state.temporaryScore.team2 = state.totalScore.team2 + calculateScoreOfTeam('team2', state);
 }
 
 function calculateScoreOfTeam(teamToCheck: TeamIndex, state: CurrentTurnDetailsState): number {
-	console.log(state);
 	let scoreToAdd = 0;
 	for (const [teamIndex, oneTwo] of getEntries(state.teamsOneTwo)) {
 		if (teamToCheck !== teamIndex) {

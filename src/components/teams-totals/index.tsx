@@ -6,12 +6,14 @@ import { getEntries } from '../../utils/type-wizards.ts';
 function TeamsTotals() {
 	const teamsWithDetails = useSelector(selectTeamsWithDetails);
 
-	function formatScore(initialScore: number, scoreToAdd: number): string {
+	function formatTemporaryScore(temporaryScore: number): string {
 		const scoreToAddWithSymbol =
-			scoreToAdd >= 0 ? `+${scoreToAdd}` : `${scoreToAdd}`;
-		return `${initialScore}(${scoreToAddWithSymbol}) | ${
-			initialScore + scoreToAdd
-		}`;
+			temporaryScore >= 0 ? `+${temporaryScore}` : `${temporaryScore}`;
+		return `(${scoreToAddWithSymbol})`;
+	}
+
+	function scoreAfterApplicationOfTemporary(initialScore: number, temporaryScore: number): number {
+		return initialScore + temporaryScore;
 	}
 
 
@@ -21,7 +23,14 @@ function TeamsTotals() {
 			<div className='mt-auto flex w-full grow-[1] items-center justify-around '>
 				{getEntries(teamsWithDetails).map(([teamIndex, details]) => (
 					<span key={teamIndex}>
-            {formatScore(details.totalPointsBeforeThisTurn, details.temporaryScore)}
+						<span>{details.totalPointsBeforeThisTurn} </span>
+						<span>{formatTemporaryScore(details.temporaryScore)}</span>
+						<span>&nbsp;=&nbsp;</span>
+						<span
+							className='border-2 border-dashed border-[black] text-orange-600 font-bold p-1'
+						>
+							{scoreAfterApplicationOfTemporary(details.totalPointsBeforeThisTurn, details.temporaryScore)}
+						</span>
           </span>
 				))}
 			</div>

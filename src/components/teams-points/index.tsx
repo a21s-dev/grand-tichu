@@ -116,7 +116,6 @@ function TeamsPoints() {
 						label='Team 2'
 						onChange={(e) => {
 							const score = e.target.value as number;
-							console.log(score);
 							dispatch(currentTurnDetailsSlice.actions.teamPoints({
 								team: 'team2',
 								points: score,
