@@ -1,20 +1,19 @@
 import { createSlice, type Draft, type PayloadAction } from '@reduxjs/toolkit';
-import { z } from 'zod';
-import { stateFromLocalStorage } from './store.ts';
 
 
-export const APP_USER_SCHEMA = z.object({
-	id: z.string(),
-	name: z.string(),
-});
-export const APP_USERS_STATE_SCHEMA = z.record(z.string(), APP_USER_SCHEMA);
-export type AppUser = z.infer<typeof APP_USER_SCHEMA>
-export type AppUsersState = z.infer<typeof APP_USERS_STATE_SCHEMA>;
+export type AppUser = {
+	id: string,
+	name: string,
+}
+export type AppUsersState = {
+	[key: string]: AppUser
+}
 
 export const usersSlice = createSlice({
 	name: 'users',
 	initialState: () => {
-		return stateFromLocalStorage('users', {
+		return {
+
 			'1': {
 				id: '1',
 				name: 'Player1',
@@ -31,7 +30,7 @@ export const usersSlice = createSlice({
 				id: '4',
 				name: 'Player4',
 			},
-		}) as AppUsersState;
+		};
 	},
 	reducers: {
 		addNew: (state: Draft<AppUsersState>, action: PayloadAction<AppUser>) => {

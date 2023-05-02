@@ -1,60 +1,44 @@
-import { z } from 'zod';
-import { exhaustiveEnumRecord, getEntries } from '../utils/type-wizards.ts';
+import { getEntries } from '../utils/type-wizards.ts';
 import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
-import { stateFromLocalStorage } from './store.ts';
-import { APP_USER_SCHEMA, AppUser } from './usersSlice.ts';
+import { AppUser } from './usersSlice.ts';
 
-export const PLAYER_INDEX_SCHEMA = z.enum(['t1p1', 't1p2', 't2p1', 't2p2']);
-export const TEAM_INDEX_SCHEMA = z.enum(['team1', 'team2']);
-const PLAYERS_SCHEMA = exhaustiveEnumRecord(PLAYER_INDEX_SCHEMA, APP_USER_SCHEMA);
-const PLAYERS_TICHU_GRAND_TICHU_SCHEMA = exhaustiveEnumRecord(PLAYER_INDEX_SCHEMA, z.object({
-	tichu: z.boolean(),
-	grandTichu: z.boolean(),
-}));
-const TEAM_ONE_TWO_SCHEMA = exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.boolean());
-const TEAM_POINTS_SCHEMA = exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.number());
-const TEAM_TOTAL_POINTS_SCHEMA = exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.number());
+export type PlayerIndex = 't1p1' | 't1p2' | 't2p1' | 't2p2';
+export type TeamIndex = 'team1' | 'team2';
+type Players = { [key in PlayerIndex]: AppUser }
+type PlayersTichuGrandTichu = { [key in PlayerIndex]: { tichu: boolean, grandTichu: boolean } };
+type OneTwo = { [key in TeamIndex]: boolean };
+type Points = { [key in TeamIndex]: number };
+type TeamTotalPoints = { [key in TeamIndex]: number; }
+export type PlayerWithDetails = {
+	id: string,
+	name: string,
+	team: TeamIndex,
+	tichu: boolean,
+	grandTichu: boolean,
+	deals: boolean
+}
+type TeamWithDetails = {
+	teamIndex: TeamIndex,
+	oneTwo: boolean,
+	points: number,
+	temporaryScore: number,
+	totalPointsBeforeThisTurn: number
+}
+export type CurrentTurnDetailsState = {
+	players: Players,
+	playersTichuGrandTichu: PlayersTichuGrandTichu,
+	teamsOneTwo: OneTwo,
+	teamsPoints: Points,
+	finishedFirst: AppUser,
+	playerWhoDeals: PlayerIndex,
+	temporaryScore: TeamTotalPoints,
+	totalScore: TeamTotalPoints,
+}
 
-export const PLAYER_WITH_DETAILS_SCHEMA = z.object({
-	id: z.string(),
-	name: z.string(),
-	team: TEAM_INDEX_SCHEMA,
-	tichu: z.boolean(),
-	grandTichu: z.boolean(),
-	deals: z.boolean(),
-});
-
-const TEAM_WITH_DETAILS_SCHEMA = z.object({
-	teamIndex: TEAM_INDEX_SCHEMA,
-	oneTwo: z.boolean(),
-	points: z.number(),
-	temporaryScore: z.number(),
-	totalPointsBeforeThisTurn: z.number(),
-});
-
-export const CURRENT_TURN_DETAILS_STATE_SCHEMA = z.object({
-	players: PLAYERS_SCHEMA,
-	playersTichuGrandTichu: PLAYERS_TICHU_GRAND_TICHU_SCHEMA,
-	teamsOneTwo: TEAM_ONE_TWO_SCHEMA,
-	teamsPoints: TEAM_POINTS_SCHEMA,
-	finishedFirst: APP_USER_SCHEMA,
-	playerWhoDeals: PLAYER_INDEX_SCHEMA,
-	temporaryScore: TEAM_TOTAL_POINTS_SCHEMA,
-	totalScore: TEAM_TOTAL_POINTS_SCHEMA,
-});
-type PlayerIndex = z.infer<typeof PLAYER_INDEX_SCHEMA>;
-export type TeamIndex = z.infer<typeof TEAM_INDEX_SCHEMA>;
-export type CurrentTurnDetailsState = z.infer<typeof CURRENT_TURN_DETAILS_STATE_SCHEMA>;
-type Players = z.infer<typeof PLAYERS_SCHEMA>;
-type OneTwo = z.infer<typeof TEAM_ONE_TWO_SCHEMA>;
-type Points = z.infer<typeof TEAM_POINTS_SCHEMA>;
-type PlayersTichuGrandTichu = z.infer<typeof PLAYERS_TICHU_GRAND_TICHU_SCHEMA>;
-type PlayerWithDetails = z.infer<typeof PLAYER_WITH_DETAILS_SCHEMA>;
-type TeamWithDetails = z.infer<typeof TEAM_WITH_DETAILS_SCHEMA>;
 export const currentTurnDetailsSlice = createSlice({
 	name: 'currentTurnDetails',
 	initialState: () => {
-		return stateFromLocalStorage('currentTurnDetails', {
+		return {
 			players: {
 				t1p1: {
 					id: '1',
@@ -112,7 +96,7 @@ export const currentTurnDetailsSlice = createSlice({
 				team1: 0,
 				team2: 0,
 			},
-		}) as CurrentTurnDetailsState;
+		} as CurrentTurnDetailsState;
 	},
 	reducers: {
 		newPlayerDeals: (

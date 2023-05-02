@@ -1,64 +1,31 @@
-import { configureStore, createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
-import { APP_USERS_STATE_SCHEMA, AppUsersState, usersSlice } from './usersSlice.ts';
-import { getState } from '../utils/localStorageUtils.ts';
-import { z } from 'zod';
-import { GAMES_HISTORY_STATE_SCHEMA, GamesHistoryState, gamesSlice } from './gamesSlice.ts';
-import {
-	CURRENT_TURN_DETAILS_STATE_SCHEMA,
-	currentTurnDetailsSlice,
-	CurrentTurnDetailsState,
-} from './currentTurnDetailsSlice.ts';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { usersSlice } from './usersSlice.ts';
+import { gamesSlice } from './gamesSlice.ts';
+import { currentTurnDetailsSlice } from './currentTurnDetailsSlice.ts';
+import { FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 
-export const SLICES_KEYS_SCHEMA = z.enum(['users', 'games', 'currentTurnDetails']);
-type SlicesKeys = z.infer<typeof SLICES_KEYS_SCHEMA>;
-
-export const GLOBAL_STATE_SCHEMA = z.object({
-	users: APP_USERS_STATE_SCHEMA,
-	games: GAMES_HISTORY_STATE_SCHEMA,
-	currentTurnDetails: CURRENT_TURN_DETAILS_STATE_SCHEMA,
+const persistConfig = {
+	key: 'root',
+	storage,
+};
+const reducers = combineReducers({
+	[usersSlice.name]: usersSlice.reducer,
+	[gamesSlice.name]: gamesSlice.reducer,
+	[currentTurnDetailsSlice.name]: currentTurnDetailsSlice.reducer,
 });
-export type GlobalState = z.infer<typeof GLOBAL_STATE_SCHEMA>;
-type SLICES_TYPES =
-	| AppUsersState
-	| GamesHistoryState
-	| CurrentTurnDetailsState
-const localStorageListener = createListenerMiddleware();
-localStorageListener.startListening({
-	matcher: isAnyOf(
-		currentTurnDetailsSlice.actions.newPlayerDeals,
-		currentTurnDetailsSlice.actions.tichuOrGrand,
-		currentTurnDetailsSlice.actions.replacePlayer,
-		currentTurnDetailsSlice.actions.teamOneTwo,
-		currentTurnDetailsSlice.actions.teamPoints,
-		currentTurnDetailsSlice.actions.finishedFirst,
-		usersSlice.actions.addNew,
-	),
-	effect: (_, listenerApi) => {
-		localStorage.setItem('state', JSON.stringify(listenerApi.getState()));
-	},
-});
+
+const persistedReducer = persistReducer(persistConfig, reducers);
+
 export const STORE = configureStore({
-	reducer: {
-		[usersSlice.name]: usersSlice.reducer,
-		[gamesSlice.name]: gamesSlice.reducer,
-		[currentTurnDetailsSlice.name]: currentTurnDetailsSlice.reducer,
-	},
+	reducer: persistedReducer,
 	middleware: (getDefaultMiddleware) => {
-		return getDefaultMiddleware().concat(localStorageListener.middleware);
+		return getDefaultMiddleware({
+			serializableCheck: {
+				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+			},
+		});
 	},
 	devTools: true,
 });
-
-
-export function stateFromLocalStorage(
-	key: SlicesKeys,
-	initial: SLICES_TYPES,
-): SLICES_TYPES {
-	try {
-		const state = getState();
-		return state[key];
-	} catch (err) {
-		return initial;
-	}
-}

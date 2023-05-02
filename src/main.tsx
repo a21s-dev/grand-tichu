@@ -9,6 +9,8 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import SubmitScore from './pages/submit-score';
 import Root from './components/Root.tsx';
 import Index from './pages/index';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistStore } from 'redux-persist';
 
 const rootRoute = new RootRoute({
 	component: Root,
@@ -62,15 +64,19 @@ const theme = createTheme({
 		},
 	},
 });
+
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const rootElement = document.getElementById('root')!;
 if (!rootElement.innerHTML) {
 	const root = ReactDOM.createRoot(rootElement);
+	const persistor = persistStore(STORE);
 	root.render(
 		<React.StrictMode>
 			<ThemeProvider theme={theme}>
 				<Provider store={STORE}>
-					<RouterProvider router={router} />
+					<PersistGate loading={null} persistor={persistor}>
+						<RouterProvider router={router} />
+					</PersistGate>
 				</Provider>
 			</ThemeProvider>
 		</React.StrictMode>,

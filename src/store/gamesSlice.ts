@@ -1,24 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { z } from 'zod';
-import { stateFromLocalStorage } from './store.ts';
-import { exhaustiveEnumRecord } from '../utils/type-wizards.ts';
-import { PLAYER_WITH_DETAILS_SCHEMA, TEAM_INDEX_SCHEMA } from './currentTurnDetailsSlice.ts';
+import { PlayerWithDetails, TeamIndex } from './currentTurnDetailsSlice.ts';
 
-const TURN_DETAILS_SCHEMA = z.object({
-	players: z.record(z.string(), PLAYER_WITH_DETAILS_SCHEMA),
-	oneTwoPerTeam: exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.boolean()),
-	pointsPerTeam: exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.number()),
-	finishedFirst: PLAYER_WITH_DETAILS_SCHEMA,
-	totalPointsPerTeam: exhaustiveEnumRecord(TEAM_INDEX_SCHEMA, z.number()),
-});
-const GAME_SCHEMA = z.array(TURN_DETAILS_SCHEMA);
-export const GAMES_HISTORY_STATE_SCHEMA = z.record(z.string(), GAME_SCHEMA);
-export type GamesHistoryState = z.infer<typeof GAMES_HISTORY_STATE_SCHEMA>;
+export type TurnDetails = {
+	players: { [key: string]: PlayerWithDetails },
+	oneTwoPerTeam: { [key in TeamIndex]: boolean }
+	pointsPerTeam: { [key in TeamIndex]: number }
+	finishedFirst: PlayerWithDetails
+	totalPointsPerTeam: { [key in TeamIndex]: number }
+}
+export type Game = TurnDetails[];
+export type GamesHistoryState = {
+	[key: string]: Game
+}
 
 export const gamesSlice = createSlice({
 	name: 'games',
 	initialState: () => {
-		return stateFromLocalStorage('games', {
+		return {
 			'1asdasd': [
 				{
 					players: {},
@@ -35,7 +33,7 @@ export const gamesSlice = createSlice({
 					totalPointsPerTeam: { team1: 5, team2: 10 },
 				},
 			],
-		});
+		};
 	},
 	reducers: {
 		update: () =>
