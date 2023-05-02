@@ -1,10 +1,8 @@
 import { FormControl, InputLabel, MenuItem, Select, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+	CURRENT_TURN_DETAILS_SELECTORS,
 	currentTurnDetailsSlice,
-	selectFinishedFirstPlayer,
-	selectPlayersAvailableForFirstPlace,
-	selectTeamsWithDetails,
 	TeamIndex,
 } from '../../store/currentTurnDetailsSlice.ts';
 
@@ -12,9 +10,9 @@ const POSSIBLE_SCORES = Array.from({ length: 31 }, (_, i) => -25 + i * 5); //[-2
 
 function TeamsPoints() {
 	const dispatch = useDispatch();
-	const teamsWithDetails = useSelector(selectTeamsWithDetails);
-	const finishedFirst = useSelector(selectFinishedFirstPlayer);
-	const playersAvailableForFirstPlace = useSelector(selectPlayersAvailableForFirstPlace);
+	const teamsWithDetails = useSelector(CURRENT_TURN_DETAILS_SELECTORS.teamsWithDetails);
+	const finishedFirst = useSelector(CURRENT_TURN_DETAILS_SELECTORS.finishedFirstPlayer);
+	const playersAvailableForFirstPlace = useSelector(CURRENT_TURN_DETAILS_SELECTORS.playersAvailableForFirstPlace);
 
 	function getTeamDetailsByIndex(teamIndex: TeamIndex) {
 		const teamDetails = teamsWithDetails.find(t => t.teamIndex === teamIndex);

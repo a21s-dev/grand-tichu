@@ -1,6 +1,6 @@
 import { Dialog, DialogTitle, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { selectGamePlayersInWeirdOrder, selectPlayersWithDetails } from '../../store/currentTurnDetailsSlice.ts';
+import { CURRENT_TURN_DETAILS_SELECTORS } from '../../store/currentTurnDetailsSlice.ts';
 
 export interface ChangePlayerWhoDealsDialogProps {
 	keepMounted: boolean;
@@ -10,8 +10,8 @@ export interface ChangePlayerWhoDealsDialogProps {
 
 function ChangePlayerWhoDealsDialog(props: ChangePlayerWhoDealsDialogProps) {
 	const { onClose, open } = props;
-	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
-	const playerDetails = useSelector(selectPlayersWithDetails);
+	const gamePlayers = useSelector(CURRENT_TURN_DETAILS_SELECTORS.gamePlayersInWeirdOrder);
+	const playerDetails = useSelector(CURRENT_TURN_DETAILS_SELECTORS.playersWithDetails);
 
 	const getPlayerDetailsById = (playerId: string) => {
 		const details = playerDetails.find(p => p.id === playerId);

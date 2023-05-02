@@ -1,10 +1,10 @@
 import { useSelector } from 'react-redux';
-import { selectTeamsWithDetails } from '../../store/currentTurnDetailsSlice.ts';
+import { CURRENT_TURN_DETAILS_SELECTORS } from '../../store/currentTurnDetailsSlice.ts';
 import { getEntries } from '../../utils/type-wizards.ts';
 
 
 function TeamsTotals() {
-	const teamsWithDetails = useSelector(selectTeamsWithDetails);
+	const teamsWithDetails = useSelector(CURRENT_TURN_DETAILS_SELECTORS.teamsWithDetails);
 
 	function formatTemporaryScore(temporaryScore: number): string {
 		const scoreToAddWithSymbol =

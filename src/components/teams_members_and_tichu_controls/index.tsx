@@ -2,20 +2,17 @@ import * as React from 'react';
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { AppUser, AppUsersState } from '../../store/usersSlice.ts';
+import { AppUser, USERS_WEIRD_SELECTORS } from '../../store/usersSlice.ts';
 import ChangePlayerDialog from '../change-player-dialog';
 import ChangePlayerWhoDealsDialog from '../change-player-who-deals-dialog';
-import {
-	currentTurnDetailsSlice,
-	selectGamePlayersInWeirdOrder,
-	selectPlayersWithDetails,
-} from '../../store/currentTurnDetailsSlice.ts';
+import { CURRENT_TURN_DETAILS_SELECTORS, currentTurnDetailsSlice } from '../../store/currentTurnDetailsSlice.ts';
+import { GlobalState } from '../../store/store.ts';
 
 function TeamsMembersAndTichuControls() {
 	const store = useStore();
 	const dispatch = useDispatch();
-	const gamePlayers = useSelector(selectGamePlayersInWeirdOrder);
-	const playerDetails = useSelector(selectPlayersWithDetails);
+	const gamePlayers = useSelector(CURRENT_TURN_DETAILS_SELECTORS.gamePlayersInWeirdOrder);
+	const playerDetails = useSelector(CURRENT_TURN_DETAILS_SELECTORS.playersWithDetails);
 	const [openWhoDealsDialog, setOpenWhoDealsDialog] = React.useState(false);
 	const [openChangePlayerDialog, setOpenChangePlayerDialog] =
 		React.useState(false);
@@ -37,11 +34,7 @@ function TeamsMembersAndTichuControls() {
 		if (details == undefined) {
 			return;
 		}
-		const state: { users: AppUsersState } = store.getState() as {
-			users: AppUsersState;
-		};
-		const appUsersState: AppUsersState = state.users;
-		const newPlayer = appUsersState[details.newId];
+		const newPlayer = USERS_WEIRD_SELECTORS.selectUserById(store.getState() as GlobalState, details.newId);
 		if (newPlayer == undefined) {
 			return;
 		}
