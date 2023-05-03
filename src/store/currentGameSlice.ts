@@ -226,8 +226,7 @@ export const currentGameSlice = createSlice({
 			latestTurn.finishedFirst = player;
 			HELPERS.updateTurnPoints(state, latestTurn);
 		},
-		submitTurn: (state: Draft<CurrentGameState>, action: PayloadAction<unknown>) => {
-			console.log(state, action);
+		submitTurn: (state: Draft<CurrentGameState>) => {
 			HELPERS.initNewTurn(state);
 			HELPERS.updateTotalPoints(state);
 		},
