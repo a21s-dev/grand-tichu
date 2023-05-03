@@ -2,9 +2,9 @@ import { FormControl, InputLabel, MenuItem, Select, ToggleButton, ToggleButtonGr
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	CURRENT_TURN_DETAILS_SELECTORS,
-	currentTurnDetailsSlice,
+	currentGameSlice,
 	TeamIndex,
-} from '../../store/currentTurnDetailsSlice.ts';
+} from '../../store/currentGameSlice.ts';
 
 const POSSIBLE_SCORES = Array.from({ length: 31 }, (_, i) => -25 + i * 5); //[-25..125]
 
@@ -42,7 +42,7 @@ function TeamsPoints() {
 					value={getTeamThatHasOneTwo()}
 					exclusive
 					onChange={(_, value) => {
-						dispatch(currentTurnDetailsSlice.actions.teamOneTwo({
+						dispatch(currentGameSlice.actions.teamOneTwo({
 							team1: value === 'team1',
 							team2: value === 'team2',
 						}));
@@ -72,7 +72,7 @@ function TeamsPoints() {
 						label='Team 1'
 						onChange={(e) => {
 							const score = e.target.value as number;
-							dispatch(currentTurnDetailsSlice.actions.teamPoints({
+							dispatch(currentGameSlice.actions.teamPoints({
 								team: 'team1',
 								points: score,
 							}));
@@ -93,7 +93,7 @@ function TeamsPoints() {
 						value={finishedFirst.id}
 						label='First'
 						onChange={(e) => {
-							dispatch(currentTurnDetailsSlice.actions.finishedFirst({
+							dispatch(currentGameSlice.actions.finishedFirst({
 								playerId: e.target.value,
 							}));
 						}}
@@ -114,7 +114,7 @@ function TeamsPoints() {
 						label='Team 2'
 						onChange={(e) => {
 							const score = e.target.value as number;
-							dispatch(currentTurnDetailsSlice.actions.teamPoints({
+							dispatch(currentGameSlice.actions.teamPoints({
 								team: 'team2',
 								points: score,
 							}));

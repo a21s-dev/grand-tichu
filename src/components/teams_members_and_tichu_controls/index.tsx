@@ -5,7 +5,7 @@ import { useDispatch, useSelector, useStore } from 'react-redux';
 import { AppUser, USERS_WEIRD_SELECTORS } from '../../store/usersSlice.ts';
 import ChangePlayerDialog from '../change-player-dialog';
 import ChangePlayerWhoDealsDialog from '../change-player-who-deals-dialog';
-import { CURRENT_TURN_DETAILS_SELECTORS, currentTurnDetailsSlice } from '../../store/currentTurnDetailsSlice.ts';
+import { CURRENT_TURN_DETAILS_SELECTORS, currentGameSlice } from '../../store/currentGameSlice.ts';
 import { GlobalState } from '../../store/store.ts';
 
 function TeamsMembersAndTichuControls() {
@@ -21,7 +21,7 @@ function TeamsMembersAndTichuControls() {
 		setOpenWhoDealsDialog(false);
 		if (newId) {
 			dispatch(
-				currentTurnDetailsSlice.actions.newPlayerDeals({
+				currentGameSlice.actions.newPlayerDeals({
 					newId,
 				}),
 			);
@@ -39,7 +39,7 @@ function TeamsMembersAndTichuControls() {
 			return;
 		}
 		dispatch(
-			currentTurnDetailsSlice.actions.replacePlayer({
+			currentGameSlice.actions.replacePlayer({
 				playerToRemoveId: details.oldId,
 				newPlayer: {
 					id: newPlayer.id,
@@ -53,7 +53,7 @@ function TeamsMembersAndTichuControls() {
 		controlValue: string | null,
 		id: string,
 	) => {
-		const v = currentTurnDetailsSlice.actions.tichuOrGrand({
+		const v = currentGameSlice.actions.tichuOrGrand({
 			playerId: id,
 			tichu: controlValue === 'tichu',
 			grandTichu: controlValue === 'grandTichu',

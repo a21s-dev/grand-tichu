@@ -1,6 +1,6 @@
 import { Dialog, DialogTitle, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { CURRENT_TURN_DETAILS_SELECTORS } from '../../store/currentTurnDetailsSlice.ts';
+import { CURRENT_TURN_DETAILS_SELECTORS } from '../../store/currentGameSlice.ts';
 
 export interface ChangePlayerWhoDealsDialogProps {
 	keepMounted: boolean;

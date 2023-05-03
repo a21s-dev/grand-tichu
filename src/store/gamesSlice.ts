@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { PlayerWithDetails, TeamIndex } from './currentTurnDetailsSlice.ts';
+import { PlayerWithDetails, TeamIndex } from './currentGameSlice.ts';
 
 export type TurnDetails = {
 	players: { [key: string]: PlayerWithDetails },

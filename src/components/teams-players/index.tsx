@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { CURRENT_TURN_DETAILS_SELECTORS } from '../../store/currentTurnDetailsSlice.ts';
+import { CURRENT_TURN_DETAILS_SELECTORS } from '../../store/currentGameSlice.ts';
 
 function TeamsPlayers() {
 	const players = useSelector(CURRENT_TURN_DETAILS_SELECTORS.gamePlayersInWeirdOrder);

@@ -10,7 +10,7 @@ type Players = { [key in PlayerIndex]: AppUser }
 type PlayersTichuGrandTichu = { [key in PlayerIndex]: { tichu: boolean, grandTichu: boolean } };
 type OneTwo = { [key in TeamIndex]: boolean };
 type Points = { [key in TeamIndex]: number };
-type TeamTotalPoints = { [key in TeamIndex]: number; }
+type TeamScore = { [key in TeamIndex]: number; }
 export type PlayerWithDetails = {
 	id: string,
 	name: string,
@@ -26,18 +26,21 @@ type TeamWithDetails = {
 	temporaryScore: number,
 	totalPointsBeforeThisTurn: number
 }
-export type CurrentTurnDetailsState = {
+export type TurnDetails = {
 	players: Players,
 	playersTichuGrandTichu: PlayersTichuGrandTichu,
 	teamsOneTwo: OneTwo,
 	teamsPoints: Points,
 	finishedFirst: AppUser,
 	playerWhoDeals: PlayerIndex,
-	temporaryScore: TeamTotalPoints,
-	totalScore: TeamTotalPoints,
+	score: TeamScore,
 }
-const initialState: CurrentTurnDetailsState = {
-
+export type CurrentGameState = {
+	turns: TurnDetails[],
+	currentScore: TeamScore,
+	winningScore: 300 | 500 | 1000 | 1500 | 2000 | 'unlimited',
+}
+const initialTurnDetails: TurnDetails = {
 	players: {
 		t1p1: {
 			id: '1',
@@ -87,60 +90,67 @@ const initialState: CurrentTurnDetailsState = {
 		name: 'Player1',
 	},
 	playerWhoDeals: 't1p1',
-	temporaryScore: {
+	score: {
 		team1: 50,
 		team2: 50,
 	},
-	totalScore: {
+};
+const initialState: CurrentGameState = {
+	turns: [initialTurnDetails],
+	currentScore: {
 		team1: 0,
 		team2: 0,
 	},
+	winningScore: 500,
 };
-export const currentTurnDetailsSlice = createSlice({
-	name: 'currentTurnDetails',
+export const currentGameSlice = createSlice({
+	name: 'currentGame',
 	initialState,
 	reducers: {
 		newPlayerDeals: (
-			state: Draft<CurrentTurnDetailsState>,
+			state: Draft<CurrentGameState>,
 			action: PayloadAction<{ newId: string }>,
 		) => {
-			const playerIndex = HELPERS.getIndexOfPlayer(state, action.payload.newId);
+			const latestTurn = HELPERS.getLatestTurn(state);
+			const playerIndex = HELPERS.getIndexOfPlayer(latestTurn, action.payload.newId);
 			if (playerIndex == undefined) {
 				throw new Error(
 					`Couldn't find player with id: ${action.payload.newId}.`,
 				);
 			}
-			state.playerWhoDeals = playerIndex;
+			latestTurn.playerWhoDeals = playerIndex;
 		},
 		tichuOrGrand: (
-			state: Draft<CurrentTurnDetailsState>,
+			state: Draft<CurrentGameState>,
 			action: PayloadAction<{
 				playerId: string;
 				tichu: boolean;
 				grandTichu: boolean;
 			}>,
 		) => {
+			const latestTurn = HELPERS.getLatestTurn(state);
 			const playerIndex: PlayerIndex | undefined = HELPERS.getIndexOfPlayer(
-				state,
+				latestTurn,
 				action.payload.playerId,
 			);
 			if (playerIndex == undefined) {
 				throw new Error(`Couldn't find player with id: ${action.payload.playerId}.`);
 			}
-			const tichuGrandTichu = state.playersTichuGrandTichu[playerIndex];
+			const tichuGrandTichu = latestTurn.playersTichuGrandTichu[playerIndex];
 			tichuGrandTichu.tichu = action.payload.tichu;
 			tichuGrandTichu.grandTichu = action.payload.grandTichu;
-			HELPERS.updateTemporaryScore(state);
+			HELPERS.updateTurnPoints(state, latestTurn);
 		},
 		replacePlayer: (
-			state: Draft<CurrentTurnDetailsState>,
+			state: Draft<CurrentGameState>,
 			action: PayloadAction<{
 				playerToRemoveId: string;
 				newPlayer: AppUser;
 			}>,
 		) => {
+			const latestTurn = HELPERS.getLatestTurn(state);
 			const playerToRemove = HELPERS.getPlayerById(
-				state,
+				latestTurn,
 				action.payload.playerToRemoveId,
 			);
 			if (playerToRemove == undefined) {
@@ -148,76 +158,90 @@ export const currentTurnDetailsSlice = createSlice({
 					`Couldn't find player with id: ${action.payload.playerToRemoveId}.`,
 				);
 			}
-			const newPlayerIsInGame = HELPERS.getPlayerById(state, action.payload.newPlayer.id) != undefined;
+			const newPlayerIsInGame = HELPERS.getPlayerById(latestTurn, action.payload.newPlayer.id) != undefined;
 			if (newPlayerIsInGame) {
 				const indexToAddNewPlayer: PlayerIndex | undefined =
-					HELPERS.getIndexOfPlayer(state, playerToRemove.id);
+					HELPERS.getIndexOfPlayer(latestTurn, playerToRemove.id);
 				const indexToAddOldPlayer: PlayerIndex | undefined =
-					HELPERS.getIndexOfPlayer(state, action.payload.newPlayer.id);
+					HELPERS.getIndexOfPlayer(latestTurn, action.payload.newPlayer.id);
 				if (
 					indexToAddNewPlayer == undefined ||
 					indexToAddOldPlayer == undefined
 				) {
 					throw new Error(`Internal Error`);
 				}
-				state.players[indexToAddOldPlayer] = playerToRemove;
-				state.players[indexToAddNewPlayer] = action.payload.newPlayer;
+				latestTurn.players[indexToAddOldPlayer] = playerToRemove;
+				latestTurn.players[indexToAddNewPlayer] = action.payload.newPlayer;
 			} else {
 				const playerToReplaceIndex: PlayerIndex | undefined =
-					HELPERS.getIndexOfPlayer(state, action.payload.playerToRemoveId);
+					HELPERS.getIndexOfPlayer(latestTurn, action.payload.playerToRemoveId);
 				if (playerToReplaceIndex == undefined) {
 					throw new InternalError();
 				}
-				state.players[playerToReplaceIndex] = action.payload.newPlayer;
-				state.playerWhoDeals = playerToReplaceIndex;
-				state.finishedFirst = action.payload.newPlayer;
+				latestTurn.players[playerToReplaceIndex] = action.payload.newPlayer;
+				latestTurn.playerWhoDeals = playerToReplaceIndex;
 			}
-			HELPERS.updateTemporaryScore(state);
+			latestTurn.finishedFirst = action.payload.newPlayer;
+			HELPERS.updateTurnPoints(state, latestTurn);
 		},
-		teamOneTwo: (state: Draft<CurrentTurnDetailsState>, action: PayloadAction<{
+		teamOneTwo: (state: Draft<CurrentGameState>, action: PayloadAction<{
 			[team in TeamIndex]: boolean
 		}>) => {
+			const latestTurn = HELPERS.getLatestTurn(state);
 			let teamThatDidOneTwoIndex: TeamIndex | undefined;
 			for (const [teamIndex, enabled] of getEntries(action.payload)) {
-				state.teamsOneTwo[teamIndex] = enabled;
+				latestTurn.teamsOneTwo[teamIndex] = enabled;
 				if (enabled) {
 					teamThatDidOneTwoIndex = teamIndex;
 				}
 			}
 			if (teamThatDidOneTwoIndex != undefined) {
-				const finishedFirst = state.finishedFirst;
-				const playersOfTeam = HELPERS.getPlayersOfTeam(teamThatDidOneTwoIndex, state);
+				const finishedFirst = latestTurn.finishedFirst;
+				const playersOfTeam = HELPERS.getPlayersOfTeam(teamThatDidOneTwoIndex, latestTurn);
 				if (!playersOfTeam.map(p => p.id).includes(finishedFirst.id)) {
 					const firstPlayer = playersOfTeam[0];
 					if (firstPlayer == undefined) {
 						throw new Error('');
 					}
-					state.finishedFirst = firstPlayer;
+					latestTurn.finishedFirst = firstPlayer;
 				}
 			}
-			HELPERS.updateTemporaryScore(state);
+			HELPERS.updateTurnPoints(state, latestTurn);
 		},
-		teamPoints: (state: Draft<CurrentTurnDetailsState>, action: PayloadAction<{ team: TeamIndex, points: number }>) => {
-			const otherTeamIndex = HELPERS.otherTeam(action.payload.team, state.teamsPoints);
-			state.teamsPoints[action.payload.team] = action.payload.points;
-			state.teamsPoints[otherTeamIndex] = 100 - action.payload.points;
-			HELPERS.updateTemporaryScore(state);
+		teamPoints: (state: Draft<CurrentGameState>, action: PayloadAction<{ team: TeamIndex, points: number }>) => {
+			const latestTurn = HELPERS.getLatestTurn(state);
+			const otherTeamIndex = HELPERS.otherTeam(action.payload.team, latestTurn.teamsPoints);
+			latestTurn.teamsPoints[action.payload.team] = action.payload.points;
+			latestTurn.teamsPoints[otherTeamIndex] = 100 - action.payload.points;
+			HELPERS.updateTurnPoints(state, latestTurn);
 		},
-		finishedFirst: (state: Draft<CurrentTurnDetailsState>, action: PayloadAction<{ playerId: string }>) => {
-			const player = HELPERS.getPlayerById(state, action.payload.playerId);
+		finishedFirst: (state: Draft<CurrentGameState>, action: PayloadAction<{ playerId: string }>) => {
+			const latestTurn = HELPERS.getLatestTurn(state);
+			const player = HELPERS.getPlayerById(latestTurn, action.payload.playerId);
 			if (player == undefined) {
 				throw new Error(
 					`Couldn't find player with id: ${action.payload.playerId}.`,
 				);
 			}
-			state.finishedFirst = player;
-			HELPERS.updateTemporaryScore(state);
+			latestTurn.finishedFirst = player;
+			HELPERS.updateTurnPoints(state, latestTurn);
+		},
+		submitTurn: (state: Draft<CurrentGameState>, action: PayloadAction<unknown>) => {
+			console.log(state, action);
+			HELPERS.initNewTurn(state);
+			HELPERS.updateTotalPoints(state);
 		},
 	},
 });
 
 
 const HELPERS = {
+	getLatestTurn: (state: CurrentGameState): TurnDetails => {
+		if (state.turns.length === 0) {
+			throw new InternalError();
+		}
+		return state.turns[state.turns.length - 1];
+	},
 	otherTeam: (team: TeamIndex, collection: { [t in TeamIndex]: unknown }): TeamIndex => {
 		const otherTeamIndex: TeamIndex | undefined = Object.keys(collection).find(teamIndex => teamIndex !== team) as (TeamIndex | undefined);
 		if (otherTeamIndex == undefined) {
@@ -225,8 +249,8 @@ const HELPERS = {
 		}
 		return otherTeamIndex;
 	},
-	getIndexOfPlayer: (state: CurrentTurnDetailsState, playerId: string): PlayerIndex | undefined => {
-		const entries: [PlayerIndex, AppUser][] = getEntries(state.players);
+	getIndexOfPlayer: (latestTurn: TurnDetails, playerId: string): PlayerIndex | undefined => {
+		const entries: [PlayerIndex, AppUser][] = getEntries(latestTurn.players);
 		for (const [playerIndex, player] of entries) {
 			if (player.id === playerId) {
 				return playerIndex;
@@ -234,11 +258,11 @@ const HELPERS = {
 		}
 		return undefined;
 	},
-	getPlayerById: (state: CurrentTurnDetailsState, playerId: string): AppUser | undefined => {
-		const players: readonly AppUser[] = HELPERS.getAllPlayers(state);
+	getPlayerById: (latestTurn: TurnDetails, playerId: string): AppUser | undefined => {
+		const players: readonly AppUser[] = HELPERS.getAllPlayers(latestTurn);
 		return players.find((player) => player.id === playerId);
 	},
-	getAllPlayers: (state: CurrentTurnDetailsState): readonly AppUser[] => {
+	getAllPlayers: (state: TurnDetails): readonly AppUser[] => {
 		return Array.from(Object.values(state.players));
 	},
 	playerWithSameId: (playerIndex: PlayerIndex, player: [string, unknown]): boolean => {
@@ -258,8 +282,8 @@ const HELPERS = {
 		}
 		throw new Error('Internal Error');
 	},
-	getPlayersOfTeam: (team: TeamIndex, state: CurrentTurnDetailsState): AppUser[] => {
-		return getEntries(state.players)
+	getPlayersOfTeam: (team: TeamIndex, latestTurn: TurnDetails): AppUser[] => {
+		return getEntries(latestTurn.players)
 			.filter((r) => HELPERS.playerBelongsToTeam(team, r))
 			.map(([, r]) => r);
 	},
@@ -273,30 +297,49 @@ const HELPERS = {
 		}
 		throw new Error('Internal Error');
 	},
-	updateTemporaryScore: (state: CurrentTurnDetailsState): void => {
-		state.temporaryScore.team1 = state.totalScore.team1 + HELPERS.POINTS_CALCULATION.calculateScoreOfTeam('team1', state);
-		state.temporaryScore.team2 = state.totalScore.team2 + HELPERS.POINTS_CALCULATION.calculateScoreOfTeam('team2', state);
+	updateTurnPoints: (state: CurrentGameState, latestTurn: TurnDetails): void => {
+		latestTurn.score.team1 = state.currentScore.team1 + HELPERS.POINTS_CALCULATION.calculateScoreOfTeam('team1', latestTurn);
+		latestTurn.score.team2 = state.currentScore.team2 + HELPERS.POINTS_CALCULATION.calculateScoreOfTeam('team2', latestTurn);
+	},
+	updateTotalPoints: (state: CurrentGameState): void => {
+		state.currentScore.team1 = HELPERS.POINTS_CALCULATION.calculateTotalScoreOfTeam('team1', state);
+		state.currentScore.team2 = HELPERS.POINTS_CALCULATION.calculateTotalScoreOfTeam('team2', state);
+	},
+	initNewTurn: (state: CurrentGameState): void => {
+		state.turns.push(initialTurnDetails);
 	},
 	POINTS_CALCULATION: {
-		calculateScoreOfTeam: (teamToCheck: TeamIndex, state: CurrentTurnDetailsState): number => {
+		calculateTotalScoreOfTeam: (teamToCheck: TeamIndex, state: CurrentGameState): number => {
+			const turns = state.turns;
+			if (turns.length <= 1) {
+				return 0;
+			}
+			let score = 0;
+			for (let i = 0; i < turns.length - 1; i++) {
+				const turn = turns[i];
+				score += turn.score[teamToCheck];
+			}
+			return score;
+		},
+		calculateScoreOfTeam: (teamToCheck: TeamIndex, latestTurn: TurnDetails): number => {
 			let scoreToAdd = 0;
-			for (const [teamIndex, oneTwo] of getEntries(state.teamsOneTwo)) {
+			for (const [teamIndex, oneTwo] of getEntries(latestTurn.teamsOneTwo)) {
 				if (teamToCheck !== teamIndex) {
 					if (oneTwo) {
-						scoreToAdd += HELPERS.POINTS_CALCULATION.applyTichuGrandTichuScore(state.playersTichuGrandTichu, state.players, teamToCheck, state.finishedFirst.id);
-						scoreToAdd += HELPERS.POINTS_CALCULATION.applyOneTwo(state.teamsOneTwo, teamToCheck);
+						scoreToAdd += HELPERS.POINTS_CALCULATION.applyTichuGrandTichuScore(latestTurn.playersTichuGrandTichu, latestTurn.players, teamToCheck, latestTurn.finishedFirst.id);
+						scoreToAdd += HELPERS.POINTS_CALCULATION.applyOneTwo(latestTurn.teamsOneTwo, teamToCheck);
 						return scoreToAdd;
 					}
 					continue;
 				}
 				if (oneTwo) {
-					scoreToAdd += HELPERS.POINTS_CALCULATION.applyTichuGrandTichuScore(state.playersTichuGrandTichu, state.players, teamToCheck, state.finishedFirst.id);
-					scoreToAdd += HELPERS.POINTS_CALCULATION.applyOneTwo(state.teamsOneTwo, teamToCheck);
+					scoreToAdd += HELPERS.POINTS_CALCULATION.applyTichuGrandTichuScore(latestTurn.playersTichuGrandTichu, latestTurn.players, teamToCheck, latestTurn.finishedFirst.id);
+					scoreToAdd += HELPERS.POINTS_CALCULATION.applyOneTwo(latestTurn.teamsOneTwo, teamToCheck);
 					return scoreToAdd;
 				}
 			}
-			scoreToAdd += HELPERS.POINTS_CALCULATION.applyPointsScore(state.teamsPoints, teamToCheck);
-			scoreToAdd += HELPERS.POINTS_CALCULATION.applyTichuGrandTichuScore(state.playersTichuGrandTichu, state.players, teamToCheck, state.finishedFirst.id);
+			scoreToAdd += HELPERS.POINTS_CALCULATION.applyPointsScore(latestTurn.teamsPoints, teamToCheck);
+			scoreToAdd += HELPERS.POINTS_CALCULATION.applyTichuGrandTichuScore(latestTurn.playersTichuGrandTichu, latestTurn.players, teamToCheck, latestTurn.finishedFirst.id);
 			return scoreToAdd;
 		},
 		applyPointsScore: (pointsPerTeam: Points, teamToCheck: TeamIndex): number => {
@@ -350,34 +393,46 @@ const HELPERS = {
 
 export const CURRENT_TURN_DETAILS_SELECTORS = {
 	playersAvailableForFirstPlace: (state: GlobalState): AppUser[] => {
-		for (const [teamIndex, oneTwo] of getEntries(state.currentTurnDetails.teamsOneTwo)) {
+		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
+		for (const [teamIndex, oneTwo] of getEntries(latestTurn.teamsOneTwo)) {
 			if (oneTwo) {
-				return HELPERS.getPlayersOfTeam(teamIndex, state.currentTurnDetails);
+				return HELPERS.getPlayersOfTeam(teamIndex, latestTurn);
 			}
 		}
-		return getEntries(state.currentTurnDetails.players).map(([, r]) => r);
+		return getEntries(latestTurn.players).map(([, r]) => r);
 	},
-	points: (state: GlobalState) => {
+	// points: (state: GlobalState) => {
+	// 	const latestTurn = HELPERS.getLatestTurn(state.currentGame);
+	// 	return {
+	// 		team1: {
+	// 			points: latestTurn.teamsPoints['team1'],
+	// 			totalPoints: latestTurn.totalScore['team1'],
+	// 		},
+	// 		team2: {
+	// 			points: latestTurn.teamsPoints['team2'],
+	// 			totalPoints: latestTurn.totalScore['team2'],
+	// 		},
+	// 	};
+	// },
+	getGameDetails: (state: GlobalState) => {
 		return {
-			team1: {
-				points: state.currentTurnDetails.teamsPoints['team1'],
-				totalPoints: state.currentTurnDetails.totalScore['team1'],
-			},
-			team2: {
-				points: state.currentTurnDetails.teamsPoints['team2'],
-				totalPoints: state.currentTurnDetails.totalScore['team2'],
+			winningScore: state.currentGame.winningScore,
+			currentScore: {
+				team1: state.currentGame.currentScore['team1'],
+				team2: state.currentGame.currentScore['team2'],
 			},
 		};
 	},
 	playersWithDetails: (state: GlobalState): PlayerWithDetails[] => {
+		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
 		const playersWithDetails: PlayerWithDetails[] = [];
-		for (const [playerIndex, player] of getEntries(state.currentTurnDetails.players)) {
-			const tichuGrandTichu = state.currentTurnDetails.playersTichuGrandTichu[playerIndex];
-			const deals = state.currentTurnDetails.playerWhoDeals === playerIndex;
+		for (const [playerIndex, player] of getEntries(latestTurn.players)) {
+			const tichuGrandTichu = latestTurn.playersTichuGrandTichu[playerIndex];
+			const deals = latestTurn.playerWhoDeals === playerIndex;
 			playersWithDetails.push({
 				id: player.id,
 				name: player.name,
-				team: HELPERS.getTeamOfPlayer(player, state.currentTurnDetails.players),
+				team: HELPERS.getTeamOfPlayer(player, latestTurn.players),
 				tichu: tichuGrandTichu.tichu,
 				grandTichu: tichuGrandTichu.grandTichu,
 				deals,
@@ -386,11 +441,12 @@ export const CURRENT_TURN_DETAILS_SELECTORS = {
 		return playersWithDetails;
 	},
 	teamsWithDetails: (state: GlobalState): TeamWithDetails[] => {
+		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
 		const teamsWithDetails: TeamWithDetails[] = [];
-		for (const [teamIndex, oneTwo] of getEntries(state.currentTurnDetails.teamsOneTwo)) {
-			const points = state.currentTurnDetails.teamsPoints[teamIndex];
-			const temporaryScore = state.currentTurnDetails.temporaryScore[teamIndex];
-			const totalPointsBeforeThisTurn = state.currentTurnDetails.totalScore[teamIndex];
+		for (const [teamIndex, oneTwo] of getEntries(latestTurn.teamsOneTwo)) {
+			const points = latestTurn.teamsPoints[teamIndex];
+			const temporaryScore = latestTurn.score[teamIndex];
+			const totalPointsBeforeThisTurn = state.currentGame.currentScore[teamIndex];
 			teamsWithDetails.push({
 				teamIndex,
 				oneTwo,
@@ -402,13 +458,17 @@ export const CURRENT_TURN_DETAILS_SELECTORS = {
 		return teamsWithDetails;
 	},
 	finishedFirstPlayer: (state: GlobalState): AppUser => {
-		return state.currentTurnDetails.finishedFirst;
+		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
+
+		return latestTurn.finishedFirst;
 	},
 	playerWhoDeals: (state: GlobalState): AppUser => {
-		return state.currentTurnDetails.players[state.currentTurnDetails.playerWhoDeals];
+		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
+		return latestTurn.players[latestTurn.playerWhoDeals];
 	},
 	gamePlayersInWeirdOrder: (state: GlobalState): AppUser[] => {
-		const players = state.currentTurnDetails.players;
+		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
+		const players = latestTurn.players;
 		return [players['t1p1'], players['t2p1'], players['t1p2'], players['t2p2']];
 	},
 } as const;

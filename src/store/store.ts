@@ -1,14 +1,14 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { AppUsersState, usersSlice } from './usersSlice.ts';
 import { GamesHistoryState, gamesSlice } from './gamesSlice.ts';
-import { currentTurnDetailsSlice, CurrentTurnDetailsState } from './currentTurnDetailsSlice.ts';
+import { CurrentGameState, currentGameSlice } from './currentGameSlice.ts';
 import { FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 export type GlobalState = {
 	[usersSlice.name]: AppUsersState,
 	[gamesSlice.name]: GamesHistoryState,
-	[currentTurnDetailsSlice.name]: CurrentTurnDetailsState,
+	[currentGameSlice.name]: CurrentGameState,
 }
 const persistConfig = {
 	key: 'root',
@@ -17,7 +17,7 @@ const persistConfig = {
 const reducers = combineReducers({
 	[usersSlice.name]: usersSlice.reducer,
 	[gamesSlice.name]: gamesSlice.reducer,
-	[currentTurnDetailsSlice.name]: currentTurnDetailsSlice.reducer,
+	[currentGameSlice.name]: currentGameSlice.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);
