@@ -30,6 +30,55 @@ const initialState: AppUsersState = {
 		id: '4',
 		name: 'Player4',
 	},
+	'5': {
+		id: '5',
+		name: 'Player5',
+	},
+	'6': {
+		id: '6',
+		name: 'Player6',
+	},
+	'7': {
+		id: '7',
+		name: 'Player7',
+	},
+	'8': {
+		id: '8',
+		name: 'Player8',
+	},
+	'9': {
+		id: '9',
+		name: 'Player9',
+	},
+	'10': {
+		id: '10',
+		name: 'Player10',
+	},
+	'11': {
+		id: '11',
+		name: 'Player11',
+	},
+	'12': {
+		id: '12',
+		name: 'Player12',
+	},
+	'13': {
+		id: '13',
+		name: 'Player13',
+	},
+	'14': {
+		id: '14',
+		name: 'Player14',
+	},
+	'15': {
+		id: '15',
+		name: 'Player15',
+	},
+	'16': {
+		id: '16',
+		name: 'Player16',
+	},
+
 };
 export const usersSlice = createSlice({
 	name: 'users',
@@ -63,8 +112,11 @@ const HELPERS = {
 } as const;
 
 export const USERS_SELECTORS = {
-	selectAppUsers: (state: { users: AppUsersState }): AppUser[] => {
+	appUsers: (state: { users: AppUsersState }): AppUser[] => {
 		return Array.from(Object.values(state.users));
+	},
+	appUserById: (userId: string) => (state: GlobalState): AppUser | undefined => {
+		return state.users[userId];
 	},
 } as const;
 
