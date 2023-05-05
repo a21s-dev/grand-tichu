@@ -10,11 +10,12 @@ export interface AddNewPlayerDialogProps {
 function AddNewPlayerDialog(props: AddNewPlayerDialogProps) {
 	const { onClose, open } = props;
 	const [playerName, setPlayerName] = React.useState<string>('');
-	const handleClose = () => {
-		onClose(undefined);
-	};
 	return (
-		<Dialog onClose={handleClose} open={open}>
+		<Dialog
+			open={open}
+			onClose={() => {
+				onClose(undefined);
+			}}>
 			<DialogTitle>
 				<Typography variant='body1'>Add a new player</Typography>
 			</DialogTitle>
@@ -28,6 +29,11 @@ function AddNewPlayerDialog(props: AddNewPlayerDialogProps) {
 					const value = e.target.value;
 					setPlayerName(value);
 				}}
+				onKeyUp={(e) => {
+					if (e.key === 'Enter') {
+						onClose({playerName});
+					}
+				}}
 				inputRef={(input) => {
 					if (input) {
 						setTimeout(() => {
@@ -38,7 +44,6 @@ function AddNewPlayerDialog(props: AddNewPlayerDialogProps) {
 			/>
 			<br />
 			<div className='flex items-center justify-around'>
-
 				<Button
 					variant='outlined'
 					color='error'
