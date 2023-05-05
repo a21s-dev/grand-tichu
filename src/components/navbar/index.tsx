@@ -24,7 +24,9 @@ function NavBar() {
 			<AppBar color='primary' position='fixed'>
 				<Toolbar className='grid grid-cols-[1fr_repeat(1,auto)_1fr] justify-items-center gap-3'>
 					<Typography variant='h2' className='col-start-2 text-3xl'>
-						Grand Tichu
+						<Link to='/'>
+							Grand Tichu
+						</Link>
 					</Typography>
 					<div className='ml-auto'>
 						<IconButton color='secondary' onClick={handleMenu}>
