@@ -1,37 +1,58 @@
 import { Button, Dialog, DialogTitle, TextField, Typography } from '@mui/material';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { USERS_SELECTORS, usersSlice } from '../../store/usersSlice.ts';
 
 export interface AddNewPlayerDialogProps {
 	keepMounted: boolean;
 	open: boolean;
-	onClose: (details: { playerName: string } | undefined) => void;
+	playerId: string;
+	onClose: () => void;
 }
 
-function AddNewPlayerDialog(props: AddNewPlayerDialogProps) {
-	const { onClose, open } = props;
-	const [playerName, setPlayerName] = React.useState<string>('');
+function UpdateUserDialog(props: AddNewPlayerDialogProps) {
+	const { onClose, playerId, open } = props;
+	const dispatch = useDispatch();
+	const user = useSelector(USERS_SELECTORS.appUserById(playerId));
+	if (user == undefined) {
+		onClose();
+		throw new Error('');
+	}
+	const [userName, setUserName] = React.useState<string>(user.name);
+
+	function updateUser() {
+		dispatch(usersSlice.actions.updateName(
+			{
+				id: playerId,
+				name: userName,
+			},
+		));
+		onClose();
+	}
+
 	return (
 		<Dialog
 			open={open}
 			onClose={() => {
-				onClose(undefined);
+				onClose();
 			}}>
 			<DialogTitle>
-				<Typography variant='body1'>Add a new player</Typography>
+				<Typography variant='body1'>Update user {user.id}</Typography>
 			</DialogTitle>
 			<TextField
 				id='outlined-basic'
 				label='Player name'
 				variant='outlined'
 				autoFocus={true}
-				value={playerName}
+				value={userName}
 				onChange={(e) => {
 					const value = e.target.value;
-					setPlayerName(value);
+					setUserName(value);
 				}}
 				onKeyUp={(e) => {
 					if (e.key === 'Enter') {
-						onClose({playerName});
+						updateUser();
+						onClose();
 					}
 				}}
 				inputRef={(input) => {
@@ -48,7 +69,7 @@ function AddNewPlayerDialog(props: AddNewPlayerDialogProps) {
 					variant='outlined'
 					color='error'
 					onClick={() => {
-						onClose(undefined);
+						onClose();
 					}}
 				>
 					Cancel
@@ -57,7 +78,8 @@ function AddNewPlayerDialog(props: AddNewPlayerDialogProps) {
 					variant='contained'
 					color='success'
 					onClick={() => {
-						onClose({ playerName });
+						updateUser();
+						onClose();
 					}}
 				>
 					OK
@@ -67,4 +89,4 @@ function AddNewPlayerDialog(props: AddNewPlayerDialogProps) {
 	);
 }
 
-export default AddNewPlayerDialog;
+export default UpdateUserDialog;

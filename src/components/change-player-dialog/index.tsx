@@ -13,11 +13,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppUser, USERS_SELECTORS, usersSlice } from '../../store/usersSlice.ts';
 import * as React from 'react';
 import AddNewPlayerDialog from '../add-new-player-dialog';
-import { v4 as uuidv4 } from 'uuid';
 import { AppError } from '../../error/AppError.ts';
 import { InternalError } from '../../error/InternalError.ts';
 import { InvalidPlayerNameError } from '../../error/InvalidPlayerNameError.ts';
 import { PlayerAlreadyExistsError } from '../../error/PlayerAlreadyExistsError.ts';
+import { nanoid } from 'nanoid';
 
 export interface ChangePlayerDialogProps {
 	keepMounted: boolean;
@@ -29,7 +29,7 @@ export interface ChangePlayerDialogProps {
 function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 	const { onClose, player, open } = props;
 	const dispatch = useDispatch();
-	const usersState = useSelector(USERS_SELECTORS.selectAppUsers);
+	const usersState = useSelector(USERS_SELECTORS.appUsers);
 	const [openAddNewPlayerDialog, setOpenAddNewPlayerDialog] =
 		React.useState(false);
 	const [addPlayerError, setAddPlayerError] = React.useState<string>('');
@@ -52,7 +52,7 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 			return;
 		}
 		try {
-			const id = uuidv4();
+			const id = nanoid();
 			dispatch(usersSlice.actions.addNew({
 				id,
 				name: details.playerName,
@@ -113,7 +113,7 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 				</List>
 			</Dialog>
 			{addPlayerError &&
-				<Snackbar open={addPlayerError !== ''} autoHideDuration={60000} onClose={() => {
+				<Snackbar open={addPlayerError !== ''} autoHideDuration={3000} onClose={() => {
 					setAddPlayerError('');
 				}}>
 					<Alert onClose={() => {
@@ -122,14 +122,6 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 						{addPlayerError}
 					</Alert>
 				</Snackbar>
-				// <Alert
-				// 	onClose={() => {
-				// 		setPlayerNameExistsError(false);
-				// 	}}
-				// 	severity='error'
-				// >
-				// 	Player name already exists
-				// </Alert>
 			}
 			{openAddNewPlayerDialog &&
 				<AddNewPlayerDialog

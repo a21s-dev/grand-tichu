@@ -3,6 +3,7 @@ import { getEntries } from '../utils/type-wizards.ts';
 import { GlobalState } from './store.ts';
 import { InvalidPlayerNameError } from '../error/InvalidPlayerNameError.ts';
 import { PlayerAlreadyExistsError } from '../error/PlayerAlreadyExistsError.ts';
+import { PlayerDoesNotExistError } from '../error/PlayerDoesNotExistError.ts';
 
 
 export type AppUser = {
@@ -30,6 +31,55 @@ const initialState: AppUsersState = {
 		id: '4',
 		name: 'Player4',
 	},
+	'5': {
+		id: '5',
+		name: 'Player5',
+	},
+	'6': {
+		id: '6',
+		name: 'Player6',
+	},
+	'7': {
+		id: '7',
+		name: 'Player7',
+	},
+	'8': {
+		id: '8',
+		name: 'Player8',
+	},
+	'9': {
+		id: '9',
+		name: 'Player9',
+	},
+	'10': {
+		id: '10',
+		name: 'Player10',
+	},
+	'11': {
+		id: '11',
+		name: 'Player11',
+	},
+	'12': {
+		id: '12',
+		name: 'Player12',
+	},
+	'13': {
+		id: '13',
+		name: 'Player13',
+	},
+	'14': {
+		id: '14',
+		name: 'Player14',
+	},
+	'15': {
+		id: '15',
+		name: 'Player15',
+	},
+	'16': {
+		id: '16',
+		name: 'Player16',
+	},
+
 };
 export const usersSlice = createSlice({
 	name: 'users',
@@ -53,6 +103,34 @@ export const usersSlice = createSlice({
 				name: trimmedName,
 			};
 		},
+		updateName: (state: Draft<AppUsersState>, action: PayloadAction<AppUser>) => {
+			const trimmedName = action.payload.name.trim();
+			if (trimmedName.length === 0) {
+				throw new InvalidPlayerNameError();
+			}
+			const userWithSameId = state[action.payload.id];
+			if (userWithSameId == undefined) {
+				throw new PlayerDoesNotExistError();
+			}
+			if (userWithSameId.name === trimmedName) {
+				return;
+			}
+			const userWithSameName = HELPERS.findUserByName(trimmedName, state);
+			if (userWithSameName != undefined) {
+				throw new PlayerAlreadyExistsError();
+			}
+			state[action.payload.id] = {
+				id: action.payload.id,
+				name: trimmedName,
+			};
+		},
+		deleteUser: (state: Draft<AppUsersState>, action: PayloadAction<{ userId: string }>) => {
+			const userWithSameId = state[action.payload.userId];
+			if (userWithSameId == undefined) {
+				throw new PlayerDoesNotExistError();
+			}
+			delete state[action.payload.userId];
+		},
 	},
 });
 
@@ -63,8 +141,11 @@ const HELPERS = {
 } as const;
 
 export const USERS_SELECTORS = {
-	selectAppUsers: (state: { users: AppUsersState }): AppUser[] => {
+	appUsers: (state: { users: AppUsersState }): AppUser[] => {
 		return Array.from(Object.values(state.users));
+	},
+	appUserById: (userId: string) => (state: GlobalState): AppUser | undefined => {
+		return state.users[userId];
 	},
 } as const;
 

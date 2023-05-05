@@ -30,13 +30,25 @@ export type TurnDetails = {
 	players: Players,
 	playersTichuGrandTichu: PlayersTichuGrandTichu,
 	teamsOneTwo: OneTwo,
+	/*
+	*
+	* Points adding together up to 100
+	* */
 	teamsPoints: Points,
 	finishedFirst: AppUser,
 	playerWhoDeals: PlayerIndex,
+	/*
+	*
+	* Score to be added from this turn alone
+	* */
 	score: TeamScore,
 }
 export type CurrentGameState = {
 	turns: TurnDetails[],
+	/*
+	*
+	* Current score after applying all the turns
+	* */
 	currentScore: TeamScore,
 	winningScore: 300 | 500 | 1000 | 1500 | 2000 | 'unlimited',
 }
@@ -139,7 +151,7 @@ export const currentGameSlice = createSlice({
 			const tichuGrandTichu = latestTurn.playersTichuGrandTichu[playerIndex];
 			tichuGrandTichu.tichu = action.payload.tichu;
 			tichuGrandTichu.grandTichu = action.payload.grandTichu;
-			HELPERS.updateTurnPoints(state, latestTurn);
+			HELPERS.updateTurnPoints(latestTurn);
 		},
 		replacePlayer: (
 			state: Draft<CurrentGameState>,
@@ -182,7 +194,7 @@ export const currentGameSlice = createSlice({
 				latestTurn.playerWhoDeals = playerToReplaceIndex;
 			}
 			latestTurn.finishedFirst = action.payload.newPlayer;
-			HELPERS.updateTurnPoints(state, latestTurn);
+			HELPERS.updateTurnPoints(latestTurn);
 		},
 		teamOneTwo: (state: Draft<CurrentGameState>, action: PayloadAction<{
 			[team in TeamIndex]: boolean
@@ -206,14 +218,14 @@ export const currentGameSlice = createSlice({
 					latestTurn.finishedFirst = firstPlayer;
 				}
 			}
-			HELPERS.updateTurnPoints(state, latestTurn);
+			HELPERS.updateTurnPoints(latestTurn);
 		},
 		teamPoints: (state: Draft<CurrentGameState>, action: PayloadAction<{ team: TeamIndex, points: number }>) => {
 			const latestTurn = HELPERS.getLatestTurn(state);
 			const otherTeamIndex = HELPERS.otherTeam(action.payload.team, latestTurn.teamsPoints);
 			latestTurn.teamsPoints[action.payload.team] = action.payload.points;
 			latestTurn.teamsPoints[otherTeamIndex] = 100 - action.payload.points;
-			HELPERS.updateTurnPoints(state, latestTurn);
+			HELPERS.updateTurnPoints(latestTurn);
 		},
 		finishedFirst: (state: Draft<CurrentGameState>, action: PayloadAction<{ playerId: string }>) => {
 			const latestTurn = HELPERS.getLatestTurn(state);
@@ -224,7 +236,7 @@ export const currentGameSlice = createSlice({
 				);
 			}
 			latestTurn.finishedFirst = player;
-			HELPERS.updateTurnPoints(state, latestTurn);
+			HELPERS.updateTurnPoints(latestTurn);
 		},
 		submitTurn: (state: Draft<CurrentGameState>) => {
 			HELPERS.initNewTurn(state);
@@ -234,7 +246,7 @@ export const currentGameSlice = createSlice({
 });
 
 
-const HELPERS = {
+export const HELPERS = {
 	getLatestTurn: (state: CurrentGameState): TurnDetails => {
 		if (state.turns.length === 0) {
 			throw new InternalError();
@@ -296,9 +308,9 @@ const HELPERS = {
 		}
 		throw new Error('Internal Error');
 	},
-	updateTurnPoints: (state: CurrentGameState, latestTurn: TurnDetails): void => {
-		latestTurn.score.team1 = state.currentScore.team1 + HELPERS.POINTS_CALCULATION.calculateScoreOfTeam('team1', latestTurn);
-		latestTurn.score.team2 = state.currentScore.team2 + HELPERS.POINTS_CALCULATION.calculateScoreOfTeam('team2', latestTurn);
+	updateTurnPoints: (latestTurn: TurnDetails): void => {
+		latestTurn.score.team1 =  HELPERS.POINTS_CALCULATION.calculateScoreOfTeam('team1', latestTurn);
+		latestTurn.score.team2 = HELPERS.POINTS_CALCULATION.calculateScoreOfTeam('team2', latestTurn);
 	},
 	updateTotalPoints: (state: CurrentGameState): void => {
 		state.currentScore.team1 = HELPERS.POINTS_CALCULATION.calculateTotalScoreOfTeam('team1', state);
@@ -337,8 +349,8 @@ const HELPERS = {
 					return scoreToAdd;
 				}
 			}
-			scoreToAdd += HELPERS.POINTS_CALCULATION.applyPointsScore(latestTurn.teamsPoints, teamToCheck);
 			scoreToAdd += HELPERS.POINTS_CALCULATION.applyTichuGrandTichuScore(latestTurn.playersTichuGrandTichu, latestTurn.players, teamToCheck, latestTurn.finishedFirst.id);
+			scoreToAdd += HELPERS.POINTS_CALCULATION.applyPointsScore(latestTurn.teamsPoints, teamToCheck);
 			return scoreToAdd;
 		},
 		applyPointsScore: (pointsPerTeam: Points, teamToCheck: TeamIndex): number => {

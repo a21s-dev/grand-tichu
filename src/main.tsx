@@ -1,19 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './main.css';
-import { RootRoute, Route, Router, RouterProvider } from '@tanstack/router';
+import { Outlet, RootRoute, Route, Router, RouterProvider } from '@tanstack/router';
 import { Provider } from 'react-redux';
 import { STORE } from './store/store.ts';
 import { orange } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material';
 import SubmitScore from './pages/submit-score';
-import Root from './components/Root.tsx';
 import Index from './pages/index';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
+import Users from './pages/users';
+import UserDetails from './pages/user-details';
 
 const rootRoute = new RootRoute({
-	component: Root,
+	component: () => {
+		return (<>
+			<Outlet />
+		</>);
+	},
 });
 const indexRoute = new Route({
 	getParentRoute: () => rootRoute,
@@ -21,14 +26,51 @@ const indexRoute = new Route({
 	component: Index,
 });
 
+
+const errorRoute = new Route({
+	getParentRoute: () => rootRoute,
+	path: '404',
+	component: () => {
+		return (<>
+			<div>404</div>
+		</>);
+	},
+});
+
 const submitScoreRoute = new Route({
 	getParentRoute: () => rootRoute,
-	path: '/submit-score',
+	path: 'submit-score',
 	component: SubmitScore,
 });
 
+const usersRootRoute = new Route({
+	path: 'users',
+	getParentRoute: () => rootRoute,
+	component: () => {
+		return (<>
+			<Outlet />
+		</>);
+	},
+});
+
+const usersIndexRoute = new Route({
+	getParentRoute: () => usersRootRoute,
+	path: '/',
+	component: Users,
+});
+
+const userDetailsRoute = new Route({
+	getParentRoute: () => usersRootRoute,
+	path: '$userId',
+	component: UserDetails,
+});
 // Create the route tree using your routes
-const routeTree = rootRoute.addChildren([indexRoute, submitScoreRoute]);
+const routeTree = rootRoute.addChildren([
+	indexRoute,
+	errorRoute,
+	submitScoreRoute,
+	usersRootRoute.addChildren([usersIndexRoute, userDetailsRoute]),
+]);
 
 // Create the router using your route tree
 const router = new Router({ routeTree });
