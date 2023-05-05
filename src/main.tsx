@@ -26,6 +26,17 @@ const indexRoute = new Route({
 	component: Index,
 });
 
+
+const errorRoute = new Route({
+	getParentRoute: () => rootRoute,
+	path: '404',
+	component: () => {
+		return (<>
+			<div>404</div>
+		</>);
+	},
+});
+
 const submitScoreRoute = new Route({
 	getParentRoute: () => rootRoute,
 	path: 'submit-score',
@@ -56,6 +67,7 @@ const userDetailsRoute = new Route({
 // Create the route tree using your routes
 const routeTree = rootRoute.addChildren([
 	indexRoute,
+	errorRoute,
 	submitScoreRoute,
 	usersRootRoute.addChildren([usersIndexRoute, userDetailsRoute]),
 ]);
