@@ -3,6 +3,7 @@ import { getEntries } from '../utils/type-wizards.ts';
 import { GlobalState } from './store.ts';
 import { InvalidPlayerNameError } from '../error/InvalidPlayerNameError.ts';
 import { PlayerAlreadyExistsError } from '../error/PlayerAlreadyExistsError.ts';
+import { PlayerDoesNotExistError } from '../error/PlayerDoesNotExistError.ts';
 
 
 export type AppUser = {
@@ -101,6 +102,34 @@ export const usersSlice = createSlice({
 				id: action.payload.id,
 				name: trimmedName,
 			};
+		},
+		updateName: (state: Draft<AppUsersState>, action: PayloadAction<AppUser>) => {
+			const trimmedName = action.payload.name.trim();
+			if (trimmedName.length === 0) {
+				throw new InvalidPlayerNameError();
+			}
+			const userWithSameId = state[action.payload.id];
+			if (userWithSameId == undefined) {
+				throw new PlayerDoesNotExistError();
+			}
+			if (userWithSameId.name === trimmedName) {
+				return;
+			}
+			const userWithSameName = HELPERS.findUserByName(trimmedName, state);
+			if (userWithSameName != undefined) {
+				throw new PlayerAlreadyExistsError();
+			}
+			state[action.payload.id] = {
+				id: action.payload.id,
+				name: trimmedName,
+			};
+		},
+		deleteUser: (state: Draft<AppUsersState>, action: PayloadAction<{ userId: string }>) => {
+			const userWithSameId = state[action.payload.userId];
+			if (userWithSameId == undefined) {
+				throw new PlayerDoesNotExistError();
+			}
+			delete state[action.payload.userId];
 		},
 	},
 });
