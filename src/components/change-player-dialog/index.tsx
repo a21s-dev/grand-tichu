@@ -113,7 +113,7 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 				</List>
 			</Dialog>
 			{addPlayerError &&
-				<Snackbar open={addPlayerError !== ''} autoHideDuration={60000} onClose={() => {
+				<Snackbar open={addPlayerError !== ''} autoHideDuration={3000} onClose={() => {
 					setAddPlayerError('');
 				}}>
 					<Alert onClose={() => {
@@ -122,14 +122,6 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 						{addPlayerError}
 					</Alert>
 				</Snackbar>
-				// <Alert
-				// 	onClose={() => {
-				// 		setPlayerNameExistsError(false);
-				// 	}}
-				// 	severity='error'
-				// >
-				// 	Player name already exists
-				// </Alert>
 			}
 			{openAddNewPlayerDialog &&
 				<AddNewPlayerDialog
