@@ -1,15 +1,10 @@
-import {
-	AppBar,
-	IconButton,
-	Menu,
-	MenuItem,
-	Toolbar,
-	Typography,
-} from '@mui/material';
+import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import * as React from 'react';
+import { Link, useNavigate } from '@tanstack/router';
 
 function NavBar() {
+	const navigate = useNavigate();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
 	const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -48,6 +43,12 @@ function NavBar() {
 						>
 							<MenuItem onClick={handleClose}>
 								<Typography variant='body1'>New Game</Typography>
+							</MenuItem>
+							<MenuItem onClick={() => {
+								navigate({ to: '/users' });
+								handleClose();
+							}}>
+								<Typography variant='body1'>All users</Typography>
 							</MenuItem>
 							<MenuItem onClick={handleClose}>
 								<Typography variant='body1'>Settings</Typography>
