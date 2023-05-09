@@ -30,8 +30,7 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 	const { onClose, player, open } = props;
 	const dispatch = useDispatch();
 	const usersState = useSelector(USERS_SELECTORS.appUsers);
-	const [openAddNewPlayerDialog, setOpenAddNewPlayerDialog] =
-		React.useState(false);
+	const [openAddNewPlayerDialog, setOpenAddNewPlayerDialog] = React.useState(false);
 	const [addPlayerError, setAddPlayerError] = React.useState<string>('');
 	if (player == undefined) {
 		return <div></div>;

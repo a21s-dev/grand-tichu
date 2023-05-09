@@ -36,7 +36,6 @@ describe('turn points', () => {
 		expect(latestTurn.score.team2).toBe(60);
 	});
 
-
 	it('one successful tichu', () => {
 		const latestTurn: TurnDetails = {
 			players: {
@@ -105,7 +104,6 @@ describe('turn points', () => {
 		expect(latestTurn.score.team2).toBe(50);
 	});
 
-
 	it('only points with initial data', () => {
 		const latestTurn: TurnDetails = {
 			players: {
@@ -140,7 +138,6 @@ describe('turn points', () => {
 		expect(latestTurn.score.team2).toBe(50);
 	});
 
-
 	it('one successful tichu and one failed tichu(diff teams)', () => {
 		const latestTurn: TurnDetails = {
 			players: {
@@ -174,7 +171,6 @@ describe('turn points', () => {
 		expect(latestTurn.score.team1).toBe(150);
 		expect(latestTurn.score.team2).toBe(-50);
 	});
-
 
 	it('one successful tichu and one failed tichu(same team)', () => {
 		const latestTurn: TurnDetails = {
