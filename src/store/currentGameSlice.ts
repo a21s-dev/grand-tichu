@@ -262,6 +262,7 @@ export const currentGameSlice = createSlice({
 			}
 			HELPERS.initNewTurn(state);
 			HELPERS.updateTotalPoints(state);
+			HELPERS.nextPlayerDeals(HELPERS.getLatestTurn(state));
 		},
 		startNew: (state: Draft<CurrentGameState>) => {
 			HELPERS.resetScoresAndStartNewTurn(state);
@@ -383,14 +384,29 @@ export const HELPERS = {
 				id: latestTurn.players.t1p1.id,
 				name: latestTurn.players.t1p1.name,
 			},
-			playerWhoDeals: 't1p1',
+			playerWhoDeals: latestTurn.playerWhoDeals,
 			score: {
 				team1: 50,
 				team2: 50,
 			},
 		};
 	},
-
+	nextPlayerDeals: (latestTurn: TurnDetails): void => {
+		const playerWhoDeals = latestTurn.playerWhoDeals;
+		latestTurn.playerWhoDeals = HELPERS.getNextPlayerIndex(playerWhoDeals);
+	},
+	getNextPlayerIndex: (playerIndex: PlayerIndex): PlayerIndex => {
+		if (playerIndex === 't1p1') {
+			return 't2p1';
+		}
+		if (playerIndex === 't2p1') {
+			return 't1p2';
+		}
+		if (playerIndex === 't1p2') {
+			return 't2p2';
+		}
+		return 't1p1';
+	},
 	gameFinished: (state: CurrentGameState): boolean => {
 		const winningScore = state.winningScore;
 		if (winningScore === 'unlimited') {
