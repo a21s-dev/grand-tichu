@@ -1,15 +1,19 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { AnyAction, combineReducers, configureStore, ThunkDispatch } from '@reduxjs/toolkit';
 import { AppUsersState, usersSlice } from './usersSlice.ts';
 import { GamesHistoryState, gamesSlice } from './gamesSlice.ts';
 import { CurrentGameState, currentGameSlice } from './currentGameSlice.ts';
 import { FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import { useDispatch } from 'react-redux';
+
 
 export type GlobalState = {
 	[usersSlice.name]: AppUsersState,
 	[gamesSlice.name]: GamesHistoryState,
 	[currentGameSlice.name]: CurrentGameState,
 }
+type TypedDispatch<T> = ThunkDispatch<T, any, AnyAction>;
+export const useAppDispatch = () => useDispatch<TypedDispatch<GlobalState>>();
 const persistConfig = {
 	key: 'root',
 	storage,
