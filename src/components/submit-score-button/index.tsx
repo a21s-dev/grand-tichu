@@ -1,10 +1,10 @@
 import { Typography } from '@mui/material';
 import { useNavigate } from '@tanstack/router';
-import { useDispatch } from 'react-redux';
-import { currentGameSlice } from '../../store/currentGameSlice.ts';
+import { CURRENT_TURN_EXTRA_ACTIONS } from '../../store/currentGameSlice.ts';
+import { useAppDispatch } from '../../store/store.ts';
 
 function SubmitScoreButton() {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	return (
@@ -13,7 +13,7 @@ function SubmitScoreButton() {
 				<button
 					className='h-full w-full'
 					onClick={() => {
-						dispatch(currentGameSlice.actions.submitTurn());
+						dispatch(CURRENT_TURN_EXTRA_ACTIONS.submitTurn());
 						navigate({ to: '/' });
 					}}
 				>

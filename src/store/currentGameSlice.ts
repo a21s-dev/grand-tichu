@@ -1,8 +1,9 @@
 import { getEntries } from '../utils/type-wizards.ts';
-import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
+import { AnyAction, createSlice, Draft, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { AppUser } from './usersSlice.ts';
 import { InternalError } from '../error/InternalError.ts';
 import { GlobalState } from './store.ts';
+import { gamesSlice } from './gamesSlice.ts';
 
 export type PlayerIndex = 't1p1' | 't1p2' | 't2p1' | 't2p2';
 export type TeamIndex = 'team1' | 'team2';
@@ -10,7 +11,7 @@ type Players = { [key in PlayerIndex]: AppUser }
 type PlayersTichuGrandTichu = { [key in PlayerIndex]: { tichu: boolean, grandTichu: boolean } };
 type OneTwo = { [key in TeamIndex]: boolean };
 type Points = { [key in TeamIndex]: number };
-type TeamScore = { [key in TeamIndex]: number; }
+export type TeamScore = { [key in TeamIndex]: number; }
 export type PlayerWithDetails = {
 	id: string,
 	name: string,
@@ -256,7 +257,7 @@ export const currentGameSlice = createSlice({
 			latestTurn.finishedFirst = player;
 			HELPERS.updateTurnPoints(latestTurn);
 		},
-		submitTurn: (state: Draft<CurrentGameState>) => {
+		internalSubmitTurn: (state: Draft<CurrentGameState>) => {
 			if (HELPERS.gameFinished(state)) {
 				return;
 			}
@@ -270,6 +271,23 @@ export const currentGameSlice = createSlice({
 	},
 });
 
+
+export const CURRENT_TURN_EXTRA_ACTIONS = {
+	submitTurn: () => {
+		return (dispatch: ThunkDispatch<GlobalState, unknown, AnyAction>, getState: () => GlobalState) => {
+			dispatch(currentGameSlice.actions.internalSubmitTurn());
+			const globalState = getState();
+			const currentGame = globalState.currentGame;
+			if (HELPERS.gameFinished(currentGame)) {
+				dispatch(gamesSlice.actions.add({
+					turns: currentGame.turns.slice(0, currentGame.turns.length - 1),
+					currentScore: currentGame.currentScore,
+					winningScore: currentGame.winningScore,
+				}));
+			}
+		};
+	},
+};
 
 export const HELPERS = {
 	getLatestTurn: (state: CurrentGameState): TurnDetails => {
@@ -513,19 +531,6 @@ export const CURRENT_TURN_DETAILS_SELECTORS = {
 		}
 		return getEntries(latestTurn.players).map(([, r]) => r);
 	},
-	// points: (state: GlobalState) => {
-	// 	const latestTurn = HELPERS.getLatestTurn(state.currentGame);
-	// 	return {
-	// 		team1: {
-	// 			points: latestTurn.teamsPoints['team1'],
-	// 			totalPoints: latestTurn.totalScore['team1'],
-	// 		},
-	// 		team2: {
-	// 			points: latestTurn.teamsPoints['team2'],
-	// 			totalPoints: latestTurn.totalScore['team2'],
-	// 		},
-	// 	};
-	// },
 	getGameDetails: (state: GlobalState) => {
 		return {
 			winningScore: state.currentGame.winningScore,
