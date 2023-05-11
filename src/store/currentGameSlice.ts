@@ -588,6 +588,13 @@ export const CURRENT_TURN_DETAILS_SELECTORS = {
 		const players = latestTurn.players;
 		return [players['t1p1'], players['t2p1'], players['t1p2'], players['t2p2']];
 	},
+	turns: (state: GlobalState): TurnDetails[] => {
+		return state.currentGame.turns.slice(0, state.currentGame.turns.length - 1);
+	},
+	gamePlayers: (state: GlobalState) => {
+		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
+		return latestTurn.players;
+	},
 	winnerOfGame: (state: GlobalState): TeamIndex | undefined => {
 		const winningScore = state.currentGame.winningScore;
 		if (winningScore === 'unlimited') {
