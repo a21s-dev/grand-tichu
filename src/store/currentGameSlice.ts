@@ -12,7 +12,7 @@ type PlayersTichuGrandTichu = { [key in PlayerIndex]: { tichu: boolean, grandTic
 type OneTwo = { [key in TeamIndex]: boolean };
 type Points = { [key in TeamIndex]: number };
 export type TeamScore = { [key in TeamIndex]: number; }
-export type WinningScore = 300 | 500 | 1000 | 1500 | 2000 | 'unlimited';
+export type WinningScore = 1 | 300 | 500 | 1000 | 1500 | 2000 | 'unlimited';
 export type PlayerWithDetails = {
 	id: string,
 	name: string,
@@ -528,7 +528,7 @@ export const CURRENT_TURN_DETAILS_SELECTORS = {
 			id: state.currentGame.id,
 			currentScore: state.currentGame.currentScore,
 			winningScore: state.currentGame.winningScore,
-			turns: state.currentGame.turns
+			turns: state.currentGame.turns,
 			// turns: state.currentGame.turns.slice(0, state.currentGame.turns.length - 1),
 		};
 	},
