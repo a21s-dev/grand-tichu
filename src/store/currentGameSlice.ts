@@ -259,7 +259,7 @@ export const currentGameSlice = createSlice({
 			HELPERS.updateTotalPoints(state);
 			HELPERS.nextPlayerDeals(HELPERS.getLatestTurn(state));
 		},
-		startNew: (state: Draft<CurrentGameState>) => {
+		internalStartNew: (state: Draft<CurrentGameState>) => {
 			HELPERS.resetScoresAndStartNewTurn(state);
 		},
 		deleteLastTurn: (state: Draft<CurrentGameState>) => {
@@ -283,7 +283,7 @@ export const CURRENT_TURN_EXTRA_ACTIONS = {
 				currentScore: currentGame.currentScore,
 				winningScore: currentGame.winningScore,
 			}));
-			dispatch(currentGameSlice.actions.startNew());
+			dispatch(currentGameSlice.actions.internalStartNew());
 		};
 	},
 };
