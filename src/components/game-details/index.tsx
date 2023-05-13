@@ -1,6 +1,8 @@
 import { List, ListItem, ListSubheader } from '@mui/material';
 import { PlayerIndex, TurnDetails } from '../../store/currentGameSlice.ts';
 import { Game } from '../../store/gamesSlice.ts';
+import * as React from 'react';
+import ChangeWinningScoreDialog from '../change-winning-score-dialog';
 
 
 export interface GameDetailsProps {
@@ -14,7 +16,7 @@ function GameDetails(props: GameDetailsProps) {
 	const latestTurnPlayers = latestTurn.players;
 	const turns = game.turns.slice(0, game.turns.length - 1);//Last turn is the dummy one
 
-
+	const [openChangeWinningScoreDialog, setOpenChangeWinningScoreDialog] = React.useState(false);
 	const playerTichuGrandTichu = (turn: TurnDetails, playerIndex: PlayerIndex) => {
 		const playersTichuGrandTichu = turn.playersTichuGrandTichu;
 		const player = playersTichuGrandTichu[playerIndex];
@@ -34,7 +36,9 @@ function GameDetails(props: GameDetailsProps) {
 						<div className='w-[33%] flex justify-center items-center font-bold text-2xl'>
 							{game.currentScore.team1.toString(10)}
 						</div>
-						<div className='w-[33%] flex justify-center items-center'>
+						<div className='w-[33%] flex justify-center items-center' onClick={() => {
+							setOpenChangeWinningScoreDialog(true);
+						}}>
 							<span className=' border-4 font-bold text-3xl border-amber-600 border-dashed'>
 							{game.winningScore.toString(10)}
 							</span>
@@ -64,14 +68,23 @@ function GameDetails(props: GameDetailsProps) {
 							</div>
 						</div>
 						<div className='flex w-full flex-row justify-between items-center p-0'>
-							<div >{playerTichuGrandTichu(turn, 't1p1')}</div>
-							<div >{playerTichuGrandTichu(turn, 't1p2')}</div>
-							<div >{playerTichuGrandTichu(turn, 't2p1')}</div>
-							<div >{playerTichuGrandTichu(turn, 't2p2')}</div>
+							<div>{playerTichuGrandTichu(turn, 't1p1')}</div>
+							<div>{playerTichuGrandTichu(turn, 't1p2')}</div>
+							<div>{playerTichuGrandTichu(turn, 't2p1')}</div>
+							<div>{playerTichuGrandTichu(turn, 't2p2')}</div>
 						</div>
 					</ListItem>;
 				})}
 			</List>
+			{(openChangeWinningScoreDialog) &&
+				<ChangeWinningScoreDialog
+					keepMounted={false}
+					open={openChangeWinningScoreDialog}
+					onClose={() => {
+						setOpenChangeWinningScoreDialog(false);
+					}}
+				/>
+			}
 		</div>
 	);
 
