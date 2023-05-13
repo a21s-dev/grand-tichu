@@ -12,7 +12,8 @@ type PlayersTichuGrandTichu = { [key in PlayerIndex]: { tichu: boolean, grandTic
 type OneTwo = { [key in TeamIndex]: boolean };
 type Points = { [key in TeamIndex]: number };
 export type TeamScore = { [key in TeamIndex]: number; }
-export type WinningScore = 1 | 300 | 500 | 1000 | 1500 | 2000 | 'unlimited';
+export const WinningScore = [1, 100, 300, 500, 1000, 1500, 2000, 'unlimited'] as const;
+export type WinningScoreType = typeof WinningScore[number];
 export type PlayerWithDetails = {
 	id: string,
 	name: string,
@@ -236,6 +237,9 @@ export const currentGameSlice = createSlice({
 			latestTurn.teamsPoints[action.payload.team] = action.payload.points;
 			latestTurn.teamsPoints[otherTeamIndex] = 100 - action.payload.points;
 			HELPERS.updateTurnPoints(latestTurn);
+		},
+		winningScore: (state: Draft<CurrentGameState>, action: PayloadAction<{ winningScore: WinningScoreType }>) => {
+			state.winningScore = action.payload.winningScore;
 		},
 		finishedFirst: (state: Draft<CurrentGameState>, action: PayloadAction<{ playerId: string }>) => {
 			if (HELPERS.gameFinished(state)) {
