@@ -268,6 +268,14 @@ export const currentGameSlice = createSlice({
 		startNew: (state: Draft<CurrentGameState>) => {
 			HELPERS.resetScoresAndStartNewTurn(state);
 		},
+		deleteLastTurn: (state: Draft<CurrentGameState>) => {
+			if (state.turns.length < 2) {
+				return;
+			}
+			state.turns.splice(state.turns.length - 2, 1);
+			HELPERS.updateTotalPoints(state);
+		},
+
 	},
 });
 
