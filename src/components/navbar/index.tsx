@@ -2,6 +2,7 @@ import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/ma
 import MenuIcon from '@mui/icons-material/Menu';
 import * as React from 'react';
 import { Link, useNavigate } from '@tanstack/router';
+import StartNewGameDialog from '../start-new-game-dialog';
 
 function NavBar() {
 	const navigate = useNavigate();
@@ -14,6 +15,8 @@ function NavBar() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+	const [newGameDialog, setNewGameDialog] = React.useState(false);
+
 	return (
 		<React.Fragment>
 			<AppBar color='primary' position='fixed'>
@@ -41,7 +44,10 @@ function NavBar() {
 							open={anchorEl != null}
 							onClose={handleClose}
 						>
-							<MenuItem onClick={handleClose}>
+							<MenuItem onClick={() => {
+								setNewGameDialog(true);
+								handleClose();
+							}}>
 								<Typography variant='body1'>New Game</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
@@ -70,6 +76,15 @@ function NavBar() {
 				</Toolbar>
 			</AppBar>
 			<Toolbar />
+			{(newGameDialog) &&
+				<StartNewGameDialog
+					keepMounted={false}
+					open={newGameDialog}
+					onClose={() => {
+						setNewGameDialog(false);
+					}}
+				/>
+			}
 		</React.Fragment>
 	);
 }

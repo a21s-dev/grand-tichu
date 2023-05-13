@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { useNavigate } from '@tanstack/router';
-import { CURRENT_TURN_EXTRA_ACTIONS } from '../../store/currentGameSlice.ts';
+import { currentGameSlice } from '../../store/currentGameSlice.ts';
 import { useAppDispatch } from '../../store/store.ts';
 
 function SubmitScoreButton() {
@@ -13,7 +13,7 @@ function SubmitScoreButton() {
 				<button
 					className='h-full w-full'
 					onClick={() => {
-						dispatch(CURRENT_TURN_EXTRA_ACTIONS.submitTurn());
+						dispatch(currentGameSlice.actions.submitTurn());
 						navigate({ to: '/' });
 					}}
 				>

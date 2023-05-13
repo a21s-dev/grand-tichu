@@ -12,7 +12,7 @@ type PlayersTichuGrandTichu = { [key in PlayerIndex]: { tichu: boolean, grandTic
 type OneTwo = { [key in TeamIndex]: boolean };
 type Points = { [key in TeamIndex]: number };
 export type TeamScore = { [key in TeamIndex]: number; }
-export type WinningScore = 300 | 500 | 1000 | 1500 | 2000 | 'unlimited';
+export type WinningScore = 1 | 300 | 500 | 1000 | 1500 | 2000 | 'unlimited';
 export type PlayerWithDetails = {
 	id: string,
 	name: string,
@@ -251,7 +251,7 @@ export const currentGameSlice = createSlice({
 			latestTurn.finishedFirst = player;
 			HELPERS.updateTurnPoints(latestTurn);
 		},
-		internalSubmitTurn: (state: Draft<CurrentGameState>) => {
+		submitTurn: (state: Draft<CurrentGameState>) => {
 			if (HELPERS.gameFinished(state)) {
 				return;
 			}
@@ -259,7 +259,7 @@ export const currentGameSlice = createSlice({
 			HELPERS.updateTotalPoints(state);
 			HELPERS.nextPlayerDeals(HELPERS.getLatestTurn(state));
 		},
-		startNew: (state: Draft<CurrentGameState>) => {
+		internalStartNew: (state: Draft<CurrentGameState>) => {
 			HELPERS.resetScoresAndStartNewTurn(state);
 		},
 		deleteLastTurn: (state: Draft<CurrentGameState>) => {
@@ -274,18 +274,16 @@ export const currentGameSlice = createSlice({
 
 
 export const CURRENT_TURN_EXTRA_ACTIONS = {
-	submitTurn: () => {
+	startNew: () => {
 		return (dispatch: ThunkDispatch<GlobalState, unknown, AnyAction>, getState: () => GlobalState) => {
-			dispatch(currentGameSlice.actions.internalSubmitTurn());
 			const globalState = getState();
 			const currentGame = globalState.currentGame;
-			if (HELPERS.gameFinished(currentGame)) {
-				dispatch(gamesSlice.actions.add({
-					turns: currentGame.turns.slice(0, currentGame.turns.length - 1),
-					currentScore: currentGame.currentScore,
-					winningScore: currentGame.winningScore,
-				}));
-			}
+			dispatch(gamesSlice.actions.add({
+				turns: currentGame.turns,
+				currentScore: currentGame.currentScore,
+				winningScore: currentGame.winningScore,
+			}));
+			dispatch(currentGameSlice.actions.internalStartNew());
 		};
 	},
 };
@@ -528,7 +526,7 @@ export const CURRENT_TURN_DETAILS_SELECTORS = {
 			id: state.currentGame.id,
 			currentScore: state.currentGame.currentScore,
 			winningScore: state.currentGame.winningScore,
-			turns: state.currentGame.turns
+			turns: state.currentGame.turns,
 			// turns: state.currentGame.turns.slice(0, state.currentGame.turns.length - 1),
 		};
 	},

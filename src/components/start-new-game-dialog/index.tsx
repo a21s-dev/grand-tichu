@@ -1,16 +1,15 @@
 import { Button, Dialog, DialogTitle, Typography } from '@mui/material';
-import { CURRENT_TURN_EXTRA_ACTIONS, TeamIndex } from '../../store/currentGameSlice.ts';
+import { CURRENT_TURN_EXTRA_ACTIONS } from '../../store/currentGameSlice.ts';
 import { useAppDispatch } from '../../store/store.ts';
 
-export interface GameEndedDialogProps {
+export interface StartNewGameDialogProps {
 	keepMounted: boolean;
 	open: boolean;
-	team: TeamIndex;
 	onClose: () => void;
 }
 
-function GameEndedDialog(props: GameEndedDialogProps) {
-	const { onClose, team, open } = props;
+function StartNewGameDialog(props: StartNewGameDialogProps) {
+	const { onClose, open } = props;
 	const dispatch = useAppDispatch();
 	return (
 		<Dialog
@@ -21,9 +20,6 @@ function GameEndedDialog(props: GameEndedDialogProps) {
 			<DialogTitle>
 				<Typography variant='body1'>New game?</Typography>
 			</DialogTitle>
-			<div>
-				Team {team} won the game
-			</div>
 			<div className='flex items-center justify-around'>
 				<Button
 					variant='outlined'
@@ -49,4 +45,4 @@ function GameEndedDialog(props: GameEndedDialogProps) {
 	);
 }
 
-export default GameEndedDialog;
+export default StartNewGameDialog;
