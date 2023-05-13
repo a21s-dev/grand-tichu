@@ -73,8 +73,9 @@ function CurrentGameDetails() {
 								</div>
 							</div>
 						</ListSubheader>
-						{turns.map((turn, index) => {
-							return <ListItem key={index} className='border-2 h-[50px]'>
+						{turns.map(r=>r).reverse().map((turn, index) => {
+							return <ListItem key={index}
+															 className={'h-[50px] ' + (index === 0 ? 'border-4 border-orange-300' : 'border')}>
 								<div className='w-[50%]'>
 									<div className='flex flex-col justify-center items-center p-0'>
 										<div className='font-bold'>
@@ -110,6 +111,7 @@ function CurrentGameDetails() {
 						<Typography variant='h2' className='h-[3em] w-full text-[2em] text-white'>
 							<button
 								className='h-full w-full'
+								disabled={turns.length === 0}
 								onClick={() => {
 									dispatch(currentGameSlice.actions.deleteLastTurn());
 								}}
