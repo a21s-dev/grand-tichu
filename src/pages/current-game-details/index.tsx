@@ -1,10 +1,16 @@
 import NavBar from '../../components/navbar';
-import { Card, CardContent, Divider } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { CURRENT_TURN_DETAILS_SELECTORS, PlayerIndex, TurnDetails } from '../../store/currentGameSlice.ts';
+import { List, ListItem, ListSubheader, Typography } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	CURRENT_TURN_DETAILS_SELECTORS,
+	currentGameSlice,
+	PlayerIndex,
+	TurnDetails,
+} from '../../store/currentGameSlice.ts';
 
 
 function CurrentGameDetails() {
+	const dispatch = useDispatch();
 	const gameDetails = useSelector(CURRENT_TURN_DETAILS_SELECTORS.getGameDetails);
 	const latestTurnPlayers = useSelector(CURRENT_TURN_DETAILS_SELECTORS.gamePlayers);
 	const turns = useSelector(CURRENT_TURN_DETAILS_SELECTORS.turns);
@@ -22,71 +28,99 @@ function CurrentGameDetails() {
 		return '';
 	};
 	return (
-		<div className='flex h-full w-full flex-col'>
+		<div className='fixed flex h-full w-full flex-col'>
 			<NavBar />
-			<main className='flex h-full w-full flex-col'>
-				<div className='flex flex-row w-full justify-between pb-5 top-15'>
-					<Card className='w-[50%]'>
-						<CardContent className='flex flex-col justify-center items-center p-0'>
-							<div className='font-bold'>
-								<span className='pr-1'>
-								Team1
-								</span>
-								<span
-									className='border-2 border-dashed border-[black] text-orange-600 font-bold p-0.5'
-								>
-								{gameDetails.currentScore.team1.toString(10)}
-								</span>
+			<main className='flex h-full w-full flex-col overflow-hidden'>
+				<div className='grow-[1.5]'>
+					<List className='pt-0 max-h-[400px]' sx={{
+						overflow: 'auto',
+					}}>
+						<ListSubheader className='text-black flex flex-row w-full justify-between  border-2'>
+							<div className='w-[50%]'>
+								<div className='flex flex-col justify-center items-center p-0'>
+									<div className='font-bold'>
+													<span className='pr-1'>
+													Team1
+													</span>
+										<span
+											className='border-2 border-dashed border-[black] text-orange-600 font-bold p-0.5'
+										>
+													{gameDetails.currentScore.team1.toString(10)}
+													</span>
+									</div>
+								</div>
+								<div className='flex flex-row w-full justify-around'>
+									<div className='font-bold'>{latestTurnPlayers.t1p1.name}</div>
+									<div className='font-bold'>{latestTurnPlayers.t1p2.name}</div>
+								</div>
 							</div>
-							<div className='flex flex-row w-full justify-around'>
-								<div className='font-bold'>{latestTurnPlayers.t1p1.name}</div>
-								<div className='font-bold'>{latestTurnPlayers.t1p2.name}</div>
+							<div className='w-[50%]'>
+								<div className='flex flex-col justify-center items-center p-0'>
+									<div className='font-bold'>
+													<span className='pr-1'>
+													Team2
+													</span>
+										<span
+											className='border-2 border-dashed border-[black] text-orange-600 font-bold p-0.5'
+										>
+													{gameDetails.currentScore.team2.toString(10)}
+													</span>
+									</div>
+								</div>
+								<div className='flex flex-row w-full justify-around'>
+									<div className='font-bold'>{latestTurnPlayers.t2p1.name}</div>
+									<div className='font-bold'>{latestTurnPlayers.t2p2.name}</div>
+								</div>
 							</div>
-						</CardContent>
-					</Card>
-					<Card className='w-[50%]'>
-						<CardContent className='flex flex-col justify-center items-center p-0'>
-							<div className='font-bold'>
-								<span className='pr-2'>
-								Team1
-								</span>
-								<span
-									className='border-2 border-dashed border-[black] text-orange-600 font-bold p-0.5'
-								>
-								{gameDetails.currentScore.team2.toString(10)}
-								</span>
-							</div>
-							<div className='flex flex-row w-full justify-around'>
-								<div className='font-bold'>{latestTurnPlayers.t2p1.name}</div>
-								<div className='font-bold'>{latestTurnPlayers.t2p2.name}</div>
-							</div>
-						</CardContent>
-					</Card>
+						</ListSubheader>
+						{turns.map((turn, index) => {
+							return <ListItem key={index} className='border-2 h-[50px]'>
+								<div className='w-[50%]'>
+									<div className='flex flex-col justify-center items-center p-0'>
+										<div className='font-bold'>
+													<span className='pr-1'>
+														{turn.score.team1}
+													</span>
+										</div>
+									</div>
+									<div className='flex flex-row w-full justify-around'>
+										<div className='h-[25px]'>{playerTichuGrandTichu(turn, 't1p1')} </div>
+										<div className='h-[25px]'>{playerTichuGrandTichu(turn, 't1p2')} </div>
+									</div>
+								</div>
+								<div className='w-[50%]'>
+									<div className='flex flex-col justify-center items-center p-0'>
+										<div className='font-bold'>
+													<span className='pr-1'>
+														{turn.score.team2}
+													</span>
+										</div>
+									</div>
+									<div className='flex flex-row w-full justify-around'>
+										<div className='h-[25px]'>{playerTichuGrandTichu(turn, 't2p1')} </div>
+										<div className='h-[25px]'>{playerTichuGrandTichu(turn, 't2p2')} </div>
+									</div>
+								</div>
+							</ListItem>;
+						})}
+					</List>
 				</div>
-				{turns.map((turn, index) => {
-					return <div key={index} className='flex flex-row w-full justify-between pb-1'>
-						<Card className='w-[50%] h-[50px]'>
-							<CardContent className='flex flex-col justify-center items-center p-0'>
-								<div>{turn.score.team1}</div>
-								<div className='flex flex-row w-full justify-around'>
-									<div>{playerTichuGrandTichu(turn, 't1p1')} </div>
-									<div>{playerTichuGrandTichu(turn, 't1p2')} </div>
-								</div>
-							</CardContent>
-						</Card>
-						<Divider orientation='vertical' flexItem sx={{ borderRightWidth: 8 }} />
-						<Card className='w-[50%] h-[50px]'>
-							<CardContent className='flex flex-col justify-center items-center p-0'>
-								<div>{turn.score.team1}</div>
-								<div className='flex flex-row w-full justify-around'>
-									<div>{playerTichuGrandTichu(turn, 't2p1')} </div>
-									<div>{playerTichuGrandTichu(turn, 't2p2')} </div>
-								</div>
-							</CardContent>
-						</Card>
-					</div>;
-				})}
+				<div>
+					<div className='mt-auto flex items-center justify-center pt-10'>
+						<Typography variant='h2' className='h-[3em] w-full text-[2em] text-white'>
+							<button
+								className='h-full w-full'
+								onClick={() => {
+									dispatch(currentGameSlice.actions.deleteLastTurn());
+								}}
+							>
+								DELETE LAST TURN
+							</button>
+						</Typography>
+					</div>
+				</div>
 			</main>
+
 		</div>
 	);
 
