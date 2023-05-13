@@ -12,6 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 import Users from './pages/users';
 import UserDetails from './pages/user-details';
+import CurrentGameDetails from './pages/current-game-details';
 
 const rootRoute = new RootRoute({
 	component: () => {
@@ -64,12 +65,19 @@ const userDetailsRoute = new Route({
 	path: '$userId',
 	component: UserDetails,
 });
+
+const currentGameRoute = new Route({
+	path: 'current-game',
+	getParentRoute: () => rootRoute,
+	component: CurrentGameDetails,
+});
 // Create the route tree using your routes
 const routeTree = rootRoute.addChildren([
 	indexRoute,
 	errorRoute,
 	submitScoreRoute,
 	usersRootRoute.addChildren([usersIndexRoute, userDetailsRoute]),
+	currentGameRoute,
 ]);
 
 // Create the router using your route tree

@@ -45,6 +45,12 @@ function NavBar() {
 								<Typography variant='body1'>New Game</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
+								navigate({ to: '/current-game' });
+								handleClose();
+							}}>
+								<Typography variant='body1'>Current game</Typography>
+							</MenuItem>
+							<MenuItem onClick={() => {
 								navigate({ to: '/users' });
 								handleClose();
 							}}>

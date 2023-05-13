@@ -3,7 +3,7 @@ import { AnyAction, createSlice, Draft, PayloadAction, ThunkDispatch } from '@re
 import { AppUser } from './usersSlice.ts';
 import { InternalError } from '../error/InternalError.ts';
 import { GlobalState } from './store.ts';
-import { gamesSlice } from './gamesSlice.ts';
+import { Game, gamesSlice } from './gamesSlice.ts';
 
 export type PlayerIndex = 't1p1' | 't1p2' | 't2p1' | 't2p2';
 export type TeamIndex = 'team1' | 'team2';
@@ -12,6 +12,7 @@ type PlayersTichuGrandTichu = { [key in PlayerIndex]: { tichu: boolean, grandTic
 type OneTwo = { [key in TeamIndex]: boolean };
 type Points = { [key in TeamIndex]: number };
 export type TeamScore = { [key in TeamIndex]: number; }
+export type WinningScore = 300 | 500 | 1000 | 1500 | 2000 | 'unlimited';
 export type PlayerWithDetails = {
 	id: string,
 	name: string,
@@ -44,15 +45,7 @@ export type TurnDetails = {
 	* */
 	score: TeamScore,
 }
-export type CurrentGameState = {
-	turns: TurnDetails[],
-	/*
-	*
-	* Current score after applying all the turns
-	* */
-	currentScore: TeamScore,
-	winningScore: 300 | 500 | 1000 | 1500 | 2000 | 'unlimited',
-}
+export type CurrentGameState = Game;
 const initialTurnDetails: TurnDetails = {
 	players: {
 		t1p1: {
@@ -109,6 +102,7 @@ const initialTurnDetails: TurnDetails = {
 	},
 };
 const initialState: CurrentGameState = {
+	id: 'current',
 	turns: [initialTurnDetails],
 	currentScore: {
 		team1: 0,
@@ -267,6 +261,13 @@ export const currentGameSlice = createSlice({
 		},
 		startNew: (state: Draft<CurrentGameState>) => {
 			HELPERS.resetScoresAndStartNewTurn(state);
+		},
+		deleteLastTurn: (state: Draft<CurrentGameState>) => {
+			if (state.turns.length < 2) {
+				return;
+			}
+			state.turns.splice(state.turns.length - 2, 1);
+			HELPERS.updateTotalPoints(state);
 		},
 	},
 });
@@ -522,6 +523,15 @@ export const HELPERS = {
 } as const;
 
 export const CURRENT_TURN_DETAILS_SELECTORS = {
+	getGame: (state: GlobalState): Game => {
+		return {
+			id: state.currentGame.id,
+			currentScore: state.currentGame.currentScore,
+			winningScore: state.currentGame.winningScore,
+			turns: state.currentGame.turns
+			// turns: state.currentGame.turns.slice(0, state.currentGame.turns.length - 1),
+		};
+	},
 	playersAvailableForFirstPlace: (state: GlobalState): AppUser[] => {
 		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
 		for (const [teamIndex, oneTwo] of getEntries(latestTurn.teamsOneTwo)) {
@@ -587,6 +597,13 @@ export const CURRENT_TURN_DETAILS_SELECTORS = {
 		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
 		const players = latestTurn.players;
 		return [players['t1p1'], players['t2p1'], players['t1p2'], players['t2p2']];
+	},
+	turns: (state: GlobalState): TurnDetails[] => {
+		return state.currentGame.turns.slice(0, state.currentGame.turns.length - 1);
+	},
+	gamePlayers: (state: GlobalState) => {
+		const latestTurn = HELPERS.getLatestTurn(state.currentGame);
+		return latestTurn.players;
 	},
 	winnerOfGame: (state: GlobalState): TeamIndex | undefined => {
 		const winningScore = state.currentGame.winningScore;

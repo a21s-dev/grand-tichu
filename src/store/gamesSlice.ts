@@ -1,27 +1,36 @@
 import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
-import { TeamScore, TurnDetails } from './currentGameSlice.ts';
+import { TeamScore, TurnDetails, WinningScore } from './currentGameSlice.ts';
 import { nanoid } from 'nanoid';
 
 export type Game = {
+	id: string,
 	turns: TurnDetails[],
 	/*
 	*
 	* Current score after applying all the turns
 	* */
 	currentScore: TeamScore,
-	winningScore: 300 | 500 | 1000 | 1500 | 2000 | 'unlimited',
+	winningScore: WinningScore,
 }
 export type GamesHistoryState = {
 	[key: string]: Game
 }
-const initialState: GamesHistoryState = {};
 export const gamesSlice = createSlice({
 	name: 'games',
-	initialState,
+	initialState: {},
 	reducers: {
-		add: (state: Draft<GamesHistoryState>, action: PayloadAction<Game>) => {
+		add: (state: Draft<GamesHistoryState>, action: PayloadAction<{
+			turns: TurnDetails[],
+			currentScore: TeamScore,
+			winningScore: WinningScore,
+		}>) => {
 			const nanoId = nanoid();
-			state[nanoId] = action.payload;
+			state[nanoId] = {
+				id: nanoId,
+				turns: action.payload.turns,
+				currentScore: action.payload.currentScore,
+				winningScore: action.payload.winningScore,
+			};
 		},
 	},
 });
