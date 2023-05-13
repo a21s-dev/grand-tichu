@@ -251,7 +251,7 @@ export const currentGameSlice = createSlice({
 			latestTurn.finishedFirst = player;
 			HELPERS.updateTurnPoints(latestTurn);
 		},
-		internalSubmitTurn: (state: Draft<CurrentGameState>) => {
+		submitTurn: (state: Draft<CurrentGameState>) => {
 			if (HELPERS.gameFinished(state)) {
 				return;
 			}
@@ -274,18 +274,16 @@ export const currentGameSlice = createSlice({
 
 
 export const CURRENT_TURN_EXTRA_ACTIONS = {
-	submitTurn: () => {
+	startNew: () => {
 		return (dispatch: ThunkDispatch<GlobalState, unknown, AnyAction>, getState: () => GlobalState) => {
-			dispatch(currentGameSlice.actions.internalSubmitTurn());
 			const globalState = getState();
 			const currentGame = globalState.currentGame;
-			if (HELPERS.gameFinished(currentGame)) {
-				dispatch(gamesSlice.actions.add({
-					turns: currentGame.turns.slice(0, currentGame.turns.length - 1),
-					currentScore: currentGame.currentScore,
-					winningScore: currentGame.winningScore,
-				}));
-			}
+			dispatch(gamesSlice.actions.add({
+				turns: currentGame.turns,
+				currentScore: currentGame.currentScore,
+				winningScore: currentGame.winningScore,
+			}));
+			dispatch(currentGameSlice.actions.startNew());
 		};
 	},
 };

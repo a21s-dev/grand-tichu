@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogTitle, Typography } from '@mui/material';
-import { currentGameSlice, TeamIndex } from '../../store/currentGameSlice.ts';
-import { useDispatch } from 'react-redux';
+import { CURRENT_TURN_EXTRA_ACTIONS, TeamIndex } from '../../store/currentGameSlice.ts';
+import { useAppDispatch } from '../../store/store.ts';
 
 export interface GameEndedDialogProps {
 	keepMounted: boolean;
@@ -11,7 +11,7 @@ export interface GameEndedDialogProps {
 
 function GameEndedDialog(props: GameEndedDialogProps) {
 	const { onClose, team, open } = props;
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	return (
 		<Dialog
 			open={open}
@@ -38,7 +38,7 @@ function GameEndedDialog(props: GameEndedDialogProps) {
 					variant='contained'
 					color='success'
 					onClick={() => {
-						dispatch(currentGameSlice.actions.startNew());
+						dispatch(CURRENT_TURN_EXTRA_ACTIONS.startNew());
 						onClose();
 					}}
 				>
