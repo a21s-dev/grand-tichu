@@ -28,7 +28,6 @@ function GameDetails() {
 						<Typography variant='h2' className='h-[3em] w-full text-[2em] text-white'>
 							<button
 								className='h-full w-full'
-								disabled={game.turns.length === 0}
 								onClick={() => {
 									// dispatch(currentGameSlice.actions.deleteLastTurn());
 								}}
