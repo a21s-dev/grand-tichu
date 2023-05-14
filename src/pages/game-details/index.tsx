@@ -7,13 +7,13 @@ import GameDetailsInternal from '../../components/game-details';
 
 function GameDetails() {
 	const navigate = useNavigate();
-	// const dispatch = useDispatch();
 	const params = useParams();
 	if (params.gameId == undefined) {
 		navigate({ to: '/games' });
 		throw new Error('');
 	}
-	const game = useSelector(GAMES_SELECTORS.gameById(params.gameId));
+	const gameId = params.gameId;
+	const game = useSelector(GAMES_SELECTORS.gameById(gameId));
 	if (game == undefined) {
 		navigate({ to: '/404' });
 		throw new Error('');
@@ -22,7 +22,7 @@ function GameDetails() {
 		<div className='fixed flex h-full w-full flex-col'>
 			<NavBar />
 			<main className='flex h-full w-full flex-col overflow-hidden'>
-				<GameDetailsInternal game={game} editableWinningScore={false} />
+				<GameDetailsInternal game={game} currentGame={false} />
 				<div>
 					<div className='mt-auto flex items-center justify-center pt-10'>
 						<Typography variant='h2' className='h-[3em] w-full text-[2em] text-white'>

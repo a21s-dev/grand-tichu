@@ -12,7 +12,7 @@ function CurrentGameDetails() {
 		<div className='fixed flex h-full w-full flex-col'>
 			<NavBar />
 			<main className='flex h-full w-full flex-col overflow-hidden'>
-				<GameDetails game={game} highlightLastTurn={true} />
+				<GameDetails game={game} />
 				<div>
 					<div className='mt-auto flex items-center justify-center pt-10'>
 						<Typography variant='h2' className='h-[3em] w-full text-[2em] text-white'>

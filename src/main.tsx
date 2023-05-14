@@ -15,6 +15,8 @@ import UserDetails from './pages/user-details';
 import CurrentGameDetails from './pages/current-game-details';
 import Games from './pages/games';
 import GameDetails from './pages/game-details';
+import TurnDetails from './pages/turn-details';
+import CurrentGameTurnDetails from './pages/current-game-turn-details';
 
 const rootRoute = new RootRoute({
 	component: () => {
@@ -68,10 +70,24 @@ const userDetailsRoute = new Route({
 	component: UserDetails,
 });
 
-const currentGameRoute = new Route({
+const currentGameRootRoute = new Route({
 	path: 'current-game',
 	getParentRoute: () => rootRoute,
+	component: () => {
+		return (<>
+			<Outlet />
+		</>);
+	},
+});
+const currentGameIndexRoute = new Route({
+	path: '/',
+	getParentRoute: () => currentGameRootRoute,
 	component: CurrentGameDetails,
+});
+const currentGameTurnDetailsRoute = new Route({
+	path: '/turns/$turnIndex',
+	getParentRoute: () => currentGameRootRoute,
+	component: CurrentGameTurnDetails,
 });
 
 
@@ -91,10 +107,27 @@ const gamesHistoryIndexRoute = new Route({
 	component: Games,
 });
 
-const gameDetailsRoute = new Route({
-	getParentRoute: () => gamesHistoryRootRoute,
+const gameDetailsRootRoute = new Route({
 	path: '$gameId',
+	getParentRoute: () => gamesHistoryRootRoute,
+	component: () => {
+		return (<>
+			<Outlet />
+		</>);
+	},
+});
+
+const gameDetailsIndexRoute = new Route({
+	getParentRoute: () => gameDetailsRootRoute,
+	path: '/',
 	component: GameDetails,
+});
+
+
+const turnDetailsRoute = new Route({
+	path: '/turns/$turnIndex',
+	getParentRoute: () => gameDetailsRootRoute,
+	component: TurnDetails,
 });
 // Create the route tree using your routes
 const routeTree = rootRoute.addChildren([
@@ -102,8 +135,10 @@ const routeTree = rootRoute.addChildren([
 	errorRoute,
 	submitScoreRoute,
 	usersRootRoute.addChildren([usersIndexRoute, userDetailsRoute]),
-	currentGameRoute,
-	gamesHistoryRootRoute.addChildren([gamesHistoryIndexRoute, gameDetailsRoute]),
+	gamesHistoryRootRoute.addChildren([
+		gamesHistoryIndexRoute,
+		gameDetailsRootRoute.addChildren([gameDetailsIndexRoute, turnDetailsRoute])]),
+	currentGameRootRoute.addChildren([currentGameIndexRoute, currentGameTurnDetailsRoute]),
 ]);
 
 // Create the router using your route tree
