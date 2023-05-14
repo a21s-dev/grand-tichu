@@ -13,6 +13,7 @@ import { persistStore } from 'redux-persist';
 import Users from './pages/users';
 import UserDetails from './pages/user-details';
 import CurrentGameDetails from './pages/current-game-details';
+import Games from './pages/games';
 
 const rootRoute = new RootRoute({
 	component: () => {
@@ -71,6 +72,13 @@ const currentGameRoute = new Route({
 	getParentRoute: () => rootRoute,
 	component: CurrentGameDetails,
 });
+
+
+const gamesHistoryRoute = new Route({
+	path: 'games',
+	getParentRoute: () => rootRoute,
+	component: Games,
+});
 // Create the route tree using your routes
 const routeTree = rootRoute.addChildren([
 	indexRoute,
@@ -78,6 +86,7 @@ const routeTree = rootRoute.addChildren([
 	submitScoreRoute,
 	usersRootRoute.addChildren([usersIndexRoute, userDetailsRoute]),
 	currentGameRoute,
+	gamesHistoryRoute
 ]);
 
 // Create the router using your route tree

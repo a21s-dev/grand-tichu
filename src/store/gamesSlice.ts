@@ -35,5 +35,7 @@ export const gamesSlice = createSlice({
 	},
 });
 
-export const GAMES_SELECTORS = {} as const;
+export const GAMES_SELECTORS = {
+	games: (state: { games: GamesHistoryState }) => state.games,
+} as const;
 export const GAMES_WEIRD_SELECTORS = {} as const;
