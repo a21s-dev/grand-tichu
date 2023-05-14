@@ -7,10 +7,11 @@ import ChangeWinningScoreDialog from '../change-winning-score-dialog';
 
 export interface GameDetailsProps {
 	game: Game;
+	editableWinningScore?: boolean;
 }
 
 function GameDetails(props: GameDetailsProps) {
-	const { game } = props;
+	const { game, editableWinningScore = true } = props;
 
 	const latestTurn = game.turns[game.turns.length - 1];
 	const latestTurnPlayers = latestTurn.players;
@@ -37,6 +38,9 @@ function GameDetails(props: GameDetailsProps) {
 							{game.currentScore.team1.toString(10)}
 						</div>
 						<div className='w-[33%] flex justify-center items-center' onClick={() => {
+							if (!editableWinningScore) {
+								return;
+							}
 							setOpenChangeWinningScoreDialog(true);
 						}}>
 							<span className=' border-4 font-bold text-3xl border-amber-600 border-dashed'>
