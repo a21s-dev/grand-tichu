@@ -14,6 +14,7 @@ import Users from './pages/users';
 import UserDetails from './pages/user-details';
 import CurrentGameDetails from './pages/current-game-details';
 import Games from './pages/games';
+import GameDetails from './pages/game-details';
 
 const rootRoute = new RootRoute({
 	component: () => {
@@ -74,10 +75,26 @@ const currentGameRoute = new Route({
 });
 
 
-const gamesHistoryRoute = new Route({
+const gamesHistoryRootRoute = new Route({
 	path: 'games',
 	getParentRoute: () => rootRoute,
+	component: () => {
+		return (<>
+			<Outlet />
+		</>);
+	},
+});
+
+const gamesHistoryIndexRoute = new Route({
+	getParentRoute: () => gamesHistoryRootRoute,
+	path: '/',
 	component: Games,
+});
+
+const gameDetailsRoute = new Route({
+	getParentRoute: () => gamesHistoryRootRoute,
+	path: '$gameId',
+	component: GameDetails,
 });
 // Create the route tree using your routes
 const routeTree = rootRoute.addChildren([
@@ -86,7 +103,7 @@ const routeTree = rootRoute.addChildren([
 	submitScoreRoute,
 	usersRootRoute.addChildren([usersIndexRoute, userDetailsRoute]),
 	currentGameRoute,
-	gamesHistoryRoute
+	gamesHistoryRootRoute.addChildren([gamesHistoryIndexRoute, gameDetailsRoute]),
 ]);
 
 // Create the router using your route tree
