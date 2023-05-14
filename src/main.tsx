@@ -17,6 +17,7 @@ import Games from './pages/games';
 import GameDetails from './pages/game-details';
 import TurnDetails from './pages/turn-details';
 import CurrentGameTurnDetails from './pages/current-game-turn-details';
+import About from './pages/about';
 
 const rootRoute = new RootRoute({
 	component: () => {
@@ -129,6 +130,22 @@ const turnDetailsRoute = new Route({
 	getParentRoute: () => gameDetailsRootRoute,
 	component: TurnDetails,
 });
+
+
+const aboutRootRoute = new Route({
+	path: 'about',
+	getParentRoute: () => rootRoute,
+	component: () => {
+		return (<>
+			<Outlet />
+		</>);
+	},
+});
+const aboutIndexRoute = new Route({
+	getParentRoute: () => aboutRootRoute,
+	path: '/',
+	component: About,
+});
 // Create the route tree using your routes
 const routeTree = rootRoute.addChildren([
 	indexRoute,
@@ -139,6 +156,7 @@ const routeTree = rootRoute.addChildren([
 		gamesHistoryIndexRoute,
 		gameDetailsRootRoute.addChildren([gameDetailsIndexRoute, turnDetailsRoute])]),
 	currentGameRootRoute.addChildren([currentGameIndexRoute, currentGameTurnDetailsRoute]),
+	aboutRootRoute.addChildren([aboutIndexRoute]),
 ]);
 
 // Create the router using your route tree
