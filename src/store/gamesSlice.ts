@@ -1,6 +1,7 @@
 import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 import { TeamScore, TurnDetails, WinningScoreType } from './currentGameSlice.ts';
 import { nanoid } from 'nanoid';
+import { GlobalState } from './store.ts';
 
 export type Game = {
 	id: string,
@@ -37,5 +38,8 @@ export const gamesSlice = createSlice({
 
 export const GAMES_SELECTORS = {
 	games: (state: { games: GamesHistoryState }) => state.games,
+	gameById: (gameId: string) => (state: GlobalState): Game | undefined => {
+		return state.games[gameId];
+	},
 } as const;
 export const GAMES_WEIRD_SELECTORS = {} as const;
