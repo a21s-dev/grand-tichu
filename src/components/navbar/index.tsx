@@ -74,7 +74,10 @@ function NavBar() {
 							<MenuItem onClick={handleClose}>
 								<Typography variant='body1'>Player Statistics</Typography>
 							</MenuItem>
-							<MenuItem onClick={handleClose}>
+							<MenuItem onClick={() => {
+								navigate({ to: '/about' });
+								handleClose();
+							}}>
 								<Typography variant='body1'>About</Typography>
 							</MenuItem>
 						</Menu>
