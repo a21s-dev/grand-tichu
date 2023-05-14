@@ -29,7 +29,6 @@ function CurrentGameDetails() {
 					</div>
 				</div>
 			</main>
-
 		</div>
 	);
 
