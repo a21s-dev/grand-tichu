@@ -273,6 +273,17 @@ export const currentGameSlice = createSlice({
 			state.turns.splice(state.turns.length - 2, 1);
 			HELPERS.updateTotalPoints(state);
 		},
+		deleteTurn: (state: Draft<CurrentGameState>, action: PayloadAction<{ turnIndex: number }>) => {
+			if (state.turns.length < 2) {
+				return;
+			}
+			const turnIndex = action.payload.turnIndex;
+			if (turnIndex < 0 || turnIndex >= state.turns.length - 1) {
+				return;
+			}
+			state.turns.splice(turnIndex, 1);
+			HELPERS.updateTotalPoints(state);
+		},
 	},
 });
 

@@ -3,14 +3,17 @@ import { PlayerIndex, TurnDetails } from '../../store/currentGameSlice.ts';
 import { Game } from '../../store/gamesSlice.ts';
 import * as React from 'react';
 import ChangeWinningScoreDialog from '../change-winning-score-dialog';
+import { useNavigate } from '@tanstack/router';
 
 
 export interface GameDetailsProps {
 	game: Game;
+	currentGame?: boolean;
 }
 
 function GameDetails(props: GameDetailsProps) {
-	const { game } = props;
+	const navigate = useNavigate();
+	const { game, currentGame = true } = props;
 
 	const latestTurn = game.turns[game.turns.length - 1];
 	const latestTurnPlayers = latestTurn.players;
@@ -37,6 +40,9 @@ function GameDetails(props: GameDetailsProps) {
 							{game.currentScore.team1.toString(10)}
 						</div>
 						<div className='w-[33%] flex justify-center items-center' onClick={() => {
+							if (!currentGame) {
+								return;
+							}
 							setOpenChangeWinningScoreDialog(true);
 						}}>
 							<span className=' border-4 font-bold text-3xl border-amber-600 border-dashed'>
@@ -55,8 +61,22 @@ function GameDetails(props: GameDetailsProps) {
 					</div>
 				</ListSubheader>
 				{turns.map(r => r).reverse().map((turn, index) => {
-					return <ListItem key={index}
-													 className={'flex flex-col w-full h-[70px] ' + (index === 0 ? 'border-4 border-orange-300' : 'border')}>
+					return <ListItem
+						key={index}
+						className={'flex flex-col w-full h-[70px] ' + (currentGame && index === 0 ? 'border-4 border-orange-300' : 'border')}
+						onClick={() => {
+							if (!currentGame) {
+								navigate({
+									to: '/games/$gameId/turns/$turnIndex',
+									params: { gameId: game.id, turnIndex: (turns.length - index).toString(10) },
+								});
+								return;
+							}
+							navigate({
+								to: '/current-game/turns/$turnIndex',
+								params: { turnIndex: (turns.length - index).toString(10) },
+							});
+						}}>
 						<div className='flex w-full flex-row justify-between items-center'>
 							<div className='w-[33%] flex justify-center items-center font-bold  '>
 								{turn.score.team1.toString(10)}
