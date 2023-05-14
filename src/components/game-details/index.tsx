@@ -8,10 +8,11 @@ import ChangeWinningScoreDialog from '../change-winning-score-dialog';
 export interface GameDetailsProps {
 	game: Game;
 	editableWinningScore?: boolean;
+	highlightLastTurn?: boolean;
 }
 
 function GameDetails(props: GameDetailsProps) {
-	const { game, editableWinningScore = true } = props;
+	const { game, editableWinningScore = true, highlightLastTurn = false } = props;
 
 	const latestTurn = game.turns[game.turns.length - 1];
 	const latestTurnPlayers = latestTurn.players;
@@ -60,7 +61,7 @@ function GameDetails(props: GameDetailsProps) {
 				</ListSubheader>
 				{turns.map(r => r).reverse().map((turn, index) => {
 					return <ListItem key={index}
-													 className={'flex flex-col w-full h-[70px] ' + (index === 0 ? 'border-4 border-orange-300' : 'border')}>
+													 className={'flex flex-col w-full h-[70px] ' + (highlightLastTurn && index === 0 ? 'border-4 border-orange-300' : 'border')}>
 						<div className='flex w-full flex-row justify-between items-center'>
 							<div className='w-[33%] flex justify-center items-center font-bold  '>
 								{turn.score.team1.toString(10)}
