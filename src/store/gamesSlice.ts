@@ -33,6 +33,11 @@ export const gamesSlice = createSlice({
 				winningScore: action.payload.winningScore,
 			};
 		},
+		delete: (state: Draft<GamesHistoryState>, action: PayloadAction<{
+			gameId: string
+		}>) => {
+			delete state[action.payload.gameId];
+		},
 	},
 });
 

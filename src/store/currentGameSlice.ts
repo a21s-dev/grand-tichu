@@ -284,6 +284,15 @@ export const currentGameSlice = createSlice({
 			state.turns.splice(turnIndex, 1);
 			HELPERS.updateTotalPoints(state);
 		},
+		replaceGame: (state: Draft<CurrentGameState>, action: PayloadAction<{
+			turns: TurnDetails[],
+			currentScore: TeamScore,
+			winningScore: WinningScoreType
+		}>) => {
+			state.turns = action.payload.turns;
+			state.currentScore = action.payload.currentScore;
+			state.winningScore = action.payload.winningScore;
+		},
 	},
 });
 
@@ -299,6 +308,28 @@ export const CURRENT_TURN_EXTRA_ACTIONS = {
 				winningScore: currentGame.winningScore,
 			}));
 			dispatch(currentGameSlice.actions.internalStartNew());
+		};
+	},
+	replaceCurrentWithHistory: (gameId: string) => {
+		return (dispatch: ThunkDispatch<GlobalState, unknown, AnyAction>, getState: () => GlobalState) => {
+			const globalState = getState();
+			const currentGame = globalState.currentGame;
+			const historyGame = globalState.games[gameId];
+			console.log({
+				currentGame,
+				historyGame,
+			});
+			dispatch(gamesSlice.actions.add({
+				turns: currentGame.turns,
+				currentScore: currentGame.currentScore,
+				winningScore: currentGame.winningScore,
+			}));
+			dispatch(gamesSlice.actions.delete({ gameId: historyGame.id }));
+			dispatch(currentGameSlice.actions.replaceGame({
+				turns: historyGame.turns,
+				currentScore: historyGame.currentScore,
+				winningScore: historyGame.winningScore,
+			}));
 		};
 	},
 };
