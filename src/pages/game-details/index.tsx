@@ -4,8 +4,11 @@ import { GAMES_SELECTORS } from '../../store/gamesSlice.ts';
 import NavBar from '../../components/navbar';
 import { Typography } from '@mui/material';
 import GameDetailsInternal from '../../components/game-details';
+import { useAppDispatch } from '../../store/store.ts';
+import { CURRENT_TURN_EXTRA_ACTIONS } from '../../store/currentGameSlice.ts';
 
 function GameDetails() {
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const params = useParams();
 	if (params.gameId == undefined) {
@@ -29,7 +32,10 @@ function GameDetails() {
 							<button
 								className='h-full w-full'
 								onClick={() => {
-									// dispatch(currentGameSlice.actions.deleteLastTurn());
+									navigate({ to: '/' })
+										.then(() => {
+											dispatch(CURRENT_TURN_EXTRA_ACTIONS.replaceCurrentWithHistory(gameId));
+										});
 								}}
 							>
 								LOAD AS CURRENT
