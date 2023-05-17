@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './main.css';
-import { Outlet, RootRoute, Route, Router, RouterProvider } from '@tanstack/router';
-import { Provider } from 'react-redux';
-import { STORE } from './store/store.ts';
+import { Navigate, Outlet, RootRoute, Route, Router, RouterProvider } from '@tanstack/router';
+import { Provider, useStore } from 'react-redux';
+import { GlobalState, STORE } from './store/store.ts';
 import { orange } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material';
 import SubmitScore from './pages/submit-score';
@@ -18,7 +18,22 @@ import GameDetails from './pages/game-details';
 import TurnDetails from './pages/turn-details';
 import CurrentGameTurnDetails from './pages/current-game-turn-details';
 import About from './pages/about';
+import { USERS_WEIRD_SELECTORS } from './store/usersSlice.ts';
+import NotFound from './pages/not-found';
 
+
+const guardedComponent = (component: React.ComponentType) => {
+	return () => {
+		// eslint-disable-next-line react-hooks/rules-of-hooks
+		const store = useStore();
+		const state = store.getState() as GlobalState;
+		const players = USERS_WEIRD_SELECTORS.users(state);
+		if (players.length < 4) {
+			return <Navigate to='/users' />;
+		}
+		return React.createElement(component);
+	};
+};
 const rootRoute = new RootRoute({
 	component: () => {
 		return (<>
@@ -29,7 +44,7 @@ const rootRoute = new RootRoute({
 const indexRoute = new Route({
 	getParentRoute: () => rootRoute,
 	path: '/',
-	component: Index,
+	component: guardedComponent(Index),
 });
 
 
@@ -42,7 +57,7 @@ const errorRoute = new Route({
 const submitScoreRoute = new Route({
 	getParentRoute: () => rootRoute,
 	path: 'submit-score',
-	component: SubmitScore,
+	component: guardedComponent(SubmitScore),
 });
 
 const usersRootRoute = new Route({
@@ -70,11 +85,11 @@ const userDetailsRoute = new Route({
 const currentGameRootRoute = new Route({
 	path: 'current-game',
 	getParentRoute: () => rootRoute,
-	component: () => {
+	component: guardedComponent(() => {
 		return (<>
 			<Outlet />
 		</>);
-	},
+	}),
 });
 const currentGameIndexRoute = new Route({
 	path: '/',
@@ -91,11 +106,11 @@ const currentGameTurnDetailsRoute = new Route({
 const gamesHistoryRootRoute = new Route({
 	path: 'games',
 	getParentRoute: () => rootRoute,
-	component: () => {
+	component: guardedComponent(() => {
 		return (<>
 			<Outlet />
 		</>);
-	},
+	}),
 });
 
 const gamesHistoryIndexRoute = new Route({
