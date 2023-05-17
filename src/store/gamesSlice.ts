@@ -1,5 +1,5 @@
 import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
-import { TeamScore, TurnDetails, WinningScoreType } from './currentGameSlice.ts';
+import { HELPERS, TeamScore, TurnDetails, WinningScoreType } from './currentGameSlice.ts';
 import { nanoid } from 'nanoid';
 import { GlobalState } from './store.ts';
 
@@ -12,6 +12,15 @@ export type Game = {
 	* */
 	currentScore: TeamScore,
 	winningScore: WinningScoreType,
+}
+export type PlayerStatistics = {
+	gamesParticipated: number,
+	gamesFinished: number,
+	gamesWon: number,
+	tichuCalled: number,
+	tichuCalledAndMade: number,
+	grandCalled: number,
+	grandCalledAndMade: number,
 }
 export type GamesHistoryState = {
 	[key: string]: Game
@@ -45,6 +54,65 @@ export const GAMES_SELECTORS = {
 	games: (state: { games: GamesHistoryState }) => state.games,
 	gameById: (gameId: string) => (state: GlobalState): Game | undefined => {
 		return state.games[gameId];
+	},
+	playerStatistics: (playerId: string) => (state: GlobalState): PlayerStatistics => {
+		const playerStatistics: PlayerStatistics = {
+			gamesParticipated: 0,
+			gamesFinished: 0,
+			gamesWon: 0,
+			tichuCalled: 0,
+			tichuCalledAndMade: 0,
+			grandCalled: 0,
+			grandCalledAndMade: 0,
+		};
+		Object.values(state.games).forEach(game => {
+			let turns = game.turns;
+			if (turns.length <= 1) {
+				return;
+			}
+			turns = turns.slice(0, turns.length - 1);
+			const firstTurn = game.turns[0];
+			const playersIds = Array.from(Object.values(firstTurn.players)).map(player => player.id);
+			if (!playersIds.includes(playerId)) {
+				return;
+			}
+			playerStatistics.gamesParticipated++;
+
+			for (const turn of turns) {
+				const playerIndex = HELPERS.getIndexOfPlayer(turn, playerId);
+				if (playerIndex == undefined) {
+					continue;
+				}
+				const tichuGrandTichu = turn.playersTichuGrandTichu[playerIndex];
+				const calledTichu = tichuGrandTichu.tichu;
+				if (calledTichu) {
+					playerStatistics.tichuCalled++;
+					if (turn.finishedFirst.id === playerId) {
+						playerStatistics.tichuCalledAndMade++;
+					}
+					continue;
+				}
+				const calledGrandTichu = tichuGrandTichu.grandTichu;
+				if (calledGrandTichu) {
+					playerStatistics.grandCalled++;
+					if (turn.finishedFirst.id === playerId) {
+						playerStatistics.grandCalledAndMade++;
+					}
+				}
+			}
+
+			const gameFinished = HELPERS.gameFinished(game.winningScore, game.currentScore);
+			if (!gameFinished) {
+				return;
+			}
+			playerStatistics.gamesFinished++;
+			const teamThatWon = HELPERS.teamThatWon(game.winningScore, game.currentScore);
+			const team = HELPERS.getTeamOfPlayer(playerId, firstTurn.players);
+			if (team === teamThatWon) {
+				playerStatistics.gamesWon++;
+			}
+		});
+		return playerStatistics;
 	},
 } as const;
 export const GAMES_WEIRD_SELECTORS = {} as const;
