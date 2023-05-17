@@ -3,11 +3,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 import * as React from 'react';
 import { Link, useNavigate } from '@tanstack/router';
 import StartNewGameDialog from '../start-new-game-dialog';
+import { useSelector } from 'react-redux';
+import { USERS_SELECTORS } from '../../store/usersSlice.ts';
 
 function NavBar() {
 	const navigate = useNavigate();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+	const users = useSelector(USERS_SELECTORS.appUsers);
 	const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -45,7 +48,9 @@ function NavBar() {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={() => {
-								setNewGameDialog(true);
+								if (users.length >= 4) {
+									setNewGameDialog(true);
+								}
 								handleClose();
 							}}>
 								<Typography variant='body1'>New Game</Typography>
@@ -67,12 +72,6 @@ function NavBar() {
 								handleClose();
 							}}>
 								<Typography variant='body1'>All games</Typography>
-							</MenuItem>
-							<MenuItem onClick={handleClose}>
-								<Typography variant='body1'>Settings</Typography>
-							</MenuItem>
-							<MenuItem onClick={handleClose}>
-								<Typography variant='body1'>Player Statistics</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
 								navigate({ to: '/about' });

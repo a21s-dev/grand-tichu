@@ -9,8 +9,8 @@ import {
 	Snackbar,
 	Typography,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppUser, USERS_SELECTORS, usersSlice } from '../../store/usersSlice.ts';
+import { useSelector } from 'react-redux';
+import { AppUser, USERS_EXTRA_ACTIONS, USERS_SELECTORS } from '../../store/usersSlice.ts';
 import * as React from 'react';
 import AddNewPlayerDialog from '../add-new-player-dialog';
 import { AppError } from '../../error/AppError.ts';
@@ -18,6 +18,7 @@ import { InternalError } from '../../error/InternalError.ts';
 import { InvalidPlayerNameError } from '../../error/InvalidPlayerNameError.ts';
 import { PlayerAlreadyExistsError } from '../../error/PlayerAlreadyExistsError.ts';
 import { nanoid } from 'nanoid';
+import { useAppDispatch } from '../../store/store.ts';
 
 export interface ChangePlayerDialogProps {
 	keepMounted: boolean;
@@ -28,7 +29,7 @@ export interface ChangePlayerDialogProps {
 
 function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 	const { onClose, player, open } = props;
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const usersState = useSelector(USERS_SELECTORS.appUsers);
 	const [openAddNewPlayerDialog, setOpenAddNewPlayerDialog] = React.useState(false);
 	const [addPlayerError, setAddPlayerError] = React.useState<string>('');
@@ -52,7 +53,7 @@ function ChangePlayerDialog(props: ChangePlayerDialogProps) {
 		}
 		try {
 			const id = nanoid();
-			dispatch(usersSlice.actions.addNew({
+			dispatch(USERS_EXTRA_ACTIONS.add({
 				id,
 				name: details.playerName,
 			}));

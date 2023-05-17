@@ -1,16 +1,17 @@
 import { useNavigate, useParams } from '@tanstack/router';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppUser, USERS_SELECTORS, usersSlice } from '../../store/usersSlice.ts';
+import { useSelector } from 'react-redux';
+import { AppUser, USERS_EXTRA_ACTIONS, USERS_SELECTORS } from '../../store/usersSlice.ts';
 import { Card, CardActions, CardContent, Typography } from '@mui/material';
 import NavBar from '../../components/navbar';
 import Button from '@mui/material/Button';
 import * as React from 'react';
 import UpdateUserDialog from '../../components/update-user-dialog';
 import { GAMES_SELECTORS } from '../../store/gamesSlice.ts';
+import { useAppDispatch } from '../../store/store.ts';
 
 function UserDetails() {
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const params = useParams();
 	if (params.userId == undefined) {
 		navigate({ to: '/users' });
@@ -28,11 +29,7 @@ function UserDetails() {
 	function deleteUser(user: AppUser) {
 		navigate({ to: '/users' })
 			.then(() => {
-				dispatch(usersSlice.actions.deleteUser(
-					{
-						userId: user.id,
-					},
-				));
+				dispatch(USERS_EXTRA_ACTIONS.delete(user.id));
 			});
 	}
 
