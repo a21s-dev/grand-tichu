@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { useDispatch, useSelector } from 'react-redux';
-import { USERS_SELECTORS, usersSlice } from '../../store/usersSlice.ts';
+import { useSelector } from 'react-redux';
+import { USERS_EXTRA_ACTIONS, USERS_SELECTORS } from '../../store/usersSlice.ts';
 import NavBar from '../../components/navbar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -13,6 +13,7 @@ import { PlayerAlreadyExistsError } from '../../error/PlayerAlreadyExistsError.t
 import { Alert, Snackbar } from '@mui/material';
 import { nanoid } from 'nanoid';
 import { useNavigate } from '@tanstack/router';
+import { useAppDispatch } from '../../store/store.ts';
 
 
 const columns: GridColDef[] = [
@@ -21,12 +22,13 @@ const columns: GridColDef[] = [
 ];
 
 function Users() {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate({ from: '/users' });
 	const users = useSelector(USERS_SELECTORS.appUsers);
 	const [openAddNewPlayerDialog, setOpenAddNewPlayerDialog] =
 		React.useState(false);
 	const [addPlayerError, setAddPlayerError] = React.useState<string>('');
+	const [lessThan4Users, setLessThan4Users] = React.useState<boolean>(users.length < 4);
 	const handleAddNewPlayerDialog = (
 		details: { playerName: string } | undefined,
 	) => {
@@ -36,7 +38,7 @@ function Users() {
 		}
 		try {
 			const id = nanoid();
-			dispatch(usersSlice.actions.addNew({
+			dispatch(USERS_EXTRA_ACTIONS.add({
 				id,
 				name: details.playerName,
 			}));
@@ -90,6 +92,17 @@ function Users() {
 						setAddPlayerError('');
 					}} severity='error' sx={{ width: '100%' }}>
 						{addPlayerError}
+					</Alert>
+				</Snackbar>
+			}
+			{lessThan4Users &&
+				<Snackbar open={lessThan4Users} onClose={() => {
+					setLessThan4Users(false);
+				}}>
+					<Alert onClose={() => {
+						setLessThan4Users(false);
+					}} severity='error' sx={{ width: '100%' }}>
+						You need at least 4 users to start a game!
 					</Alert>
 				</Snackbar>
 			}
