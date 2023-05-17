@@ -36,11 +36,7 @@ const indexRoute = new Route({
 const errorRoute = new Route({
 	getParentRoute: () => rootRoute,
 	path: '404',
-	component: () => {
-		return (<>
-			<div>404</div>
-		</>);
-	},
+	component: NotFound
 });
 
 const submitScoreRoute = new Route({
