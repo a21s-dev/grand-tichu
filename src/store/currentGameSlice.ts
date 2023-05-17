@@ -47,64 +47,9 @@ export type TurnDetails = {
 	score: TeamScore,
 }
 export type CurrentGameState = Game;
-const initialTurnDetails: TurnDetails = {
-	players: {
-		t1p1: {
-			id: '1',
-			name: 'Player1',
-		},
-		t1p2: {
-			id: '3',
-			name: 'Player3',
-		},
-		t2p1: {
-			id: '2',
-			name: 'Player2',
-		},
-		t2p2: {
-			id: '4',
-			name: 'Player4',
-		},
-	},
-	playersTichuGrandTichu: {
-		t1p1: {
-			tichu: false,
-			grandTichu: false,
-		},
-		t1p2: {
-			tichu: false,
-			grandTichu: false,
-		},
-		t2p1: {
-			tichu: false,
-			grandTichu: false,
-		},
-		t2p2: {
-			tichu: false,
-			grandTichu: false,
-		},
-	},
-	teamsOneTwo: {
-		team1: false,
-		team2: false,
-	},
-	teamsPoints: {
-		team1: 50,
-		team2: 50,
-	},
-	finishedFirst: {
-		id: '1',
-		name: 'Player1',
-	},
-	playerWhoDeals: 't1p1',
-	score: {
-		team1: 50,
-		team2: 50,
-	},
-};
 const initialState: CurrentGameState = {
 	id: 'current',
-	turns: [initialTurnDetails],
+	turns: [],
 	currentScore: {
 		team1: 0,
 		team2: 0,
@@ -115,6 +60,17 @@ export const currentGameSlice = createSlice({
 	name: 'currentGame',
 	initialState,
 	reducers: {
+		initialInitialTurn: (state: Draft<CurrentGameState>, action: PayloadAction<{ turns: TurnDetails[] }>) => {
+			state.turns = action.payload.turns;
+		},
+		initialInitialReset: (state: Draft<CurrentGameState>) => {
+			state.turns = [];
+			state.currentScore = {
+				team1: 0,
+				team2: 0,
+			};
+			state.winningScore = 500;
+		},
 		newPlayerDeals: (
 			state: Draft<CurrentGameState>,
 			action: PayloadAction<{ newId: string }>,
