@@ -6,7 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
 	plugins: [react(), VitePWA(
 		{
-			includeAssets: ['public/vite.svg', 'icons/*.png'],
+			includeAssets: ['public/card-icon.png', 'icons/*.png'],
 			manifest: {
 				'id': 'com.alator21.grandtichu',
 				'name': 'Grand Tichu',
