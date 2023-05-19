@@ -1,7 +1,8 @@
 import { Button, Dialog, DialogTitle, TextField, Typography } from '@mui/material';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { USERS_SELECTORS, usersSlice } from '../../store/usersSlice.ts';
+import { useSelector } from 'react-redux';
+import { USERS_EXTRA_ACTIONS, USERS_SELECTORS } from '../../store/usersSlice.ts';
+import { useAppDispatch } from '../../store/store.ts';
 
 export interface AddNewPlayerDialogProps {
 	keepMounted: boolean;
@@ -12,7 +13,7 @@ export interface AddNewPlayerDialogProps {
 
 function UpdateUserDialog(props: AddNewPlayerDialogProps) {
 	const { onClose, playerId, open } = props;
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const user = useSelector(USERS_SELECTORS.appUserById(playerId));
 	if (user == undefined) {
 		onClose();
@@ -21,7 +22,7 @@ function UpdateUserDialog(props: AddNewPlayerDialogProps) {
 	const [userName, setUserName] = React.useState<string>(user.name);
 
 	function updateUser() {
-		dispatch(usersSlice.actions.updateName(
+		dispatch(USERS_EXTRA_ACTIONS.rename(
 			{
 				id: playerId,
 				name: userName,

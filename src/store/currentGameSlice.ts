@@ -62,6 +62,10 @@ export const currentGameSlice = createSlice({
 	reducers: {
 		initialInitialTurn: (state: Draft<CurrentGameState>, action: PayloadAction<{ turns: TurnDetails[] }>) => {
 			state.turns = action.payload.turns;
+			state.currentScore = {
+				team1: 0,
+				team2: 0,
+			};
 		},
 		initialInitialReset: (state: Draft<CurrentGameState>) => {
 			state.turns = [];
@@ -248,6 +252,18 @@ export const currentGameSlice = createSlice({
 			state.turns = action.payload.turns;
 			state.currentScore = action.payload.currentScore;
 			state.winningScore = action.payload.winningScore;
+		},
+		renamePlayer: (state: Draft<CurrentGameState>, action: PayloadAction<{ playerId: string, newName: string }>) => {
+			const turns = state.turns;
+			for (const turn of turns) {
+				const players = turn.players;
+				for (const player of Object.values(players)) {
+					if (player.id === action.payload.playerId) {
+						player.name = action.payload.newName;
+						break;
+					}
+				}
+			}
 		},
 	},
 });
