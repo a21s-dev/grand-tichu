@@ -2,6 +2,7 @@ import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 import { HELPERS, TeamScore, TurnDetails, WinningScoreType } from './currentGameSlice.ts';
 import { nanoid } from 'nanoid';
 import { GlobalState } from './store.ts';
+import { AppUser } from './usersSlice.ts';
 
 export type Game = {
 	id: string,
@@ -46,6 +47,39 @@ export const gamesSlice = createSlice({
 			gameId: string
 		}>) => {
 			delete state[action.payload.gameId];
+		},
+		renamePlayer: (state: Draft<GamesHistoryState>, action: PayloadAction<{ user: AppUser }>) => {
+			const games = Object.values(state);
+			const { user } = action.payload;
+			for (const game of games) {
+				const turns = game.turns;
+				for (const turn of turns) {
+					const players = turn.players;
+					for (const player of Object.values(players)) {
+						if (player.id === user.id) {
+							player.name = user.name;
+							break;
+						}
+					}
+				}
+			}
+		},
+		deletePlayer: (state: Draft<GamesHistoryState>, action: PayloadAction<{ userId:string }>) => {
+			const games = Object.values(state);
+			const { userId } = action.payload;
+			for (const game of games) {
+				const turns = game.turns;
+				for (const turn of turns) {
+					const players = turn.players;
+					for (const player of Object.values(players)) {
+						if (player.id === userId) {
+							player.id = `DELETED_${player.id}`;
+							player.name = `DELETED_${player.name}`;
+							break;
+						}
+					}
+				}
+			}
 		},
 	},
 });
