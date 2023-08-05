@@ -10,14 +10,20 @@ import Games from './pages/games';
 import GameDetails from './pages/game-details';
 import TurnDetails from './pages/turn-details';
 import About from './pages/about';
+import { useStore } from 'react-redux';
+import { GlobalState } from './store/store.ts';
+import { USERS_WEIRD_SELECTORS } from './store/usersSlice.ts';
+import SignIn from './pages/firebase/sign-in';
+import Signup from './pages/firebase/sign-up';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase.ts';
 
-interface AppRoutesProp {
-	isAuthenticated: boolean;
-}
 
 const INDEX_ROUTE = '/';
 const LOGIN_ROUTE = '/login';
 const SIGNUP_ROUTE = '/signup';
+const LOGOUT_ROUTE = '/logout';
 const SUBMIT_SCORE_ROUTE = 'submit-score';
 const USERS_ROUTE = '/users';
 const SPECIFIC_USER_DETAILS_ROUTE = '/users/:userId';
@@ -33,6 +39,7 @@ export const APP_ROUTES = {
 	indexRoute: () => INDEX_ROUTE,
 	loginRoute: () => LOGIN_ROUTE,
 	signupRoute: () => SIGNUP_ROUTE,
+	logoutRoute: () => LOGOUT_ROUTE,
 	submitScoreRoute: () => SUBMIT_SCORE_ROUTE,
 	usersRoute: () => USERS_ROUTE,
 	specificUserDetailsRoute: (userId: string) => SPECIFIC_USER_DETAILS_ROUTE.replace(':userId', userId),
@@ -57,12 +64,43 @@ const GuardedRoute = ({
 	isRouteAccessible ? <Outlet /> : <Navigate to={redirectRoute} replace />;
 
 
-const PrivateComponent = ({ Component, isAuthenticated }: { Component: any, isAuthenticated: boolean }) => {
-	return isAuthenticated ? <Component /> : <Navigate to={LOGIN_ROUTE} />;
+const Needs4UsersComponent = ({ Component }: { Component: any }) => {
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	const store = useStore();
+	const state = store.getState() as GlobalState;
+	const players = USERS_WEIRD_SELECTORS.users(state);
+	return players.length < 4 ? <Navigate to={USERS_ROUTE} /> : <Component />;
 };
 
-const AppRoutes = (props: AppRoutesProp): JSX.Element => {
-		const { isAuthenticated } = props;
+const PrivateComponent = ({ Component, isAuthenticated, needs4Users = true }: {
+	Component: any,
+	isAuthenticated: boolean,
+	needs4Users?: boolean
+}) => {
+	if (!isAuthenticated) return <Navigate to={LOGIN_ROUTE} replace />;
+	if (!needs4Users) return <Component />;
+	return <Needs4UsersComponent Component={Component} />;
+};
+const AppRoutes = (): JSX.Element => {
+		const [isAuthenticated, setIsAuthenticated] = useState(false);
+		useEffect(() => {
+			onAuthStateChanged(auth, (user) => {
+				if (user) {
+					// User is signed in, see docs for a list of available properties
+					// https://firebase.google.com/docs/reference/js/firebase.User
+					const uid = user.uid;
+					// ...
+					console.log('uid', uid);
+					setIsAuthenticated(true);
+				} else {
+					// User is signed out
+					// ...
+					console.log('user is logged out');
+					setIsAuthenticated(false);
+				}
+			});
+
+		}, []);
 
 		return (
 			<Routes>
@@ -75,7 +113,7 @@ const AppRoutes = (props: AppRoutesProp): JSX.Element => {
 						/>
 					}
 				>
-					<Route path={LOGIN_ROUTE} element={<p>Login Page</p>} />
+					<Route path={LOGIN_ROUTE} element={<SignIn />} />
 				</Route>
 				<Route
 					element={
@@ -85,36 +123,26 @@ const AppRoutes = (props: AppRoutesProp): JSX.Element => {
 						/>
 					}
 				>
-					<Route path={SIGNUP_ROUTE} element={<p>Signup Page</p>} />
+					<Route path={SIGNUP_ROUTE} element={<Signup />} />
 				</Route>
 				<Route path={INDEX_ROUTE} element={<PrivateComponent Component={Index} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={INDEX_ROUTE} isAuthenticated={isAuthenticated} element={<Index />} />*/}
 				<Route path={SUBMIT_SCORE_ROUTE}
 							 element={<PrivateComponent Component={SubmitScore} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={SUBMIT_SCORE_ROUTE} isAuthenticated={isAuthenticated} element={<SubmitScore />} />*/}
-				<Route path={USERS_ROUTE} element={<PrivateComponent Component={Users} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={USERS_ROUTE} isAuthenticated={isAuthenticated} element={<Users />} />*/}
+				<Route path={USERS_ROUTE}
+							 element={<PrivateComponent Component={Users} isAuthenticated={isAuthenticated} needs4Users={false} />} />
 				<Route path={SPECIFIC_USER_DETAILS_ROUTE}
 							 element={<PrivateComponent Component={UserDetails} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={SPECIFIC_USER_DETAILS_ROUTE} isAuthenticated={isAuthenticated} element={<UserDetails />} />*/}
 				<Route path={CURRENT_GAME_ROUTE}
 							 element={<PrivateComponent Component={CurrentGameDetails} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={CURRENT_GAME_ROUTE} isAuthenticated={isAuthenticated} element={<CurrentGameDetails />} />*/}
 				<Route path={CURRENT_GAME_SPECIFIC_TURN_DETAILS_ROUTE}
 							 element={<PrivateComponent Component={CurrentGameTurnDetails} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={CURRENT_GAME_SPECIFIC_TURN_DETAILS_ROUTE} isAuthenticated={isAuthenticated}*/}
-				{/*								 element={<CurrentGameTurnDetails />} />*/}
 				<Route path={GAMES_ROUTE} element={<PrivateComponent Component={Games} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={GAMES_ROUTE} isAuthenticated={isAuthenticated} element={<Games />} />*/}
 				<Route path={GAME_DETAILS_ROUTE}
 							 element={<PrivateComponent Component={GameDetails} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={GAME_DETAILS_ROUTE} isAuthenticated={isAuthenticated} element={<GameDetails />} />*/}
 				<Route path={GAME_TURN_DETAILS_ROUTE}
 							 element={<PrivateComponent Component={TurnDetails} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={GAME_TURN_DETAILS_ROUTE} isAuthenticated={isAuthenticated} element={<TurnDetails />} />*/}
 				<Route path={GAME_DETAILS_ROUTE}
 							 element={<PrivateComponent Component={GameDetails} isAuthenticated={isAuthenticated} />} />
-				{/*<AppGuardedRoute path={GAME_DETAILS_ROUTE} isAuthenticated={isAuthenticated} element={<GameDetails />} />*/}
 				<Route path='*' element={<NotFound />} />
 			</Routes>
 		);

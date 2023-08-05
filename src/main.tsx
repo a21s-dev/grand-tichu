@@ -48,7 +48,7 @@ if (!rootElement.innerHTML) {
 				<Provider store={STORE}>
 					<PersistGate loading={null} persistor={persistor}>
 						<BrowserRouter>
-							<AppRoutes isAuthenticated={true} />
+							<AppRoutes />
 						</BrowserRouter>
 					</PersistGate>
 				</Provider>
