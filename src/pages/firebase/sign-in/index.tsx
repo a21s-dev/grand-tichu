@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { auth } from '../../../firebase.ts';
-import { browserSessionPersistence, setPersistence, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Link } from 'react-router-dom';
 
 function Signin() {
