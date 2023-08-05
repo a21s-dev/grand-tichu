@@ -1,4 +1,3 @@
-import { useNavigate, useParams } from '@tanstack/router';
 import { useSelector } from 'react-redux';
 import { AppUser, USERS_EXTRA_ACTIONS, USERS_SELECTORS } from '../../store/usersSlice.ts';
 import { Card, CardActions, CardContent, Typography } from '@mui/material';
@@ -8,18 +7,20 @@ import * as React from 'react';
 import UpdateUserDialog from '../../components/update-user-dialog';
 import { GAMES_SELECTORS } from '../../store/gamesSlice.ts';
 import { useAppDispatch } from '../../store/store.ts';
+import { useNavigate, useParams } from 'react-router-dom';
+import { APP_ROUTES } from '../../routes.tsx';
 
 function UserDetails() {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 	const params = useParams();
 	if (params.userId == undefined) {
-		navigate({ to: '/users' });
+		navigate(APP_ROUTES.usersRoute());
 		throw new Error('');
 	}
 	const user = useSelector(USERS_SELECTORS.appUserById(params.userId));
 	if (user == undefined) {
-		navigate({ to: '/404' });
+		navigate(APP_ROUTES.notFoundRoute());
 		throw new Error('');
 	}
 	const playerStatistics = useSelector(GAMES_SELECTORS.playerStatistics(user.id));
@@ -27,10 +28,8 @@ function UserDetails() {
 		React.useState(false);
 
 	function deleteUser(user: AppUser) {
-		navigate({ to: '/users' })
-			.then(() => {
-				dispatch(USERS_EXTRA_ACTIONS.delete(user.id));
-			});
+		navigate(APP_ROUTES.usersRoute());
+		dispatch(USERS_EXTRA_ACTIONS.delete(user.id));
 	}
 
 	function percentage(part: number, total: number): string {

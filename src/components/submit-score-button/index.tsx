@@ -1,7 +1,8 @@
 import { Typography } from '@mui/material';
-import { useNavigate } from '@tanstack/router';
 import { currentGameSlice } from '../../store/currentGameSlice.ts';
 import { useAppDispatch } from '../../store/store.ts';
+import { useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../routes.tsx';
 
 function SubmitScoreButton() {
 	const dispatch = useAppDispatch();
@@ -14,7 +15,7 @@ function SubmitScoreButton() {
 					className='h-full w-full'
 					onClick={() => {
 						dispatch(currentGameSlice.actions.submitTurn());
-						navigate({ to: '/' });
+						navigate(APP_ROUTES.indexRoute())
 					}}
 				>
 					OK

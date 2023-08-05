@@ -1,9 +1,10 @@
 import { Typography } from '@mui/material';
-import { useNavigate } from '@tanstack/router';
 import { useSelector } from 'react-redux';
 import { CURRENT_TURN_DETAILS_SELECTORS } from '../../store/currentGameSlice.ts';
 import * as React from 'react';
 import GameEndedDialog from '../game-ended-dialog';
+import { useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../routes.tsx';
 
 export interface SetScoreProps {
 	gameEnded: boolean;
@@ -23,7 +24,7 @@ function SetScore(props: SetScoreProps) {
 						className='h-full w-full'
 						onClick={() => {
 							if (winner == undefined) {
-								navigate({ to: '/submit-score' });
+								navigate(APP_ROUTES.submitScoreRoute())
 								return;
 							}
 							setOpenGameEndedDialog(true);

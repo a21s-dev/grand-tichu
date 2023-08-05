@@ -3,7 +3,8 @@ import { PlayerIndex, TurnDetails } from '../../store/currentGameSlice.ts';
 import { Game } from '../../store/gamesSlice.ts';
 import * as React from 'react';
 import ChangeWinningScoreDialog from '../change-winning-score-dialog';
-import { useNavigate } from '@tanstack/router';
+import { useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../routes.tsx';
 
 
 export interface GameDetailsProps {
@@ -66,16 +67,10 @@ function GameDetails(props: GameDetailsProps) {
 						className={'flex flex-col w-full h-[70px] ' + (currentGame && index === 0 ? 'border-4 border-orange-300' : 'border')}
 						onClick={() => {
 							if (!currentGame) {
-								navigate({
-									to: '/games/$gameId/turns/$turnIndex',
-									params: { gameId: game.id, turnIndex: (turns.length - index).toString(10) },
-								});
+								navigate(APP_ROUTES.gameTurnDetailsRoute(game.id, (turns.length - index).toString(10)));
 								return;
 							}
-							navigate({
-								to: '/current-game/turns/$turnIndex',
-								params: { turnIndex: (turns.length - index).toString(10) },
-							});
+							navigate(APP_ROUTES.currentGameSpecificTurnDetailsRoute((turns.length - index).toString(10)));
 						}}>
 						<div className='flex w-full flex-row justify-between items-center'>
 							<div className='w-[33%] flex justify-center items-center font-bold  '>
