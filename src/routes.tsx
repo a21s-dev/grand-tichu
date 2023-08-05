@@ -99,7 +99,6 @@ const AppRoutes = (): JSX.Element => {
 					setIsAuthenticated(false);
 				}
 			});
-
 		}, []);
 
 		return (
