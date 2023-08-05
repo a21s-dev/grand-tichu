@@ -7,40 +7,13 @@ function Signin() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	const onLogin = (e:any) => {
+	const onLogin = (e: any) => {
 		e.preventDefault();
-		// setPersistence(auth, browserSessionPersistence)
-		// 	.then(() => {
-		// 		// Existing and future Auth states are now persisted in the current
-		// 		// session only. Closing the window would clear any existing state even
-		// 		// if a user forgets to sign out.
-		// 		// ...
-		// 		// New sign-in will be persisted with session persistence.
-		// 		return signInWithEmailAndPassword(auth, email, password)
-		// 			.then((userCredential) => {
-		// 				// Signed in
-		// 				const user = userCredential.user;
-		// 				// navigate('/');
-		// 				console.log(user);
-		// 			});
-		// 	})
-		// 	.catch((error) => {
-		// 		// Handle Errors here.
-		// 		const errorCode = error.code;
-		// 		const errorMessage = error.message;
-		// 		console.log(errorCode, errorMessage);
-		// 	});
 		signInWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				// Signed in
-				const user = userCredential.user;
-				// navigate('/');
-				console.log(user);
-			})
 			.catch((error) => {
 				const errorCode = error.code;
 				const errorMessage = error.message;
-				console.log(errorCode, errorMessage);
+				console.error(errorCode, errorMessage);
 			});
 
 	};
