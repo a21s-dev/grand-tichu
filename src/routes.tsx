@@ -85,7 +85,8 @@ const PrivateComponent = ({ Component, isAuthenticated, needs4Users = true }: {
 	return <Needs4UsersComponent Component={Component} />;
 };
 const AppRoutes = (): JSX.Element => {
-		const [isAuthenticated, setIsAuthenticated] = useState(false);
+		const userLoggedIn = localStorage.getItem('USER_LOGGED_IN') && true || false;
+		const [isAuthenticated, setIsAuthenticated] = useState(userLoggedIn);
 		useEffect(() => {
 			onAuthStateChanged(auth, (user) => {
 				if (user) {
