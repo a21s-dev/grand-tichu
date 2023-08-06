@@ -2,7 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { GlobalState } from './store/store.ts';
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -42,13 +42,22 @@ export const saveStateToFirestore = (state: GlobalState) => {
 		.catch((error) => {
 			console.error('Error saving state to Firestore:', error);
 		});
-
-	// docRef
-	// 	.set(state)
-	// 	.then(() => {
-	// 		console.log('State saved to Firestore.');
-	// 	})
-	// 	.catch((error) => {
-	// 		console.error('Error saving state to Firestore:', error);
-	// 	});
+};
+export const getStateFromFirestore = async (): Promise<GlobalState | undefined> => {
+	const firestore = getFirestore(app);
+	const user = auth.currentUser; // If using Firebase Authentication
+	if (user === null) {
+		console.error('No user logged in.');
+		return;
+	}
+	const documentReference = doc(firestore, 'state', user.uid);
+	const docSnap = await getDoc(documentReference);
+	if (docSnap.exists()) {
+		console.log('Document data:', docSnap.data());
+		return docSnap.data() as GlobalState;
+	} else {
+		// doc.data() will be undefined in this case
+		console.log('No such document!');
+		return undefined;
+	}
 };

@@ -20,6 +20,9 @@ export const usersSlice = createSlice({
 	name: 'users',
 	initialState: {},
 	reducers: {
+		REPLACE_WHOLE_STATE: (_: Draft<AppUsersState>, action: PayloadAction<AppUsersState>) => {
+			return action.payload;
+		},
 		internalAddNew: (state: Draft<AppUsersState>, action: PayloadAction<AppUser>) => {
 			const trimmedName = action.payload.name.trim();
 			if (trimmedName.length === 0) {

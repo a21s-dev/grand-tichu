@@ -77,6 +77,12 @@ function NavBar() {
 								<Typography variant='body1'>All games</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
+								navigate(APP_ROUTES.authRoute())
+								handleClose();
+							}}>
+								<Typography variant='body1'>Auth</Typography>
+							</MenuItem>
+							<MenuItem onClick={() => {
 								signOut(auth).then(() => {
 									navigate("/");
 									console.log("Signed out successfully")

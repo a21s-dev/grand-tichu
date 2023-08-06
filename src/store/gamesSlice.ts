@@ -30,6 +30,9 @@ export const gamesSlice = createSlice({
 	name: 'games',
 	initialState: {},
 	reducers: {
+		REPLACE_WHOLE_STATE: (_: Draft<GamesHistoryState>, action: PayloadAction<GamesHistoryState>) => {
+			return action.payload;
+		},
 		add: (state: Draft<GamesHistoryState>, action: PayloadAction<{
 			turns: TurnDetails[],
 			currentScore: TeamScore,
