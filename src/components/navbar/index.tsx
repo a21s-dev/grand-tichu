@@ -1,10 +1,13 @@
 import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import * as React from 'react';
-import { Link, useNavigate } from '@tanstack/router';
 import StartNewGameDialog from '../start-new-game-dialog';
 import { useSelector } from 'react-redux';
 import { USERS_SELECTORS } from '../../store/usersSlice.ts';
+import { Link, useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../routes.tsx';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase.ts';
 
 function NavBar() {
 	const navigate = useNavigate();
@@ -56,25 +59,41 @@ function NavBar() {
 								<Typography variant='body1'>New Game</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
-								navigate({ to: '/current-game' });
+								navigate(APP_ROUTES.currentGameRoute());
 								handleClose();
 							}}>
 								<Typography variant='body1'>Current game</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
-								navigate({ to: '/users' });
+								navigate(APP_ROUTES.usersRoute());
 								handleClose();
 							}}>
 								<Typography variant='body1'>All users</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
-								navigate({ to: '/games' });
+								navigate(APP_ROUTES.gamesRoute());
 								handleClose();
 							}}>
 								<Typography variant='body1'>All games</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
-								navigate({ to: '/about' });
+								navigate(APP_ROUTES.authRoute());
+								handleClose();
+							}}>
+								<Typography variant='body1'>Auth</Typography>
+							</MenuItem>
+							<MenuItem onClick={() => {
+								signOut(auth).then(() => {
+									navigate('/');
+									localStorage.removeItem('USER_LOGGED_IN');
+									console.log('Signed out successfully');
+								});
+								handleClose();
+							}}>
+								<Typography variant='body1'>Logout</Typography>
+							</MenuItem>
+							<MenuItem onClick={() => {
+								navigate(APP_ROUTES.aboutRoute());
 								handleClose();
 							}}>
 								<Typography variant='body1'>About</Typography>

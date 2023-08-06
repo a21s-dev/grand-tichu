@@ -1,184 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './main.css';
-import { Navigate, Outlet, RootRoute, Route, Router, RouterProvider } from '@tanstack/router';
-import { Provider, useStore } from 'react-redux';
-import { GlobalState, STORE } from './store/store.ts';
+import { Provider } from 'react-redux';
+import { STORE } from './store/store.ts';
 import { orange } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material';
-import SubmitScore from './pages/submit-score';
-import Index from './pages/index';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
-import Users from './pages/users';
-import UserDetails from './pages/user-details';
-import CurrentGameDetails from './pages/current-game-details';
-import Games from './pages/games';
-import GameDetails from './pages/game-details';
-import TurnDetails from './pages/turn-details';
-import CurrentGameTurnDetails from './pages/current-game-turn-details';
-import About from './pages/about';
-import { USERS_WEIRD_SELECTORS } from './store/usersSlice.ts';
-import NotFound from './pages/not-found';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes.tsx';
 
 
-const guardedComponent = (component: React.ComponentType) => {
-	return () => {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
-		const store = useStore();
-		const state = store.getState() as GlobalState;
-		const players = USERS_WEIRD_SELECTORS.users(state);
-		if (players.length < 4) {
-			return <Navigate to='/users' />;
-		}
-		return React.createElement(component);
-	};
-};
-const rootRoute = new RootRoute({
-	component: () => {
-		return (<>
-			<Outlet />
-		</>);
-	},
-});
-const indexRoute = new Route({
-	getParentRoute: () => rootRoute,
-	path: '/',
-	component: guardedComponent(Index),
-});
-
-
-const errorRoute = new Route({
-	getParentRoute: () => rootRoute,
-	path: '404',
-	component: NotFound
-});
-
-const submitScoreRoute = new Route({
-	getParentRoute: () => rootRoute,
-	path: 'submit-score',
-	component: guardedComponent(SubmitScore),
-});
-
-const usersRootRoute = new Route({
-	path: 'users',
-	getParentRoute: () => rootRoute,
-	component: () => {
-		return (<>
-			<Outlet />
-		</>);
-	},
-});
-
-const usersIndexRoute = new Route({
-	getParentRoute: () => usersRootRoute,
-	path: '/',
-	component: Users,
-});
-
-const userDetailsRoute = new Route({
-	getParentRoute: () => usersRootRoute,
-	path: '$userId',
-	component: UserDetails,
-});
-
-const currentGameRootRoute = new Route({
-	path: 'current-game',
-	getParentRoute: () => rootRoute,
-	component: guardedComponent(() => {
-		return (<>
-			<Outlet />
-		</>);
-	}),
-});
-const currentGameIndexRoute = new Route({
-	path: '/',
-	getParentRoute: () => currentGameRootRoute,
-	component: CurrentGameDetails,
-});
-const currentGameTurnDetailsRoute = new Route({
-	path: '/turns/$turnIndex',
-	getParentRoute: () => currentGameRootRoute,
-	component: CurrentGameTurnDetails,
-});
-
-
-const gamesHistoryRootRoute = new Route({
-	path: 'games',
-	getParentRoute: () => rootRoute,
-	component: guardedComponent(() => {
-		return (<>
-			<Outlet />
-		</>);
-	}),
-});
-
-const gamesHistoryIndexRoute = new Route({
-	getParentRoute: () => gamesHistoryRootRoute,
-	path: '/',
-	component: Games,
-});
-
-const gameDetailsRootRoute = new Route({
-	path: '$gameId',
-	getParentRoute: () => gamesHistoryRootRoute,
-	component: () => {
-		return (<>
-			<Outlet />
-		</>);
-	},
-});
-
-const gameDetailsIndexRoute = new Route({
-	getParentRoute: () => gameDetailsRootRoute,
-	path: '/',
-	component: GameDetails,
-});
-
-
-const turnDetailsRoute = new Route({
-	path: '/turns/$turnIndex',
-	getParentRoute: () => gameDetailsRootRoute,
-	component: TurnDetails,
-});
-
-
-const aboutRootRoute = new Route({
-	path: 'about',
-	getParentRoute: () => rootRoute,
-	component: () => {
-		return (<>
-			<Outlet />
-		</>);
-	},
-});
-const aboutIndexRoute = new Route({
-	getParentRoute: () => aboutRootRoute,
-	path: '/',
-	component: About,
-});
-// Create the route tree using your routes
-const routeTree = rootRoute.addChildren([
-	indexRoute,
-	errorRoute,
-	submitScoreRoute,
-	usersRootRoute.addChildren([usersIndexRoute, userDetailsRoute]),
-	gamesHistoryRootRoute.addChildren([
-		gamesHistoryIndexRoute,
-		gameDetailsRootRoute.addChildren([gameDetailsIndexRoute, turnDetailsRoute])]),
-	currentGameRootRoute.addChildren([currentGameIndexRoute, currentGameTurnDetailsRoute]),
-	aboutRootRoute.addChildren([aboutIndexRoute]),
-]);
-
-// Create the router using your route tree
-const router = new Router({ routeTree });
-
-// Register your router for maximum type safety
-declare module '@tanstack/router' {
-	interface Register {
-		router: typeof router;
-	}
-}
 const theme = createTheme({
 	palette: {
 		primary: {
@@ -215,7 +47,9 @@ if (!rootElement.innerHTML) {
 			<ThemeProvider theme={theme}>
 				<Provider store={STORE}>
 					<PersistGate loading={null} persistor={persistor}>
-						<RouterProvider router={router} />
+						<BrowserRouter>
+							<AppRoutes />
+						</BrowserRouter>
 					</PersistGate>
 				</Provider>
 			</ThemeProvider>

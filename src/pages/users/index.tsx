@@ -12,8 +12,9 @@ import { InvalidPlayerNameError } from '../../error/InvalidPlayerNameError.ts';
 import { PlayerAlreadyExistsError } from '../../error/PlayerAlreadyExistsError.ts';
 import { Alert, Snackbar } from '@mui/material';
 import { nanoid } from 'nanoid';
-import { useNavigate } from '@tanstack/router';
 import { useAppDispatch } from '../../store/store.ts';
+import { useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../routes.tsx';
 
 
 const columns: GridColDef[] = [
@@ -23,7 +24,7 @@ const columns: GridColDef[] = [
 
 function Users() {
 	const dispatch = useAppDispatch();
-	const navigate = useNavigate({ from: '/users' });
+	const navigate = useNavigate();
 	const users = useSelector(USERS_SELECTORS.appUsers);
 	const [openAddNewPlayerDialog, setOpenAddNewPlayerDialog] =
 		React.useState(false);
@@ -79,7 +80,7 @@ function Users() {
 						}}
 						pageSizeOptions={[5]}
 						onRowClick={(e) => {
-							navigate({ to: '/users/$userId', params: { userId: e.id as string } });
+							navigate(APP_ROUTES.specificUserDetailsRoute(e.id as string));
 						}}
 					/>
 				</Box>

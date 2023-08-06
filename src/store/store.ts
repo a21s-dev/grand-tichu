@@ -1,7 +1,7 @@
 import { AnyAction, combineReducers, configureStore, ThunkDispatch } from '@reduxjs/toolkit';
 import { AppUsersState, usersSlice } from './usersSlice.ts';
 import { GamesHistoryState, gamesSlice } from './gamesSlice.ts';
-import { CurrentGameState, currentGameSlice } from './currentGameSlice.ts';
+import { currentGameSlice, CurrentGameState } from './currentGameSlice.ts';
 import { FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { useDispatch } from 'react-redux';

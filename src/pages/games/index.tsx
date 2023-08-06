@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import NavBar from '../../components/navbar';
 import Box from '@mui/material/Box';
 import { GAMES_SELECTORS } from '../../store/gamesSlice.ts';
-import { useNavigate } from '@tanstack/router';
+import { useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../routes.tsx';
 
 
 const columns: GridColDef[] = [
@@ -19,7 +20,7 @@ const columns: GridColDef[] = [
 ];
 
 function Games() {
-	const navigate = useNavigate({ from: '/games' });
+	const navigate = useNavigate();
 
 	const games = Array.from(Object.values(useSelector(GAMES_SELECTORS.games)))
 		.map(game => {
@@ -52,7 +53,7 @@ function Games() {
 						}}
 						pageSizeOptions={[5]}
 						onRowClick={(e) => {
-							navigate({ to: '/games/$gameId', params: { gameId: e.id as string } });
+							navigate(APP_ROUTES.gameDetailsRoute(e.id as string));
 						}}
 					/>
 				</Box>

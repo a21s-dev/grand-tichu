@@ -60,6 +60,9 @@ export const currentGameSlice = createSlice({
 	name: 'currentGame',
 	initialState,
 	reducers: {
+		REPLACE_WHOLE_STATE: (_: Draft<CurrentGameState>, action: PayloadAction<CurrentGameState>) => {
+			return action.payload;
+		},
 		initialInitialTurn: (state: Draft<CurrentGameState>, action: PayloadAction<{ turns: TurnDetails[] }>) => {
 			state.turns = action.payload.turns;
 			state.currentScore = {
