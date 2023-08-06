@@ -7,6 +7,7 @@ export default defineConfig({
 	plugins: [react(), VitePWA(
 		{
 			includeAssets: ['public/card-icon.png', 'icons/*.png'],
+			registerType: 'autoUpdate',
 			manifest: {
 				'id': 'com.alator21.grandtichu',
 				'name': 'Grand Tichu',

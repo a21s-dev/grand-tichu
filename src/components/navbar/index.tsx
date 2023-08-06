@@ -6,8 +6,6 @@ import { useSelector } from 'react-redux';
 import { USERS_SELECTORS } from '../../store/usersSlice.ts';
 import { Link, useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../../routes.tsx';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../firebase.ts';
 
 function NavBar() {
 	const navigate = useNavigate();
@@ -81,16 +79,6 @@ function NavBar() {
 								handleClose();
 							}}>
 								<Typography variant='body1'>Auth</Typography>
-							</MenuItem>
-							<MenuItem onClick={() => {
-								signOut(auth).then(() => {
-									navigate('/');
-									localStorage.removeItem('USER_LOGGED_IN');
-									console.log('Signed out successfully');
-								});
-								handleClose();
-							}}>
-								<Typography variant='body1'>Logout</Typography>
 							</MenuItem>
 							<MenuItem onClick={() => {
 								navigate(APP_ROUTES.aboutRoute());

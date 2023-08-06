@@ -1,6 +1,8 @@
 import { Button, Dialog, DialogTitle, Typography } from '@mui/material';
 import { CURRENT_TURN_EXTRA_ACTIONS } from '../../store/currentGameSlice.ts';
 import { useAppDispatch } from '../../store/store.ts';
+import { useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../routes.tsx';
 
 export interface StartNewGameDialogProps {
 	keepMounted: boolean;
@@ -9,6 +11,7 @@ export interface StartNewGameDialogProps {
 }
 
 function StartNewGameDialog(props: StartNewGameDialogProps) {
+	const navigate = useNavigate();
 	const { onClose, open } = props;
 	const dispatch = useAppDispatch();
 	return (
@@ -35,6 +38,7 @@ function StartNewGameDialog(props: StartNewGameDialogProps) {
 					color='success'
 					onClick={() => {
 						dispatch(CURRENT_TURN_EXTRA_ACTIONS.startNew());
+						navigate(APP_ROUTES.indexRoute());
 						onClose();
 					}}
 				>
