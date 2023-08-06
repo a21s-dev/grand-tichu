@@ -21,7 +21,6 @@ function Login() {
 		signInWithEmailAndPassword(auth, email, password)
 			.then(async () => {
 				const remoteState = await getStateFromFirestore();
-				localStorage.setItem('USER_LOGGED_IN', 'true');
 				console.log('got remote state', remoteState);
 				if (remoteState == null) {
 					console.warn('Remote state is null. Initializing new state.');

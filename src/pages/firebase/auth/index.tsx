@@ -6,11 +6,14 @@ import { GlobalState } from '../../../store/store.ts';
 import { usersSlice } from '../../../store/usersSlice.ts';
 import { gamesSlice } from '../../../store/gamesSlice.ts';
 import { currentGameSlice } from '../../../store/currentGameSlice.ts';
-import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import React from 'react';
+import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 
 function Auth() {
+	const navigate = useNavigate();
 	const store = useStore();
 	const dispatch = useDispatch();
 	const [email, setEmail] = React.useState<string | null>(null);
@@ -18,24 +21,42 @@ function Auth() {
 	const [fetchOrSend, setFetchOrSend] = React.useState<'fetch' | 'send' | null>(null);
 	const [localState, setLocalState] = React.useState<GlobalState | null>(null);
 	const [remoteState, setRemoteState] = React.useState<GlobalState | null>(null);
+	const [success, setSuccess] = React.useState(false);
+	const [error, setError] = React.useState(false);
 	const openConfirmationDialog = () => {
 		setOpen(true);
 	};
 	const handleClose = (confirmed: boolean) => {
 		setOpen(false);
-		console.log('confirmed: ', confirmed);
 		if (localState == null || remoteState == null) {
 			return;
 		}
 		if (confirmed) {
 			if (fetchOrSend === 'send') {
-				saveStateToFirestore(localState);
+				try {
+					saveStateToFirestore(localState);
+					setSuccess(true);
+					setTimeout(() => {
+						setSuccess(false);
+					}, 2000);
+				} catch (e) {
+					console.error(e);
+					setError(true);
+					setTimeout(() => {
+						setError(false);
+					}, 2000);
+				}
+
 				return;
 			}
 			if (fetchOrSend === 'fetch') {
 				dispatch(usersSlice.actions.REPLACE_WHOLE_STATE(remoteState.users));
 				dispatch(gamesSlice.actions.REPLACE_WHOLE_STATE(remoteState.games));
 				dispatch(currentGameSlice.actions.REPLACE_WHOLE_STATE(remoteState.currentGame));
+				setSuccess(true);
+				setTimeout(() => {
+					setSuccess(false);
+				}, 2000);
 				return;
 			}
 		}
@@ -45,12 +66,15 @@ function Auth() {
 
 
 	React.useEffect(() => {
-		const user = auth.currentUser;
-		if (user == null) {
-			return;
-		}
-		const email = user.email;
-		setEmail(email);
+		setTimeout(() => {
+			const user = auth.currentUser;
+			if (user == null) {
+				return;
+			}
+			const email = user.email;
+			setEmail(email);
+		}, 1000);
+
 	}, []);
 
 
@@ -97,6 +121,35 @@ function Auth() {
 				>
 					Load remote state to local
 				</Button>
+				<Button
+					variant='contained'
+					className='m-2 text-black flex flex-col'
+					onClick={() => {
+						signOut(auth).then(() => {
+							navigate('/');
+							console.log('Signed out successfully');
+						});
+					}}
+				>
+					<b>Logout</b>
+					<p>
+					(Local state will be lost)
+					</p>
+				</Button>
+				{success &&
+					<Alert severity='success' variant='filled' onClose={() => {
+						setSuccess(false);
+					}}>
+						Success
+					</Alert>
+				}
+				{error &&
+					<Alert severity='error' variant='filled' onClose={() => {
+						setError(false);
+					}}>
+						Something went wrong
+					</Alert>
+				}
 			</main>
 			}
 			<ConfirmationDialogRaw

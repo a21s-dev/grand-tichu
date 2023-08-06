@@ -10,15 +10,17 @@ import Games from './pages/games';
 import GameDetails from './pages/game-details';
 import TurnDetails from './pages/turn-details';
 import About from './pages/about';
-import { useStore } from 'react-redux';
+import { useDispatch, useStore } from 'react-redux';
 import { GlobalState } from './store/store.ts';
-import { USERS_WEIRD_SELECTORS } from './store/usersSlice.ts';
+import { USERS_WEIRD_SELECTORS, usersSlice } from './store/usersSlice.ts';
 import SignIn from './pages/firebase/login';
 import Signup from './pages/firebase/sign-up';
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase.ts';
 import Auth from './pages/firebase/auth';
+import { currentGameSlice } from './store/currentGameSlice.ts';
+import { gamesSlice } from './store/gamesSlice.ts';
 
 
 const INDEX_ROUTE = '/';
@@ -85,6 +87,7 @@ const PrivateComponent = ({ Component, isAuthenticated, needs4Users = true }: {
 	return <Needs4UsersComponent Component={Component} />;
 };
 const AppRoutes = (): JSX.Element => {
+		const dispatch = useDispatch();
 		const userLoggedIn = localStorage.getItem('USER_LOGGED_IN') && true || false;
 		const [isAuthenticated, setIsAuthenticated] = useState(userLoggedIn);
 		useEffect(() => {
@@ -96,11 +99,14 @@ const AppRoutes = (): JSX.Element => {
 					// ...
 					console.log('uid', uid);
 					setIsAuthenticated(true);
+					localStorage.setItem('USER_LOGGED_IN', 'true');
 				} else {
-					// User is signed out
-					// ...
 					console.log('user is logged out');
 					setIsAuthenticated(false);
+					localStorage.removeItem('USER_LOGGED_IN');
+					dispatch(currentGameSlice.actions.initialInitialReset());
+					dispatch(usersSlice.actions.REPLACE_WHOLE_STATE({}));
+					dispatch(gamesSlice.actions.REPLACE_WHOLE_STATE({}));
 				}
 			});
 		}, []);
@@ -136,7 +142,7 @@ const AppRoutes = (): JSX.Element => {
 					element={<PrivateComponent Component={SubmitScore} isAuthenticated={isAuthenticated} />} />
 				<Route
 					path={AUTH_ROUTE}
-					element={<PrivateComponent Component={Auth} isAuthenticated={isAuthenticated} />}
+					element={<PrivateComponent Component={Auth} isAuthenticated={isAuthenticated} needs4Users={false}/>}
 				/>
 				<Route
 					path={USERS_ROUTE}
