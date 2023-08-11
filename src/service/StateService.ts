@@ -25,7 +25,12 @@ export class StateService implements IStateService {
 		if (raw == null) {
 			return undefined;
 		}
-		return JSON.parse(raw) as GlobalState;
+		const parsed = JSON.parse(raw);
+		return {
+			'users': JSON.parse(parsed['users']),
+			'games': JSON.parse(parsed['games']),
+			'currentGame': JSON.parse(parsed['currentGame']),
+		}
 	}
 
 	async remoteState(): Promise<GlobalState | undefined> {
