@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { auth, getStateFromFirestore } from '../../../firebase.ts';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { authService, stateService } from '../../../firebase.ts';
 import { useNavigate } from 'react-router-dom';
-import { TextField } from '@mui/material';
+import { Alert, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import { APP_ROUTES } from '../../../routes.tsx';
 import { useDispatch } from 'react-redux';
 import { usersSlice } from '../../../store/usersSlice.ts';
 import { gamesSlice } from '../../../store/gamesSlice.ts';
 import { currentGameSlice } from '../../../store/currentGameSlice.ts';
+import NavBar from '../../../components/navbar';
 
 function Login() {
 	const dispatch = useDispatch();
@@ -18,15 +18,11 @@ function Login() {
 
 	const onLogin = (e: any) => {
 		e.preventDefault();
-		signInWithEmailAndPassword(auth, email, password)
+		authService.login(email, password)
 			.then(async () => {
-				const remoteState = await getStateFromFirestore();
-				console.log('got remote state', remoteState);
+				const remoteState = await stateService.remoteState();
 				if (remoteState == null) {
-					console.warn('Remote state is null. Initializing new state.');
-					dispatch(currentGameSlice.actions.initialInitialReset());
-					dispatch(usersSlice.actions.REPLACE_WHOLE_STATE({}));
-					dispatch(gamesSlice.actions.REPLACE_WHOLE_STATE({}));
+					console.warn('Remote state is null. Doing nothing.');
 					return;
 				}
 				dispatch(usersSlice.actions.REPLACE_WHOLE_STATE(remoteState.users));
@@ -43,8 +39,10 @@ function Login() {
 
 	};
 	return (
-		<>
+		<div className='fixed flex h-full w-full flex-col'>
+			<NavBar />
 			<main>
+				<p className='flex justify-center items-center font-bold text-xl underline'>Login</p>
 				<br />
 				<section>
 					<form className='flex flex-col justify-center items-center' onSubmit={onLogin}>
@@ -79,6 +77,10 @@ function Login() {
 					</form>
 					<hr />
 					<hr />
+
+					<Alert severity='error'>Your local progress(as a guest) will be deleted if you have already some progress
+						remotely</Alert>
+
 					<br /><br /><br />
 					<p className='text-sm text-black text-center'>
 						No account yet? {' '}
@@ -89,9 +91,18 @@ function Login() {
 							Sign up
 						</Button>
 					</p>
+					<p className='text-sm text-black text-center'>
+						Or continue as a guest pressing
+						<Button
+							onClick={() => {
+								navigate(APP_ROUTES.indexRoute());
+							}}>
+							here
+						</Button>
+					</p>
 				</section>
 			</main>
-		</>
+		</div>
 	);
 
 }

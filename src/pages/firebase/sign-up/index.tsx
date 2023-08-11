@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { auth } from '../../../firebase.ts';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { authService } from '../../../firebase.ts';
 import { useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../../../routes.tsx';
 import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
+import NavBar from '../../../components/navbar';
 
 function Signup() {
 	const navigate = useNavigate();
@@ -15,7 +15,7 @@ function Signup() {
 	const onSubmit = async (e: any) => {
 		e.preventDefault();
 
-		await createUserWithEmailAndPassword(auth, email, password)
+		await authService.register(email, password)
 			.catch((error) => {
 				const errorCode = error.code;
 				const errorMessage = error.message;
@@ -24,7 +24,9 @@ function Signup() {
 			});
 	};
 	return (
-		<>
+		<div className='fixed flex h-full w-full flex-col'>
+			<NavBar />
+			<p className='flex justify-center items-center font-bold text-xl underline'>Register</p>
 			<main>
 				<br />
 				<section>
@@ -72,7 +74,7 @@ function Signup() {
 					</p>
 				</section>
 			</main>
-		</>
+		</div>
 	);
 
 }

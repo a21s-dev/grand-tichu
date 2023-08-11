@@ -10,17 +10,16 @@ import Games from './pages/games';
 import GameDetails from './pages/game-details';
 import TurnDetails from './pages/turn-details';
 import About from './pages/about';
-import { useDispatch, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { GlobalState } from './store/store.ts';
-import { USERS_WEIRD_SELECTORS, usersSlice } from './store/usersSlice.ts';
+import { USERS_WEIRD_SELECTORS } from './store/usersSlice.ts';
 import SignIn from './pages/firebase/login';
 import Signup from './pages/firebase/sign-up';
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase.ts';
+import { authService } from './firebase.ts';
 import Auth from './pages/firebase/auth';
-import { currentGameSlice } from './store/currentGameSlice.ts';
-import { gamesSlice } from './store/gamesSlice.ts';
+import { AuthStatus } from './service/AuthService.ts';
+import { tap } from 'rxjs';
 
 
 const INDEX_ROUTE = '/';
@@ -70,45 +69,31 @@ const GuardedRoute = ({
 
 
 const Needs4UsersComponent = ({ Component }: { Component: any }) => {
-	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const store = useStore();
 	const state = store.getState() as GlobalState;
 	const players = USERS_WEIRD_SELECTORS.users(state);
 	return players.length < 4 ? <Navigate to={USERS_ROUTE} /> : <Component />;
 };
 
-const PrivateComponent = ({ Component, isAuthenticated, needs4Users = true }: {
+const PrivateComponent = ({ Component, needs4Users = true }: {
 	Component: any,
-	isAuthenticated: boolean,
 	needs4Users?: boolean
 }) => {
-	if (!isAuthenticated) return <Navigate to={LOGIN_ROUTE} replace />;
 	if (!needs4Users) return <Component />;
 	return <Needs4UsersComponent Component={Component} />;
 };
 const AppRoutes = (): JSX.Element => {
-		const dispatch = useDispatch();
-		const userLoggedIn = localStorage.getItem('USER_LOGGED_IN') && true || false;
-		const [isAuthenticated, setIsAuthenticated] = useState(userLoggedIn);
+		const [authStatus, setAuthStatus] = useState<AuthStatus | undefined>();
+
 		useEffect(() => {
-			onAuthStateChanged(auth, (user) => {
-				if (user) {
-					// User is signed in, see docs for a list of available properties
-					// https://firebase.google.com/docs/reference/js/firebase.User
-					const uid = user.uid;
-					// ...
-					console.log('uid', uid);
-					setIsAuthenticated(true);
-					localStorage.setItem('USER_LOGGED_IN', 'true');
-				} else {
-					console.log('user is logged out');
-					setIsAuthenticated(false);
-					localStorage.removeItem('USER_LOGGED_IN');
-					dispatch(currentGameSlice.actions.initialInitialReset());
-					dispatch(usersSlice.actions.REPLACE_WHOLE_STATE({}));
-					dispatch(gamesSlice.actions.REPLACE_WHOLE_STATE({}));
-				}
-			});
+			authService
+				.status()
+				.pipe(
+					tap((status) => {
+						setAuthStatus(status);
+					}),
+				)
+				.subscribe();
 		}, []);
 
 		return (
@@ -117,7 +102,7 @@ const AppRoutes = (): JSX.Element => {
 				<Route
 					element={
 						<GuardedRoute
-							isRouteAccessible={!isAuthenticated}
+							isRouteAccessible={authStatus !== AuthStatus.LoggedIn}
 							redirectRoute={USERS_ROUTE}
 						/>
 					}
@@ -127,7 +112,7 @@ const AppRoutes = (): JSX.Element => {
 				<Route
 					element={
 						<GuardedRoute
-							isRouteAccessible={!isAuthenticated}
+							isRouteAccessible={authStatus !== AuthStatus.LoggedIn}
 							redirectRoute={USERS_ROUTE}
 						/>
 					}
@@ -136,37 +121,41 @@ const AppRoutes = (): JSX.Element => {
 				</Route>
 				<Route
 					path={INDEX_ROUTE}
-					element={<PrivateComponent Component={Index} isAuthenticated={isAuthenticated} />} />
+					element={<PrivateComponent Component={Index} />} />
 				<Route
 					path={SUBMIT_SCORE_ROUTE}
-					element={<PrivateComponent Component={SubmitScore} isAuthenticated={isAuthenticated} />} />
+					element={<PrivateComponent Component={SubmitScore} />} />
 				<Route
 					path={AUTH_ROUTE}
-					element={<PrivateComponent Component={Auth} isAuthenticated={isAuthenticated} needs4Users={false}/>}
+					element={<PrivateComponent Component={Auth} needs4Users={false} />}
 				/>
 				<Route
 					path={USERS_ROUTE}
-					element={<PrivateComponent Component={Users} isAuthenticated={isAuthenticated} needs4Users={false} />} />
+					element={<PrivateComponent
+						Component={Users}
+						needs4Users={false} />}
+				/>
 				<Route
 					path={SPECIFIC_USER_DETAILS_ROUTE}
-					element={<PrivateComponent Component={UserDetails} isAuthenticated={isAuthenticated} />} />
+					element={<PrivateComponent Component={UserDetails} />} />
 				<Route
 					path={CURRENT_GAME_ROUTE}
-					element={<PrivateComponent Component={CurrentGameDetails} isAuthenticated={isAuthenticated} />} />
+					element={<PrivateComponent Component={CurrentGameDetails} />} />
 				<Route
 					path={CURRENT_GAME_SPECIFIC_TURN_DETAILS_ROUTE}
-					element={<PrivateComponent Component={CurrentGameTurnDetails} isAuthenticated={isAuthenticated} />} />
+					element={<PrivateComponent Component={CurrentGameTurnDetails} />} />
 				<Route
-					path={GAMES_ROUTE} element={<PrivateComponent Component={Games} isAuthenticated={isAuthenticated} />} />
+					path={GAMES_ROUTE}
+					element={<PrivateComponent Component={Games} />} />
 				<Route
 					path={GAME_DETAILS_ROUTE}
-					element={<PrivateComponent Component={GameDetails} isAuthenticated={isAuthenticated} />} />
+					element={<PrivateComponent Component={GameDetails} />} />
 				<Route
 					path={GAME_TURN_DETAILS_ROUTE}
-					element={<PrivateComponent Component={TurnDetails} isAuthenticated={isAuthenticated} />} />
+					element={<PrivateComponent Component={TurnDetails} />} />
 				<Route
 					path={GAME_DETAILS_ROUTE}
-					element={<PrivateComponent Component={GameDetails} isAuthenticated={isAuthenticated} />} />
+					element={<PrivateComponent Component={GameDetails} />} />
 				<Route
 					path='*'
 					element={<NotFound />} />
