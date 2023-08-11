@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { usersSlice } from '../../../store/usersSlice.ts';
 import { gamesSlice } from '../../../store/gamesSlice.ts';
 import { currentGameSlice } from '../../../store/currentGameSlice.ts';
+import NavBar from '../../../components/navbar';
 
 function Login() {
 	const dispatch = useDispatch();
@@ -20,7 +21,6 @@ function Login() {
 		authService.login(email, password)
 			.then(async () => {
 				const remoteState = await stateService.remoteState();
-				console.log('got remote state', remoteState);
 				if (remoteState == null) {
 					console.warn('Remote state is null. Doing nothing.');
 					return;
@@ -39,8 +39,10 @@ function Login() {
 
 	};
 	return (
-		<>
+		<div className='fixed flex h-full w-full flex-col'>
+			<NavBar />
 			<main>
+				<p className='flex justify-center items-center font-bold text-xl underline'>Login</p>
 				<br />
 				<section>
 					<form className='flex flex-col justify-center items-center' onSubmit={onLogin}>
@@ -93,18 +95,14 @@ function Login() {
 						Or continue as a guest pressing
 						<Button
 							onClick={() => {
-								authService.loginAsGuest();
-								// setTimeout(()=>{
-								// 	console.log('navigating to users')
-								// 	navigate(APP_ROUTES.usersRoute());
-								// },100);
+								navigate(APP_ROUTES.indexRoute());
 							}}>
 							here
 						</Button>
 					</p>
 				</section>
 			</main>
-		</>
+		</div>
 	);
 
 }

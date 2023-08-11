@@ -1,4 +1,4 @@
-import React from 'react';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import './main.css';
 import { Provider } from 'react-redux';
@@ -43,7 +43,7 @@ if (!rootElement.innerHTML) {
 	const root = ReactDOM.createRoot(rootElement);
 	const persistor = persistStore(STORE);
 	root.render(
-		<React.StrictMode>
+		<StrictMode>
 			<ThemeProvider theme={theme}>
 				<Provider store={STORE}>
 					<PersistGate loading={null} persistor={persistor}>
@@ -53,6 +53,6 @@ if (!rootElement.innerHTML) {
 					</PersistGate>
 				</Provider>
 			</ThemeProvider>
-		</React.StrictMode>,
+		</StrictMode>,
 	);
 }

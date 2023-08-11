@@ -1,13 +1,13 @@
 import NavBar from '../../../components/navbar';
 import Button from '@mui/material/Button';
 import { authService, stateService } from '../../../firebase.ts';
-import { useDispatch, useStore } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { GlobalState } from '../../../store/store.ts';
 import { usersSlice } from '../../../store/usersSlice.ts';
 import { gamesSlice } from '../../../store/gamesSlice.ts';
 import { currentGameSlice } from '../../../store/currentGameSlice.ts';
 import { Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tap } from 'rxjs';
 import { AuthStatus } from '../../../service/AuthService.ts';
@@ -15,14 +15,13 @@ import { APP_ROUTES } from '../../../routes.tsx';
 
 
 function Auth() {
-	const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.None);
+	const [authStatus, setAuthStatus] = useState<AuthStatus | undefined>();
 
 	useEffect(() => {
 		const subscription = authService
 			.status()
 			.pipe(
 				tap((status) => {
-					console.log(status);
 					setAuthStatus(status);
 				}),
 			)
@@ -33,7 +32,7 @@ function Auth() {
 	return (
 		<div className='fixed flex h-full w-full flex-col'>
 			<NavBar />
-			{authStatus === AuthStatus.Guest && <Guest />}
+			{authStatus === AuthStatus.NotLoggedIn && <Guest />}
 			{authStatus === AuthStatus.LoggedIn && <LoggedIn />}
 
 		</div>
@@ -43,19 +42,18 @@ function Auth() {
 const LoggedIn = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const store = useStore();
-	const [email, setEmail] = React.useState<string | null>(null);
-	const [open, setOpen] = React.useState(false);
-	const [fetchOrSend, setFetchOrSend] = React.useState<'fetch' | 'send' | null>(null);
-	const [localState, setLocalState] = React.useState<GlobalState | null>(null);
-	const [remoteState, setRemoteState] = React.useState<GlobalState | null>(null);
-	const [success, setSuccess] = React.useState(false);
-	const [error, setError] = React.useState(false);
+	const [email, setEmail] = useState<string | null>(null);
+	const [open, setOpen] = useState(false);
+	const [fetchOrSend, setFetchOrSend] = useState<'fetch' | 'send' | null>(null);
+	const [localState, setLocalState] = useState<GlobalState | null>(null);
+	const [remoteState, setRemoteState] = useState<GlobalState | null>(null);
+	const [success, setSuccess] = useState(false);
+	const [error, setError] = useState(false);
 	const openConfirmationDialog = () => {
 		setOpen(true);
 	};
 	const isOnline = window.navigator.onLine;
-	const handleClose = (confirmed: boolean) => {
+	const handleClose = async (confirmed: boolean) => {
 		setOpen(false);
 		if (localState == null || remoteState == null) {
 			return;
@@ -63,7 +61,7 @@ const LoggedIn = () => {
 		if (confirmed) {
 			if (fetchOrSend === 'send') {
 				try {
-					stateService.saveStateToFirestore();
+					await stateService.saveStateToFirestore();
 					setSuccess(true);
 					setTimeout(() => {
 						setSuccess(false);
@@ -91,7 +89,7 @@ const LoggedIn = () => {
 		}
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setTimeout(() => {
 			const user = authService.currentUser();
 			if (user == null) {
@@ -156,6 +154,9 @@ const LoggedIn = () => {
 					onClick={() => {
 						authService.logout()
 							.then(() => {
+								dispatch(currentGameSlice.actions.initialInitialReset());
+								dispatch(usersSlice.actions.REPLACE_WHOLE_STATE({}));
+								dispatch(gamesSlice.actions.REPLACE_WHOLE_STATE({}));
 								navigate('/');
 								console.log('Signed out successfully');
 							});
@@ -209,10 +210,7 @@ const Guest = () => {
 					</span>
 					<Button
 						onClick={() => {
-							authService.resetStatus();
-							setTimeout(() => {
-								navigate(APP_ROUTES.loginRoute());
-							}, 100);
+							navigate(APP_ROUTES.loginRoute());
 						}}
 					>
 						Login

@@ -7,7 +7,7 @@ import {
 	WinningScore,
 	WinningScoreType,
 } from '../../store/currentGameSlice.ts';
-import React from 'react';
+import { useState } from 'react';
 
 export interface ChangeWinningScoreDialogProps {
 	keepMounted: boolean;
@@ -19,7 +19,7 @@ function ChangeWinningScoreDialog(props: ChangeWinningScoreDialogProps) {
 	const { onClose, open } = props;
 	const dispatch = useAppDispatch();
 	const game = useSelector(CURRENT_TURN_DETAILS_SELECTORS.getGame);
-	const [winningScore, setWinningScore] = React.useState(game.winningScore);
+	const [winningScore, setWinningScore] = useState(game.winningScore);
 	return (
 		<Dialog
 			open={open}

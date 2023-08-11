@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogTitle, TextField, Typography } from '@mui/material';
-import React from 'react';
+import { useState } from 'react';
 
 export interface AddNewPlayerDialogProps {
 	keepMounted: boolean;
@@ -9,7 +9,7 @@ export interface AddNewPlayerDialogProps {
 
 function AddNewPlayerDialog(props: AddNewPlayerDialogProps) {
 	const { onClose, open } = props;
-	const [playerName, setPlayerName] = React.useState<string>('');
+	const [playerName, setPlayerName] = useState<string>('');
 	return (
 		<Dialog
 			open={open}
