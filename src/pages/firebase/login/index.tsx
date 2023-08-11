@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { auth, getStateFromFirestore } from '../../../firebase.ts';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { authService, stateService } from '../../../firebase.ts';
 import { useNavigate } from 'react-router-dom';
-import { TextField } from '@mui/material';
+import { Alert, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import { APP_ROUTES } from '../../../routes.tsx';
 import { useDispatch } from 'react-redux';
@@ -18,15 +17,12 @@ function Login() {
 
 	const onLogin = (e: any) => {
 		e.preventDefault();
-		signInWithEmailAndPassword(auth, email, password)
+		authService.login(email, password)
 			.then(async () => {
-				const remoteState = await getStateFromFirestore();
+				const remoteState = await stateService.remoteState();
 				console.log('got remote state', remoteState);
 				if (remoteState == null) {
-					console.warn('Remote state is null. Initializing new state.');
-					dispatch(currentGameSlice.actions.initialInitialReset());
-					dispatch(usersSlice.actions.REPLACE_WHOLE_STATE({}));
-					dispatch(gamesSlice.actions.REPLACE_WHOLE_STATE({}));
+					console.warn('Remote state is null. Doing nothing.');
 					return;
 				}
 				dispatch(usersSlice.actions.REPLACE_WHOLE_STATE(remoteState.users));
@@ -79,6 +75,10 @@ function Login() {
 					</form>
 					<hr />
 					<hr />
+
+					<Alert severity='error'>Your local progress(as a guest) will be deleted if you have already some progress
+						remotely</Alert>
+
 					<br /><br /><br />
 					<p className='text-sm text-black text-center'>
 						No account yet? {' '}
@@ -87,6 +87,19 @@ function Login() {
 								navigate(APP_ROUTES.signupRoute());
 							}}>
 							Sign up
+						</Button>
+					</p>
+					<p className='text-sm text-black text-center'>
+						Or continue as a guest pressing
+						<Button
+							onClick={() => {
+								authService.loginAsGuest();
+								// setTimeout(()=>{
+								// 	console.log('navigating to users')
+								// 	navigate(APP_ROUTES.usersRoute());
+								// },100);
+							}}>
+							here
 						</Button>
 					</p>
 				</section>

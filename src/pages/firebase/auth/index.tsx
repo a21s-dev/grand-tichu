@@ -1,21 +1,49 @@
 import NavBar from '../../../components/navbar';
 import Button from '@mui/material/Button';
-import { auth, getStateFromFirestore, saveStateToFirestore } from '../../../firebase.ts';
+import { authService, stateService } from '../../../firebase.ts';
 import { useDispatch, useStore } from 'react-redux';
 import { GlobalState } from '../../../store/store.ts';
 import { usersSlice } from '../../../store/usersSlice.ts';
 import { gamesSlice } from '../../../store/gamesSlice.ts';
 import { currentGameSlice } from '../../../store/currentGameSlice.ts';
 import { Alert, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import React from 'react';
-import { signOut } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { tap } from 'rxjs';
+import { AuthStatus } from '../../../service/AuthService.ts';
+import { APP_ROUTES } from '../../../routes.tsx';
 
 
 function Auth() {
+	const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.None);
+
+	useEffect(() => {
+		const subscription = authService
+			.status()
+			.pipe(
+				tap((status) => {
+					console.log(status);
+					setAuthStatus(status);
+				}),
+			)
+			.subscribe();
+		return subscription.unsubscribe();
+	}, []);
+
+	return (
+		<div className='fixed flex h-full w-full flex-col'>
+			<NavBar />
+			{authStatus === AuthStatus.Guest && <Guest />}
+			{authStatus === AuthStatus.LoggedIn && <LoggedIn />}
+
+		</div>
+	);
+}
+
+const LoggedIn = () => {
 	const navigate = useNavigate();
-	const store = useStore();
 	const dispatch = useDispatch();
+	const store = useStore();
 	const [email, setEmail] = React.useState<string | null>(null);
 	const [open, setOpen] = React.useState(false);
 	const [fetchOrSend, setFetchOrSend] = React.useState<'fetch' | 'send' | null>(null);
@@ -26,6 +54,7 @@ function Auth() {
 	const openConfirmationDialog = () => {
 		setOpen(true);
 	};
+	const isOnline = window.navigator.onLine;
 	const handleClose = (confirmed: boolean) => {
 		setOpen(false);
 		if (localState == null || remoteState == null) {
@@ -34,7 +63,7 @@ function Auth() {
 		if (confirmed) {
 			if (fetchOrSend === 'send') {
 				try {
-					saveStateToFirestore(localState);
+					stateService.saveStateToFirestore();
 					setSuccess(true);
 					setTimeout(() => {
 						setSuccess(false);
@@ -62,12 +91,9 @@ function Auth() {
 		}
 	};
 
-	const isOnline = window.navigator.onLine;
-
-
 	React.useEffect(() => {
 		setTimeout(() => {
-			const user = auth.currentUser;
+			const user = authService.currentUser();
 			if (user == null) {
 				return;
 			}
@@ -76,11 +102,8 @@ function Auth() {
 		}, 1000);
 
 	}, []);
-
-
 	return (
-		<div className='fixed flex h-full w-full flex-col'>
-			<NavBar />
+		<>
 			{!isOnline && <div>Offline!</div>}
 			<br />
 			{email && <div className='flex justify-center items-center'>Logged in as {email}</div>}
@@ -89,10 +112,13 @@ function Auth() {
 					variant='outlined'
 					className='m-2 text-black'
 					onClick={async () => {
-						const localState = store.getState() as GlobalState;
-						const remoteState = await getStateFromFirestore();
+						const localState = stateService.localState();
+						const remoteState = await stateService.remoteState();
+						if (localState == null || remoteState == null) {
+							return;
+						}
 						if (remoteState == null) {
-							saveStateToFirestore(localState);
+							stateService.saveStateToFirestore();
 							return;
 						}
 						setFetchOrSend('send');
@@ -107,8 +133,11 @@ function Auth() {
 					variant='outlined'
 					className='m-2 text-black'
 					onClick={async () => {
-						const localState = store.getState() as GlobalState;
-						const remoteState = await getStateFromFirestore();
+						const localState = stateService.localState();
+						const remoteState = await stateService.remoteState();
+						if (localState == null) {
+							return;
+						}
 						if (remoteState == null) {
 							console.warn('Remote state is null. Doing nothing!');
 							return;
@@ -125,15 +154,16 @@ function Auth() {
 					variant='contained'
 					className='m-2 text-black flex flex-col'
 					onClick={() => {
-						signOut(auth).then(() => {
-							navigate('/');
-							console.log('Signed out successfully');
-						});
+						authService.logout()
+							.then(() => {
+								navigate('/');
+								console.log('Signed out successfully');
+							});
 					}}
 				>
 					<b>Logout</b>
 					<p>
-					(Local state will be lost)
+						(Local state will be lost)
 					</p>
 				</Button>
 				{success &&
@@ -163,9 +193,35 @@ function Auth() {
 				remoteUsersLength={remoteState && Object.keys(remoteState.users).length || 0}
 				remoteGamesLength={remoteState && Object.keys(remoteState.games).length || 0}
 			/>;
+		</>
+	);
+};
+
+const Guest = () => {
+	const navigate = useNavigate();
+	return (
+		<div className='flex flex-col justify-around items-center h-full'>
+			Logged in as Guest
+			<div>
+				<div className='flex flex-col justify-center items-center'>
+					<span>
+						Wanna save your progress?
+					</span>
+					<Button
+						onClick={() => {
+							authService.resetStatus();
+							setTimeout(() => {
+								navigate(APP_ROUTES.loginRoute());
+							}, 100);
+						}}
+					>
+						Login
+					</Button>
+				</div>
+			</div>
 		</div>
 	);
-}
+};
 
 interface ConfirmationDialogRawProps {
 	id: string;

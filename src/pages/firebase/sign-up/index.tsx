@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { auth } from '../../../firebase.ts';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { authService } from '../../../firebase.ts';
 import { useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../../../routes.tsx';
 import { TextField } from '@mui/material';
@@ -15,7 +14,7 @@ function Signup() {
 	const onSubmit = async (e: any) => {
 		e.preventDefault();
 
-		await createUserWithEmailAndPassword(auth, email, password)
+		await authService.register(email, password)
 			.catch((error) => {
 				const errorCode = error.code;
 				const errorMessage = error.message;

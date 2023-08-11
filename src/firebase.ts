@@ -2,8 +2,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { GlobalState } from './store/store.ts';
+import { AuthService } from './service/AuthService.ts';
+import { StateService } from './service/StateService.ts';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -22,42 +22,5 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-export const saveStateToFirestore = (state: GlobalState) => {
-	const firestore = getFirestore(app);
-
-	// const collectionRef = firestore.collection('reduxPersistState');
-	const user = auth.currentUser; // If using Firebase Authentication
-	if (user === null) {
-		console.error('No user logged in.');
-		return;
-	}
-
-	// Customize the document path if you need to organize data differently
-	// const docRef = collectionRef.doc(user ? user.uid : 'defaultUser').collection('state').doc('appState');
-	const documentReference = doc(firestore, 'state', user.uid);
-	setDoc(documentReference, state)
-		.then(() => {
-			console.log('State saved to Firestore.');
-		})
-		.catch((error) => {
-			console.error('Error saving state to Firestore:', error);
-		});
-};
-export const getStateFromFirestore = async (): Promise<GlobalState | undefined> => {
-	const firestore = getFirestore(app);
-	const user = auth.currentUser; // If using Firebase Authentication
-	if (user === null) {
-		console.error('No user logged in.');
-		return;
-	}
-	const documentReference = doc(firestore, 'state', user.uid);
-	const docSnap = await getDoc(documentReference);
-	if (docSnap.exists()) {
-		console.log('Document data:', docSnap.data());
-		return docSnap.data() as GlobalState;
-	} else {
-		// doc.data() will be undefined in this case
-		console.log('No such document!');
-		return undefined;
-	}
-};
+export const authService = new AuthService(auth);
+export const stateService = new StateService(getFirestore(app), authService);
