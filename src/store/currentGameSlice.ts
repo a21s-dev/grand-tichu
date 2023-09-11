@@ -235,6 +235,7 @@ export const currentGameSlice = createSlice({
 			}
 			state.turns.splice(state.turns.length - 2, 1);
 			HELPERS.updateTotalPoints(state);
+			HELPERS.previousPlayerDeals(HELPERS.getLatestTurn(state));
 		},
 		deleteTurn: (state: Draft<CurrentGameState>, action: PayloadAction<{ turnIndex: number }>) => {
 			if (state.turns.length < 2) {
@@ -430,10 +431,28 @@ export const HELPERS = {
 			},
 		};
 	},
+	previousPlayerDeals: (latestTurn: TurnDetails): void => {
+		const playerWhoDeals = latestTurn.playerWhoDeals;
+		latestTurn.playerWhoDeals = HELPERS.getPreviousPlayerIndex(playerWhoDeals);
+	},
+
 	nextPlayerDeals: (latestTurn: TurnDetails): void => {
 		const playerWhoDeals = latestTurn.playerWhoDeals;
 		latestTurn.playerWhoDeals = HELPERS.getNextPlayerIndex(playerWhoDeals);
 	},
+	getPreviousPlayerIndex: (playerIndex: PlayerIndex): PlayerIndex => {
+		if (playerIndex === 't1p1') {
+			return 't2p2';
+		}
+		if (playerIndex === 't2p1') {
+			return 't1p1';
+		}
+		if (playerIndex === 't1p2') {
+			return 't2p1';
+		}
+		return 't1p2';
+	},
+
 	getNextPlayerIndex: (playerIndex: PlayerIndex): PlayerIndex => {
 		if (playerIndex === 't1p1') {
 			return 't2p1';
