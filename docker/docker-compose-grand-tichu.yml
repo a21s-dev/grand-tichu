@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   grand-tichu:
-    image: registry.a21.dev/grand_tichu
+    image: registry.a21.dev/grand-tichu
     ports:
       - '4111:80'
     restart: unless-stopped
