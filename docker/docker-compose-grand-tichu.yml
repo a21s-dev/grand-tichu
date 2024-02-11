@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  grand-tichu:
+    image: registry.a21.dev/grand_tichu
+    ports:
+      - '4111:80'
+    restart: unless-stopped
+    networks:
+      - a21s
+
+networks:
+  a21s:
+    external: true

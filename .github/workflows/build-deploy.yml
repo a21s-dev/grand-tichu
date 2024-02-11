@@ -1,0 +1,63 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - uses: oven-sh/setup-bun@v1
+      - name: Install Dependencies
+        run: |
+          bun i
+
+      - name: Build App
+        run: |
+          make build
+
+      - name: Build Docker Image
+        run: |
+          make build-docker-image
+
+      - name: Login to Docker Registry
+        run: |
+          docker login registry.a21.dev -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push Docker Image
+        run: |
+          docker push registry.a21.dev/grand-tichu
+
+  deploy:
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy docker-compose file
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "docker/docker-compose-grand-tichu.yml"
+          target: "/home/alator/workspace/deployments"
+
+      - name: Start container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker pull registry.a21.dev/grand-tichu
+            docker compose -f /home/alator/workspace/deployments/docker/docker-compose-grand-tichu.yml up -d --force-recreate
+            docker rmi $(docker images -f "dangling=true" -q) || true
