@@ -34,7 +34,7 @@ jobs:
           docker push registry.a21.dev/grand-tichu
 
   deploy:
-    needs: create-release
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
