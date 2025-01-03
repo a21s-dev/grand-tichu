@@ -11,6 +11,7 @@ import { gamesSlice } from './gamesSlice.ts';
 export type AppUser = {
 	id: string,
 	name: string,
+	isMvp?: boolean
 }
 export type AppUsersState = {
 	[key: string]: AppUser
@@ -131,18 +132,22 @@ const HELPERS = {
 				t1p1: {
 					id: user1.id,
 					name: user1.name,
+					isMvp: user1.isMvp
 				},
 				t1p2: {
 					id: user2.id,
 					name: user2.name,
+					isMvp: user2.isMvp
 				},
 				t2p1: {
 					id: user3.id,
 					name: user3.name,
+					isMvp: user3.isMvp
 				},
 				t2p2: {
 					id: user4.id,
 					name: user4.name,
+					isMvp: user4.isMvp
 				},
 			},
 			playersTichuGrandTichu: {

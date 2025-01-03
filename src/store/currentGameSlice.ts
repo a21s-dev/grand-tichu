@@ -17,6 +17,7 @@ export type WinningScoreType = typeof WinningScore[number];
 export type PlayerWithDetails = {
 	id: string,
 	name: string,
+	isMvp: boolean,
 	team: TeamIndex,
 	tichu: boolean,
 	grandTichu: boolean,
@@ -607,6 +608,7 @@ export const CURRENT_TURN_DETAILS_SELECTORS = {
 			playersWithDetails.push({
 				id: player.id,
 				name: player.name,
+				isMvp: player.isMvp ?? false,
 				team: HELPERS.getTeamOfPlayer(player.id, latestTurn.players),
 				tichu: tichuGrandTichu.tichu,
 				grandTichu: tichuGrandTichu.grandTichu,

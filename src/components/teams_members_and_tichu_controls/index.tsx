@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import ElderlyIcon from '@mui/icons-material/Elderly';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { AppUser, USERS_WEIRD_SELECTORS } from '../../store/usersSlice.ts';
 import ChangePlayerDialog from '../change-player-dialog';
@@ -44,6 +45,7 @@ function TeamsMembersAndTichuControls() {
 				newPlayer: {
 					id: newPlayer.id,
 					name: newPlayer.name,
+					isMvp: newPlayer.isMvp
 				},
 			}),
 		);
@@ -78,7 +80,7 @@ function TeamsMembersAndTichuControls() {
 							className='flex flex-col items-center justify-center'
 							key={player.id}
 						>
-							<div className='grid h-[2em] w-full grid-cols-[1fr_repeat(1,auto)_1fr] justify-items-center'>
+							<div className='grid h-[2em] w-full grid-cols-[1fr_auto_auto_auto_1fr] gap-2 items-center'>
 								<Button
 									variant='text'
 									onClick={() => {
@@ -89,6 +91,15 @@ function TeamsMembersAndTichuControls() {
 								>
 									{player.name}
 								</Button>
+								{getPlayerDetailsById(player.id).isMvp && (
+									<div className='ml-auto flex items-center justify-center text-[1.8em]'>
+										<Button
+											className='m-0 p-0 leading-[normal]'
+										>
+											<ElderlyIcon className='text-[2em]' />
+										</Button>
+									</div>
+								)}
 								{getPlayerDetailsById(player.id).deals && (
 									<div className='ml-auto flex items-center justify-center text-[1.8em]'>
 										<Button
