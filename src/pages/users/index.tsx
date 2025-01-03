@@ -20,6 +20,7 @@ import { APP_ROUTES } from '../../routes.tsx';
 const columns: GridColDef[] = [
 	{ field: 'id', headerName: 'ID', width: 120, sortable: false, disableColumnMenu: true },
 	{ field: 'name', headerName: 'Name', width: 170, disableColumnMenu: true },
+	{ field: 'mvp', headerName: 'MVP', width: 100, disableColumnMenu: true },
 ];
 
 function Users() {
@@ -71,7 +72,7 @@ function Users() {
 					</Button>
 					<DataGrid
 						className='w-full'
-						rows={users}
+						rows={users.map(user => ({ id: user.id, name: user.name, mvp: user.isMvp ? 'YEAAA' : 'Nah' }))}
 						columns={columns}
 						initialState={{
 							pagination: {

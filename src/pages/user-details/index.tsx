@@ -59,6 +59,9 @@ function UserDetails() {
 						<Typography>
 							Name: {user.name}
 						</Typography>
+						<Typography>
+							MVP status: {user.isMvp === true ? 'YEA!!' : 'Plebe'}
+						</Typography>
 						<hr />
 						<Typography variant='body1' className='font-bold'>
 							Statistics
