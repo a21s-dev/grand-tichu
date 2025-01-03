@@ -274,12 +274,14 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
 					<li>[games] Remote:{remoteGamesLength} | Local: {localGamesLength}</li>
 					{fetchOrSend === 'send' && (
 						<>
+							<li className='text-red-500'>You are about to send the data in the device TO firebase</li>
 							{moreRemoteUsers() && <li>Remote state has more users!</li>}
 							{moreRemoteGames() && <li>Remote state has more games!</li>}
 						</>
 					)}
 					{fetchOrSend === 'fetch' && (
 						<>
+							<li className='text-red-500'>You are about to send the data FROM firebase to this device</li>
 							{moreLocalUsers() && <li>Local state has more users!</li>}
 							{moreLocalGames() && <li>Local state has more games!</li>}
 						</>
